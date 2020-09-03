@@ -1,5 +1,6 @@
 import numpy as np
 import sys
+import os
 
 N = int(sys.argv[1])
 sigma = float(sys.argv[2])
@@ -26,3 +27,9 @@ with open(outfilename, "w") as outfile:
     for i in range(N):
         outfile.write(str(x[i]) + " " + str(y[i]) + " " + str(data[i]))
         outfile.write("\n")
+
+path = "datasets"
+if not os.path.exists(path):
+    os.makedirs(path)
+
+os.system("mv" + " " + outfilename + " " + path)
