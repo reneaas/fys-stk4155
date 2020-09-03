@@ -5,8 +5,8 @@ import os
 N = int(sys.argv[1])
 sigma = float(sys.argv[2])
 
-x = np.linspace(0, 1, N)
-y = np.linspace(0, 1, N)
+x = np.random.uniform(0,1, N)
+y = np.random.uniform(0,1, N)
 
 def FrankeFunction(x,y):
     term1 = 0.75*np.exp(-(0.25*(9*x-2)**2) - 0.25*((9*y-2)**2))
