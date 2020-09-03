@@ -15,7 +15,7 @@ n = 1000
 
 solver = Regression(n)
 solver.ReadData(filename, deg)
-#f_train, f_test, f_tilde, f_predict = solver.LinearRegression()
+f_train, f_test, f_tilde, f_predict = solver.LinearRegression()
 
 #Training
 #R2_train = solver.R2(f_train, f_tilde)
