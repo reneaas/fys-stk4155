@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+import random
 
 
 class Regression:
@@ -34,30 +35,13 @@ class Regression:
                 y.append(float(words[1]))
                 func_vals.append(float(words[2]))
 
-<<<<<<< HEAD
-        self.p = int((deg+1) * (deg+2) / 2 - 1)
-=======
         self.p = int((deg+1) * (deg+2) / 2) #Closed form expression for the number of features
->>>>>>> e5d0b976eb20fecbe1da820e721eebfa278991a1
 
         #Need to find a way to scale data (as suggested by the project text), but for now this works as it should.
         x = np.array(x)
         y = np.array(y)
         self.func_vals = np.array(func_vals)
 
-<<<<<<< HEAD
-
-        # Scaling data
-        x = x - np.mean(x)
-        y = y - np.mean(y)
-        self.func_vals = self.func_vals - np.mean(func_vals)
-
-        #Set up the design matrix
-        self.design_matrix = np.zeros([self.n, self.p])
-        col_idx = 0
-        max_degree = 0
-        # Sorry Kææsp, we had to change this part a little bit.... :)))))))
-=======
         #Set up the design matrix
         self.design_matrix = np.zeros([self.n, self.p])
         self.design_matrix[:,0] = 1.0 #First column is simply 1s.
@@ -66,20 +50,10 @@ class Regression:
         # Sorry Kææsp, we had to change this part a little bit.... :)))))))
         # Ble bare 100 ganger mer forvirrende men okei, Judases with bad taste and strange preferences....
         # Gonna have a talk about this tomorrow, sov godt<33
->>>>>>> e5d0b976eb20fecbe1da820e721eebfa278991a1
         while col_idx < self.p:
             max_degree += 1
             for i in range(max_degree+1):
                 self.design_matrix[:,col_idx] = x[:]**(max_degree-i)*y[:]**i
-<<<<<<< HEAD
-                col_idx += 1
-
-    def SplitData(self):
-        self.train_n = 4*(self.n // 5) + 4*(self.n % 5)
-        self.test_n = (self.n // 5) + (self.n % 5)
-        shuffled_indices = np.random.permutation(self.n)
-        self.design_matrix = self.design_matrix[shuffled_indices,:]
-=======
                 #print(col_idx,max_degree-i, i) #Nice way to visualize how the features are placed in the design matrix.
                 col_idx += 1
 
@@ -96,29 +70,12 @@ class Regression:
         #Split data into training and test set.
         self.train_n = 4*(self.n // 5) + 4*(self.n % 5)
         self.test_n = (self.n // 5) + (self.n % 5)
->>>>>>> e5d0b976eb20fecbe1da820e721eebfa278991a1
         self.X_train = self.design_matrix[:self.train_n,:]
         self.X_test = self.design_matrix[self.train_n:,:]
         self.y_train = self.func_vals[:self.train_n]
         self.y_test = self.func_vals[self.train_n:]
 
     def OLS(self):
-<<<<<<< HEAD
-        self.A = self.X_train.T @ self.X_train
-        self.b = self.X_train.T @ self.y_train
-        self.w = np.linalg.solve(self.A, self.b)
-        self.mse_train = np.mean( (self.X_train @ self.w - self.y_train)**2 )
-        print("In-sample error = ", self.mse_train)
-        print(self.w)
-
-
-    def Predict(self):
-        self.y_predictions = self.X_test @ self.w
-
-    def MSE(self):
-        self.mean_square_error = np.mean((self.y_predictions - self.y_test)**2)
-        print("Out-of-sample error = ", self.mean_square_error)
-=======
         """
         Perform ordinary least squares to find the parameters of the model denoted w.
         """
@@ -145,4 +102,27 @@ class Regression:
 
     def compute_R2_score(self,y_data, y_model):
         return 1 - np.sum((y_data - y_model) ** 2) / np.sum((y_data - np.mean(y_data)) ** 2)
->>>>>>> e5d0b976eb20fecbe1da820e721eebfa278991a1
+
+    def confidence_intervals(self, sigma):
+        """
+        Compute 95% confidence intervals for each parameter w_i
+        """
+        self.confidence_interval = np.zeros([self.p,2])
+        standard_error = sigma/np.sqrt(self.n)  # Litt usikker på det her
+        for i in range(self.p):
+            lower_limit = self.w[i] - 1.96*standard_error
+            upper_limit = self.w[i] + 1.96*standard_error
+            self.confidence_interval[i,0] = lower_limit
+            self.confidence_interval[i,1] = upper_limit
+
+
+    def Bootstrap(self, K, sample_size):
+        exp_val = np.zeros([K,self.p])
+        print(random.choices(self.design_matrix[:,0],k=sample_size))
+        """
+        for i in range(K):
+            for j in range(1,self.p):
+                boot_sample = random.choices(self.design_matrix[:,j], sample_size)
+                if (i == 0 and j == 0):
+                    print(boot_sample)
+        """
