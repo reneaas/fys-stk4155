@@ -101,20 +101,3 @@ class Regression:
 
     def compute_R2_score(self,y_data, y_model):
         return 1 - np.sum((y_data - y_model) ** 2) / np.sum((y_data - np.mean(y_data)) ** 2)
-
-    def kfold_CrossValidation(self, k):
-        """
-        Perform k-fold cross validation on the test set
-        and produces a vector of R2 scores and an arithmetic mean R2 score.
-        """
-        cross_validation_size = self.test_n // k + self.test_n % k
-        print(cross_validation_size)
-        print(self.test_n)
-        self.y_test_predictions = self.X_test @ self.w
-        r2_scores = np.zeros(k)
-        for i in range(k):
-            y_data = self.y_test[i*cross_validation_size:(i+1)*cross_validation_size+1]
-            y_model = self.y_test_predictions[i*cross_validation_size:(i+1)*cross_validation_size+1]
-            r2_scores[i] = self.compute_R2_score(y_data, y_model)
-        print(r2_scores)
-        print(np.mean(r2_scores))
