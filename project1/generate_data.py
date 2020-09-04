@@ -19,7 +19,7 @@ def f(x,y):
     """
     Test function to check that the Regression class produces correct results.
     """
-    return  1 + 2*x + 4*y + 2*x*y + x**2 + y**2
+    return  1 + 2*x + 4*y + x**2 + 2*x*y + + y**2
 
 noise = np.random.normal(0,sigma,size=N)
 
