@@ -23,11 +23,11 @@ class OLS(Regression):
         self.y_test_predictions = self.X_test @ self.w
         R2_score_train = self.compute_R2_score(self.y_train, self.y_train_predictions)
         R2_score_test = self.compute_R2_score(self.y_test, self.y_test_predictions)
-        print("Training R2 score = ", R2_score_train)
-        print("Test R2 score = ", R2_score_test)
-        print("Weights = ", self.w)
+        #print("Training R2 score = ", R2_score_train)
+        #print("Test R2 score = ", R2_score_test)
+        #print("Weights = ", self.w)
 
-    def bootstrap_train(self, B):
+    def bootstrap(self, B):
         X_train_old = np.copy(self.X_train)
         y_train_old = np.copy(self.y_train)
 
@@ -43,21 +43,6 @@ class OLS(Regression):
         self.X_train[:] = X_train_old[:]
         self.y_train[:] = y_train_old[:]
 
-    def bootstrap_test(self, B):
-        X_test_old = np.copy(self.X_test)
-        y_test_old = np.copy(self.y_test)
-
-        self.w_boots = np.zeros((B, self.p))
-        for i in range(B):
-            idx = np.random.randint(0,self.n_test, size=self.n_test)
-            self.X_test = X_test_old[idx,:]
-            self.y_test = y_test_old[idx]
-            self.train()
-            self.w_boots[i, :] = self.w[:]
-        self.compute_statistics()
-
-        self.X_train[:] = X_train_old[:]
-        self.y_train[:] = y_train_old[:]
 
     def compute_statistics(self):
         self.w_mean = np.zeros(self.p)
@@ -65,5 +50,6 @@ class OLS(Regression):
         for i in range(self.p):
             self.w_mean[i] = np.mean(self.w_boots[:, i])
             self.w_std[i] = np.std(self.w_boots[:,i])
+        self.w[:] = self.w_mean[:]
         print("w_mean = ", self.w_mean)
         print("w_std = ", self.w_std)
