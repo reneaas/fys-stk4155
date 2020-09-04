@@ -12,4 +12,5 @@ solver = Regression() #Initiate solver
 solver.ReadData(filename, polynomial_degree) #Read data from file
 solver.SplitData() #Split the data into training and test set
 solver.OLS()   #Perform ordinary least squares
-solver.Predict() #Predict and compute R2 scores.
+#solver.Predict() #Predict and compute R2 scores.
+solver.kfold_CrossValidation(5)
