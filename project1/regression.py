@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+np.random.seed(1001)
 from sklearn.model_selection import train_test_split
 #import random
 
@@ -12,7 +13,6 @@ class Regression:
         self.x = []
         self.y = []
         self.func_vals = []
-        self.B = 0
 
     def read_data(self,filename, deg):
         """
@@ -44,7 +44,7 @@ class Regression:
         self.x = np.array(self.x)
         self.y = np.array(self.y)
         self.func_vals = np.array(self.func_vals)
-        self.scale_data()
+        #self.scale_data()
         self.create_design_matrix() #Set up initial design matrix
 
     def scale_data(self):
@@ -81,12 +81,12 @@ class Regression:
         self.func_vals = self.func_vals[shuffled_idx]
 
         #Split data into training and test set.
-        self.train_n = 4*(self.n // 5) + 4*(self.n % 5)
-        self.test_n = (self.n // 5) + (self.n % 5)
-        self.X_train = self.design_matrix[:self.train_n,:]
-        self.X_test = self.design_matrix[self.train_n:,:]
-        self.y_train = self.func_vals[:self.train_n]
-        self.y_test = self.func_vals[self.train_n:]
+        self.n_train = 4*(self.n // 5) + 4*(self.n % 5)
+        self.n_test = (self.n // 5) + (self.n % 5)
+        self.X_train = self.design_matrix[:self.n_train,:]
+        self.X_test = self.design_matrix[self.n_train:,:]
+        self.y_train = self.func_vals[:self.n_train]
+        self.y_test = self.func_vals[self.n_train:]
 
 
     def compute_MSE(self):
@@ -107,16 +107,3 @@ class Regression:
             upper_limit = self.w[i] + 1.96*standard_error
             self.confidence_interval[i,0] = lower_limit
             self.confidence_interval[i,1] = upper_limit
-
-
-    def bootstrap_sampling(self):
-        self.w_boots = np.zeros((self.p, self.B))
-        for i in range(self.B):
-            idx = np.random.randint(0,self.n, size=self.n)
-            self.x_boot = self.x[idx]
-            self.y_boot = self.y[idx]
-            self.f_boot = self.func_vals[idx]
-            create_design_matrix()
-            split_data()
-            for j in range(self.p):
-                self.w_boots[j,:] = self.w[:]
