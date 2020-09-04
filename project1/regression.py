@@ -120,4 +120,3 @@ class Regression:
             split_data()
             for j in range(self.p):
                 self.w_boots[j,:] = self.w[:]
-        
