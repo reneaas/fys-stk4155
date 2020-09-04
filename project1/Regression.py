@@ -113,16 +113,3 @@ class Regression:
             lower_limit = self.w[i] - 1.96*standard_error
             upper_limit = self.w[i] + 1.96*standard_error
             self.confidence_interval[i,0] = lower_limit
-            self.confidence_interval[i,1] = upper_limit
-
-
-    def Bootstrap(self, K, sample_size):
-        exp_val = np.zeros([K,self.p])
-        print(random.choices(self.design_matrix[:,0],k=sample_size))
-        """
-        for i in range(K):
-            for j in range(1,self.p):
-                boot_sample = random.choices(self.design_matrix[:,j], sample_size)
-                if (i == 0 and j == 0):
-                    print(boot_sample)
-        """
