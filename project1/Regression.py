@@ -47,6 +47,8 @@ class Regression:
         col_idx = 1
         max_degree = 0
         # Sorry Kææsp, we had to change this part a little bit.... :)))))))
+        # Ble bare 100 ganger mer forvirrende men okei, Judases with bad taste and strange preferences....
+        # Gonna have a talk about this tomorrow, sov godt<33
         while col_idx < self.p:
             max_degree += 1
             for i in range(max_degree+1):
