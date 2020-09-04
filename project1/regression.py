@@ -25,9 +25,9 @@ class Regression:
         self.n: Number of datapoints n
         self.p: Number of features of the model
         """
-        #self.x = []
-        #self.y = []
-        #self.func_vals = []
+        self.x = []
+        self.y = []
+        self.func_vals = []
 
         with open(filename, "r") as infile:
             lines = infile.readlines()
@@ -89,9 +89,9 @@ class Regression:
         self.y_test = self.func_vals[self.n_train:]
 
 
-    def compute_MSE(self):
-        self.mean_square_error = np.mean((self.y_predictions - self.y_test)**2)
-        print("Out-of-sample error = ", self.mean_square_error)
+    def compute_MSE(self, y_data, y_model):
+        return np.mean((y_model - y_data)**2)
+
 
     def compute_R2_score(self,y_data, y_model):
         return 1 - np.sum((y_data - y_model) ** 2) / np.sum((y_data - np.mean(y_data)) ** 2)
