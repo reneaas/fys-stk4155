@@ -32,7 +32,7 @@ def plot_OLS_MSE_R2(filename,n,sigma):
 
     path = "./results/OLS/plots/"
 
-    plot_name = path + "MSE_N_" + str(n) + "sigma_" + str(sigma) + ".pdf"
+    plot_name = path + "MSE_N_" + str(n) + "_sigma_" + str(sigma) + ".pdf"
 
     plt.plot(degrees, MSE_train, label = "Training data")
     plt.plot(degrees, MSE_test, label = "Test data")
@@ -41,8 +41,9 @@ def plot_OLS_MSE_R2(filename,n,sigma):
     plt.ylabel("Mean Square Error")
     plt.xlabel("Model Complexity")
     plt.savefig(plot_name)
+    plt.figure()
 
-    plot_name = path + "R2_N_" + str(n) + "sigma_" + str(sigma) + ".pdf"
+    plot_name = path + "R2_N_" + str(n) + "_sigma_" + str(sigma) + ".pdf"
 
     plt.plot(degrees, R2_train, label = "Training data")
     plt.plot(degrees, R2_test, label = "Test data")
