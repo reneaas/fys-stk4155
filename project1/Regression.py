@@ -4,31 +4,48 @@ from sklearn.model_selection import train_test_split
 
 
 class Regression:
-    def __init__(self, n):
-        self.n = int(n)
+    def __init__(self):
+        """
+        For now this is an empty useless init function
+        """
+        None
 
+    def ReadData(self,filename, deg):
+        """
+        deg: Degree of the polynomial p(x,y)
 
-    def ReadData(self,filename, deg): #p = number of features in you polynomial
-        #Lese
-        #Produsere Design matrise
+        -------------------------------------------------
+        Extracts:
+        x, y: n data tuples (x,y).
+        func_vals: n function values f(x,y)
+        self.n: Number of datapoints n
+        self.p: Number of features of the model
+        """
         x = []
         y = []
         func_vals = []
 
         with open(filename, "r") as infile:
             lines = infile.readlines()
+            self.n = len(lines)
             for line in lines:
                 words = line.split()
                 x.append(float(words[0]))
                 y.append(float(words[1]))
                 func_vals.append(float(words[2]))
 
+<<<<<<< HEAD
         self.p = int((deg+1) * (deg+2) / 2 - 1)
+=======
+        self.p = int((deg+1) * (deg+2) / 2) #Closed form expression for the number of features
+>>>>>>> e5d0b976eb20fecbe1da820e721eebfa278991a1
 
+        #Need to find a way to scale data (as suggested by the project text), but for now this works as it should.
         x = np.array(x)
         y = np.array(y)
         self.func_vals = np.array(func_vals)
 
+<<<<<<< HEAD
 
         # Scaling data
         x = x - np.mean(x)
@@ -40,10 +57,21 @@ class Regression:
         col_idx = 0
         max_degree = 0
         # Sorry Kææsp, we had to change this part a little bit.... :)))))))
+=======
+        #Set up the design matrix
+        self.design_matrix = np.zeros([self.n, self.p])
+        self.design_matrix[:,0] = 1.0 #First column is simply 1s.
+        col_idx = 1
+        max_degree = 0
+        # Sorry Kææsp, we had to change this part a little bit.... :)))))))
+        # Ble bare 100 ganger mer forvirrende men okei, Judases with bad taste and strange preferences....
+        # Gonna have a talk about this tomorrow, sov godt<33
+>>>>>>> e5d0b976eb20fecbe1da820e721eebfa278991a1
         while col_idx < self.p:
             max_degree += 1
             for i in range(max_degree+1):
                 self.design_matrix[:,col_idx] = x[:]**(max_degree-i)*y[:]**i
+<<<<<<< HEAD
                 col_idx += 1
 
     def SplitData(self):
@@ -51,12 +79,31 @@ class Regression:
         self.test_n = (self.n // 5) + (self.n % 5)
         shuffled_indices = np.random.permutation(self.n)
         self.design_matrix = self.design_matrix[shuffled_indices,:]
+=======
+                #print(col_idx,max_degree-i, i) #Nice way to visualize how the features are placed in the design matrix.
+                col_idx += 1
+
+    def SplitData(self):
+        """
+        Reshuffles and splits the data into a training set
+        Training/test is by default 80/20 ratio.
+        """
+        #Reshuffle data to minimize risk of human bias
+        shuffled_indices = np.random.permutation(self.n)
+        self.design_matrix = self.design_matrix[shuffled_indices,:]
+        self.func_vals = self.func_vals[shuffled_indices]
+
+        #Split data into training and test set.
+        self.train_n = 4*(self.n // 5) + 4*(self.n % 5)
+        self.test_n = (self.n // 5) + (self.n % 5)
+>>>>>>> e5d0b976eb20fecbe1da820e721eebfa278991a1
         self.X_train = self.design_matrix[:self.train_n,:]
         self.X_test = self.design_matrix[self.train_n:,:]
         self.y_train = self.func_vals[:self.train_n]
         self.y_test = self.func_vals[self.train_n:]
 
     def OLS(self):
+<<<<<<< HEAD
         self.A = self.X_train.T @ self.X_train
         self.b = self.X_train.T @ self.y_train
         self.w = np.linalg.solve(self.A, self.b)
@@ -71,3 +118,31 @@ class Regression:
     def MSE(self):
         self.mean_square_error = np.mean((self.y_predictions - self.y_test)**2)
         print("Out-of-sample error = ", self.mean_square_error)
+=======
+        """
+        Perform ordinary least squares to find the parameters of the model denoted w.
+        """
+        A = self.X_train.T @ self.X_train
+        b = self.X_train.T @ self.y_train
+        self.w = np.linalg.solve(A, b)
+
+    def Predict(self):
+        """
+        Computes predictions on the training and test dataset.
+        It computes associated R2 scores on both traning and test data
+        """
+        self.y_train_predictions = self.X_train @ self.w
+        self.y_test_predictions = self.X_test @ self.w
+        R2_score_train = self.compute_R2_score(self.y_train, self.y_train_predictions)
+        R2_score_test = self.compute_R2_score(self.y_test, self.y_test_predictions)
+        print("Training R2 score = ", R2_score_train)
+        print("Test R2 score = ", R2_score_test)
+        print("Weights = ", self.w)
+
+    def compute_MSE(self):
+        self.mean_square_error = np.mean((self.y_predictions - self.y_test)**2)
+        print("Out-of-sample error = ", self.mean_square_error)
+
+    def compute_R2_score(self,y_data, y_model):
+        return 1 - np.sum((y_data - y_model) ** 2) / np.sum((y_data - np.mean(y_data)) ** 2)
+>>>>>>> e5d0b976eb20fecbe1da820e721eebfa278991a1

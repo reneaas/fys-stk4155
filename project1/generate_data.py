@@ -16,12 +16,24 @@ def FrankeFunction(x,y):
     return term1 + term2 + term3 + term4
 
 def f(x,y):
+<<<<<<< HEAD
     return 2*x + 4*y + x**2 + y**2
 
 noise = np.random.normal(0,sigma,size=N)
 
 #data = FrankeFunction(x,y)
 data = f(x,y)
+=======
+    """
+    Test function to check that the Regression class produces correct results.
+    """
+    return  1 + 2*x + 4*y + 2*x*y + x**2 + y**2
+
+noise = np.random.normal(0,sigma,size=N)
+
+#data = FrankeFunction(x,y) + noise
+data = f(x,y) + noise
+>>>>>>> e5d0b976eb20fecbe1da820e721eebfa278991a1
 
 names = ["frankefunction", "dataset", "N", str(N), "sigma", str(sigma)]
 outfilename = "_".join(names) + ".txt"
