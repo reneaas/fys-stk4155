@@ -15,10 +15,13 @@ def FrankeFunction(x,y):
     term4 = -0.2*np.exp(-(9*x-4)**2 - (9*y-7)**2)
     return term1 + term2 + term3 + term4
 
+def f(x,y):
+    return 2*x + 4*y + x**2 + y**2
+
 noise = np.random.normal(0,sigma,size=N)
 
-data = FrankeFunction(x,y) + noise
-
+#data = FrankeFunction(x,y)
+data = f(x,y)
 
 names = ["frankefunction", "dataset", "N", str(N), "sigma", str(sigma)]
 outfilename = "_".join(names) + ".txt"

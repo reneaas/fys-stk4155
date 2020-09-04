@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 
 
@@ -22,36 +23,51 @@ class Regression:
                 y.append(float(words[1]))
                 func_vals.append(float(words[2]))
 
-        p = int((deg+1) * (deg+2) / 2 - 1)
+        self.p = int((deg+1) * (deg+2) / 2 - 1)
 
         x = np.array(x)
         y = np.array(y)
         self.func_vals = np.array(func_vals)
-        self.design_matrix = np.zeros([self.n,p])
 
-        deg = deg + 1
-        index = 0
 
-        for i in range(deg):      #Itererer over alle x^0, x^1,...., x^4
-            for j in range(deg - i):      #Vil for hver x^i ha alle y opp til y^(order-i) for å få alle komboer mindre enn order grad
-                if not (i==0 and j==0):     #Vil ikke ha x^0 * y^0 som en kolonne
-                    self.design_matrix[:,index] = x[:]**i * y[:]**j
-                    index +=1       #Må inkrementere kolonnen i matrisen ett hakk hver gang
+        # Scaling data
+        x = x - np.mean(x)
+        y = y - np.mean(y)
+        self.func_vals = self.func_vals - np.mean(func_vals)
 
-    def LinearRegression(self):
+        #Set up the design matrix
+        self.design_matrix = np.zeros([self.n, self.p])
+        col_idx = 0
+        max_degree = 0
+        # Sorry Kææsp, we had to change this part a little bit.... :)))))))
+        while col_idx < self.p:
+            max_degree += 1
+            for i in range(max_degree+1):
+                self.design_matrix[:,col_idx] = x[:]**(max_degree-i)*y[:]**i
+                col_idx += 1
 
-        X_train, X_test, f_train, f_test = train_test_split(self.design_matrix, self.func_vals, test_size=0.2)
+    def SplitData(self):
+        self.train_n = 4*(self.n // 5) + 4*(self.n % 5)
+        self.test_n = (self.n // 5) + (self.n % 5)
+        shuffled_indices = np.random.permutation(self.n)
+        self.design_matrix = self.design_matrix[shuffled_indices,:]
+        self.X_train = self.design_matrix[:self.train_n,:]
+        self.X_test = self.design_matrix[self.train_n:,:]
+        self.y_train = self.func_vals[:self.train_n]
+        self.y_test = self.func_vals[self.train_n:]
 
-        beta = np.linalg.inv(X_train.T @ X_train) @ X_train.T @ f_train
-        print(beta)
+    def OLS(self):
+        self.A = self.X_train.T @ self.X_train
+        self.b = self.X_train.T @ self.y_train
+        self.w = np.linalg.solve(self.A, self.b)
+        self.mse_train = np.mean( (self.X_train @ self.w - self.y_train)**2 )
+        print("In-sample error = ", self.mse_train)
+        print(self.w)
 
-        f_tilde = X_train @ beta
-        f_predict = X_test @ beta
 
-        return f_train, f_test, f_tilde, f_predict
+    def Predict(self):
+        self.y_predictions = self.X_test @ self.w
 
-    def R2(self, f_data, f_model):
-        return 1 - np.sum((f_data - f_model) ** 2) / np.sum((f_data - np.mean(f_data)) ** 2)
-
-    def MSE(self, f_data, f_model):
-        return np.sum((f_data-f_model)**2)/self.n
+    def MSE(self):
+        self.mean_square_error = np.mean((self.y_predictions - self.y_test)**2)
+        print("Out-of-sample error = ", self.mean_square_error)
