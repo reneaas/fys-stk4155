@@ -32,8 +32,8 @@ def plot_OLS_MSE_R2(filename,n,sigma):
 
     path = "./results/OLS/plots/"
 
-    #Siden du separerer alle med "_" kan du bruke "_".join(liste_med_strings) for å sy de sammen til en string der alle separeres med "_"
-    plot_name = path + "_".join([path, "MSE", "N", str(n), "sigma", str(sigma)]) + ".pdf"
+    #Siden du separerer alle med "_" kan du bruke "_".join(liste_med_strings) for å sy de sammen til en string der alle liste elementene separeres med "_"
+    plot_name = path + "_".join(["MSE", "N", str(n), "sigma", str(sigma)]) + ".pdf"
     #plot_name = path + "MSE_N_" + str(n) + "_sigma_" + str(sigma) + ".pdf"
 
     plt.plot(degrees, MSE_train, label = "Training data")
