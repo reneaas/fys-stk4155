@@ -23,5 +23,19 @@ solver.split_data()
 solver.k_fold_cross_validation(3)
 
 #Ridge Regularization path
+"""
 python_path = "./compute_regularization_path.py"
 os.system(" ".join(["python3", python_path, str(n), str(sigma)]))
+"""
+
+solver = Ridge(Lambda = 0.001)
+solver.read_data(filename, polynomial_degree) #Read data from file
+solver.split_data()
+filename_plots = ["regularization_path_R2.pdf", "regularization_path_MSE.pdf"]
+path_plots = "./results/plots"
+solver.plot_regularization_path(filename_plots, path_plots)
+if not os.path.exists(path_plots):
+    os.makedirs(path_plots)
+
+filenames = "_".join(filename_plots)
+os.system(" ".join([path_plots, filenames]))
