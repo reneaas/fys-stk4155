@@ -1,6 +1,7 @@
 from regression import Regression
 from ols import OLS
 from ridge import Ridge
+from lasso import Lasso
 from plot import *
 import numpy as np
 import sys
@@ -16,6 +17,7 @@ filename = path_to_datasets + "_".join(["frankefunction", "dataset", "N", str(n)
 
 
 polynomial_degree = 2 #Maximum degree of polynomial
+<<<<<<< HEAD
 solver = OLS() #Initiate solver
 solver.read_data(filename, polynomial_degree) #Read data from file
 solver.split_data()
@@ -32,3 +34,19 @@ path_plots = "./results/ridge/plots"
 ridge_solver.plot_regularization_path(filename_plots, path_plots)
 ridge_solver.bootstrap_ridge(100)
 ridge_solver.cross_validate_ridge(3)
+=======
+solver = Lasso(0.00001)
+#solver = OLS() #Initiate solver
+#solver = Ridge(Lambda = 0.001)
+solver.read_data(filename, polynomial_degree) #Read data from file
+solver.split_data()
+
+
+solver.bootstrap(100)
+#solver.plot_lasso()
+#solver.k_fold_cross_validation(3)
+
+#Ridge Regularization path
+#python_path = "./compute_regularization_path.py"
+#os.system(" ".join(["python3", python_path, str(n), str(sigma)]))
+>>>>>>> ed6ba91195e017b1393e38123a9baa6c9f594303
