@@ -10,9 +10,6 @@ class Regression:
         """
         For now this is an empty useless init function
         """
-        self.x = []
-        self.y = []
-        self.func_vals = []
 
     def read_data(self,filename, deg):
         """
@@ -25,6 +22,7 @@ class Regression:
         self.n: Number of datapoints n
         self.p: Number of features of the model
         """
+
         self.x = []
         self.y = []
         self.func_vals = []
@@ -107,3 +105,34 @@ class Regression:
             upper_limit = self.w[i] + 1.96*standard_error
             self.confidence_interval[i,0] = lower_limit
             self.confidence_interval[i,1] = upper_limit
+
+
+    def train(self):
+        return None
+
+    def bootstrap(self, B):
+        X_train_old = np.copy(self.X_train)
+        y_train_old = np.copy(self.y_train)
+
+        self.w_boots = np.zeros((B, self.p))
+        for i in range(B):
+            idx = np.random.randint(0,self.n_train, size=self.n_train)
+            self.X_train = X_train_old[idx,:]
+            self.y_train = y_train_old[idx]
+            self.train()
+            self.w_boots[i, :] = self.w[:]
+        self.compute_statistics()
+
+        self.X_train[:] = X_train_old[:]
+        self.y_train[:] = y_train_old[:]
+
+
+    def compute_statistics(self):
+        self.w_mean = np.zeros(self.p)
+        self.w_std = np.zeros(self.p)
+        for i in range(self.p):
+            self.w_mean[i] = np.mean(self.w_boots[:, i])
+            self.w_std[i] = np.std(self.w_boots[:,i])
+        self.w[:] = self.w_mean[:]
+        print("w_mean = ", self.w_mean)
+        print("w_std = ", self.w_std)

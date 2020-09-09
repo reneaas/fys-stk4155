@@ -11,12 +11,8 @@ filename = path_to_datasets + "frankefunction_dataset_N_" + str(n) + "_sigma_" +
 
 plot_OLS_MSE_R2(filename, n, sigma) #Plots the MSE and R2-score of the OLS regression
 
-"""
 polynomial_degree = 2 #Maximum degree of polynomial
 solver = OLS() #Initiate solver
 solver.read_data(filename, polynomial_degree) #Read data from file
 solver.split_data()
 solver.bootstrap(100)
-#solver.confidence_intervals(0.1)
-#solver.Bootstrap(3,5)
-"""
