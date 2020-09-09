@@ -15,9 +15,3 @@ class Ridge(OLS):
         A += self.Lambda*np.eye(shape[0])
         b = X_train.T @ y_train
         self.w = np.linalg.solve(A, b)
-
-    def extract_MSE(self):
-        return self.MSE_train, self.MSE_test
-
-    def extract_R2(self):
-        return self.R2_train, self.R2_test
