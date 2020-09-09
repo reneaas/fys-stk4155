@@ -18,6 +18,20 @@ class Ridge(OLS):
         b = X_train.T @ y_train
         self.w = np.linalg.solve(A, b)
 
+    def bootstrap_ridge(self, B):
+        Lambdas = [1/10**i for i in range(-10,10)]
+        for l in Lambdas:
+            self.Lambda = l
+            print("lambda = ", l)
+            self.bootstrap(B)
+
+    def cross_validate_ridge(self, k):
+        Lambdas = [1/10**i for i in range(-10,10)]
+        for l in Lambdas:
+            self.Lambda = l
+            print("lambda = ", l)
+            self.k_fold_cross_validation(k)
+
     def plot_regularization_path(self, filename_plots, path_plots):
         Lambdas = [1/10**i for i in range(-10,10)]
         R2_scores_train = []
@@ -49,3 +63,9 @@ class Ridge(OLS):
         plt.legend()
         plt.savefig(filename_plots[1])
         plt.close()
+
+        if not os.path.exists(path_plots):
+            os.makedirs(path_plots)
+
+        filenames = " ".join(filename_plots)
+        os.system(" ".join(["mv", filenames, path_plots]))

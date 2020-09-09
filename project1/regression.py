@@ -166,7 +166,7 @@ class Regression:
             self.w_std[i] = np.std(self.w_boots[:,i])
         self.w[:] = self.w_mean[:]
         print("w_mean = ", self.w_mean)
-        print("w_std = ", self.w_std)
+        #print("w_std = ", self.w_std)
 
     def predict(self, X_data, y_data):
         y_prediction = X_data @ self.w
