@@ -6,15 +6,15 @@ class OLS(Regression):
     def __init__(self):
         super().__init__()
 
-    def train(self):
+    def train(self, X_train, y_train):
         """
         Perform ordinary least squares to find the parameters of the model denoted w.
         """
-        A = self.X_train.T @ self.X_train
-        b = self.X_train.T @ self.y_train
+        A = X_train.T @ X_train
+        b = X_train.T @ y_train
         self.w = np.linalg.solve(A, b)
 
-    def predict(self):
+    def predict(self, X_train, y_train, X_test, y_test):
         """
         Computes predictions on the training and test dataset.
         It computes associated R2 scores on both traning and test data

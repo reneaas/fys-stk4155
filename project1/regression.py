@@ -107,24 +107,55 @@ class Regression:
             self.confidence_interval[i,1] = upper_limit
 
 
-    def train(self):
+    def train(self, X_train, y_train):
+        return None
+
+    def predict(self, X_train, y_train, X_test, y_test):
         return None
 
     def bootstrap(self, B):
-        X_train_old = np.copy(self.X_train)
-        y_train_old = np.copy(self.y_train)
-
         self.w_boots = np.zeros((B, self.p))
         for i in range(B):
             idx = np.random.randint(0,self.n_train, size=self.n_train)
-            self.X_train = X_train_old[idx,:]
-            self.y_train = y_train_old[idx]
-            self.train()
+            X_train = self.X_train[idx,:]
+            y_train = self.y_train[idx]
+            self.train(X_train, y_train)
             self.w_boots[i, :] = self.w[:]
         self.compute_statistics()
 
-        self.X_train[:] = X_train_old[:]
-        self.y_train[:] = y_train_old[:]
+    def k_fold_cross_validation(self,k):
+
+        int_size = self.n_train//k
+        rest = self.n_train%k
+
+        fold_size = np.zeros(k, dtype ="int")
+        for i in range(k):
+            if rest > 0:
+                fold_size[i] = int_size + 1
+                rest -= 1
+            else:
+                fold_size[i] = int_size
+
+        row_ptr = np.zeros(k+1, dtype="int")
+        for i in range(1,k+1):
+            row_ptr[i] += row_ptr[i-1]+fold_size[i-1]
+
+        for j in range(k):
+            X_test = self.X_train[[i for i in range(row_ptr[j],row_ptr[j+1])], :]
+            y_test = self.y_train[[i for i in range(row_ptr[j],row_ptr[j+1])]]
+            idx = []
+            for l in range(j):
+                idx += [i for i in range(row_ptr[l],row_ptr[l+1])]
+            for l in range(j+1,k):
+                idx += [i for i in range(row_ptr[l],row_ptr[l+1])]
+
+            X_train = self.X_train[idx, :]
+            y_train = self.y_train[idx]
+            self.train(X_train, y_train)
+            self.predict(X_train, y_train, X_test, y_test)
+
+
+
 
 
     def compute_statistics(self):
