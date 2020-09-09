@@ -38,4 +38,4 @@ if not os.path.exists(path_plots):
     os.makedirs(path_plots)
 
 filenames = "_".join(filename_plots)
-os.system(" ".join([path_plots, filenames]))
+os.system(" ".join(["mv", path_plots, filenames]))

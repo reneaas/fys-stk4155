@@ -49,4 +49,3 @@ class Ridge(OLS):
         plt.legend()
         plt.savefig(filename_plots[1])
         plt.close()
-        print(filename_plots)
