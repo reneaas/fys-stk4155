@@ -17,7 +17,6 @@ class Ridge(OLS):
         A += self.Lambda*np.eye(shape[0])
         b = X_train.T @ y_train
         self.w = np.linalg.solve(A, b)
-<<<<<<< HEAD
 
     def bootstrap_ridge(self, B):
         Lambdas = [1/10**i for i in range(-10,10)]
@@ -70,5 +69,3 @@ class Ridge(OLS):
 
         filenames = " ".join(filename_plots)
         os.system(" ".join(["mv", filenames, path_plots]))
-=======
->>>>>>> ed6ba91195e017b1393e38123a9baa6c9f594303
