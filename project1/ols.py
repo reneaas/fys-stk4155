@@ -1,4 +1,5 @@
 from regression import Regression
+#from ols import OLS
 import numpy as np
 np.random.seed(1001)
 
