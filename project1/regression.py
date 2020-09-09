@@ -125,16 +125,17 @@ class Regression:
 
     def k_fold_cross_validation(self,k):
 
+        R2_test = np.zeros(k)
+        MSE_test = np.zeros(k)
+
         int_size = self.n_train//k
         rest = self.n_train%k
 
         fold_size = np.zeros(k, dtype ="int")
         for i in range(k):
-            if rest > 0:
-                fold_size[i] = int_size + 1
-                rest -= 1
-            else:
-                fold_size[i] = int_size
+            fold_size[i] = int_size + (rest > 0)
+            rest -= 1
+
 
         row_ptr = np.zeros(k+1, dtype="int")
         for i in range(1,k+1):
@@ -153,10 +154,11 @@ class Regression:
             y_train = self.y_train[idx]
             self.train(X_train, y_train)
             self.predict(X_train, y_train, X_test, y_test)
+            R2_test[j] = self.R2_test
+            MSE_test[j] = self.MSE_test
 
-
-
-
+        print("Mean R2 score = ", np.mean(R2_test))
+        print("Mean MSE score = ", np.mean(MSE_test))
 
     def compute_statistics(self):
         self.w_mean = np.zeros(self.p)

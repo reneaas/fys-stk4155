@@ -15,5 +15,5 @@ polynomial_degree = 2 #Maximum degree of polynomial
 solver = OLS() #Initiate solver
 solver.read_data(filename, polynomial_degree) #Read data from file
 solver.split_data()
-solver.bootstrap(100)
+#solver.bootstrap(100)
 solver.k_fold_cross_validation(3)
