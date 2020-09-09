@@ -109,9 +109,10 @@ class Regression:
 
     def train(self, X_train, y_train):
         return None
-
+    """
     def predict(self, X_train, y_train, X_test, y_test):
         return None
+    """
 
     def bootstrap(self, B):
         self.w_boots = np.zeros((B, self.p))
@@ -153,9 +154,10 @@ class Regression:
             X_train = self.X_train[idx, :]
             y_train = self.y_train[idx]
             self.train(X_train, y_train)
-            self.predict(X_train, y_train, X_test, y_test)
-            R2_test[j] = self.R2_test
-            MSE_test[j] = self.MSE_test
+            R2_score, MSE = self.predict(X_test, y_test)
+
+            R2_test[j] = R2_score
+            MSE_test[j] = MSE
 
         print("Mean R score = ", np.mean(R2_test))
         print("Mean MSE score =", np.mean(MSE_test))
@@ -169,3 +171,16 @@ class Regression:
         self.w[:] = self.w_mean[:]
         print("w_mean = ", self.w_mean)
         print("w_std = ", self.w_std)
+
+    def predict(self, X_data, y_data):
+        y_prediction = X_data @ self.w
+        R2_score = self.compute_R2_score(y_data, y_prediction)
+        MSE = self.compute_MSE(y_data, y_prediction)
+        return R2_score, MSE
+
+    def extract_MSE(self):
+
+        return self.MSE_train, self.MSE_test
+
+    def extract_R2(self):
+        return self.R2_train, self.R2_test
