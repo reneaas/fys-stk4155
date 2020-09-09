@@ -155,9 +155,6 @@ class Regression:
             self.predict(X_train, y_train, X_test, y_test)
 
 
-
-
-
     def compute_statistics(self):
         self.w_mean = np.zeros(self.p)
         self.w_std = np.zeros(self.p)
