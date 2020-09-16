@@ -17,7 +17,7 @@ filename = path_to_datasets + "_".join(["frankefunction", "dataset", "N", str(n)
 
 
 polynomial_degree = 2 #Maximum degree of polynomial
-
+"""
 solver = OLS() #Initiate solver
 solver.read_data(filename, polynomial_degree) #Read data from file
 solver.split_data()
@@ -34,15 +34,14 @@ path_plots = "./results/ridge/plots"
 ridge_solver.plot_regularization_path(filename_plots, path_plots)
 ridge_solver.bootstrap_ridge(100)
 ridge_solver.cross_validate_ridge(3)
-
+"""
 solver = Lasso(0.00001)
-#solver = OLS() #Initiate solver
-#solver = Ridge(Lambda = 0.001)
 solver.read_data(filename, polynomial_degree) #Read data from file
 solver.split_data()
-
-
-solver.bootstrap(100)
+filename_plots = ["regularization_path_R2.pdf", "regularization_path_MSE.pdf"]
+path_plots = "./results/lasso/plots"
+solver.plot_regularization_path(filename_plots, path_plots)
+#solver.bootstrap_lasso(10)
 #solver.plot_lasso()
 #solver.k_fold_cross_validation(3)
 

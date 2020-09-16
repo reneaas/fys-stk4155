@@ -1,12 +1,12 @@
 from sklearn import linear_model
 import numpy as np
 import matplotlib.pyplot as plt
-from regression import Regression
+from ridge import Ridge
 
-class Lasso(Regression):
+class Lasso(Ridge):
 
     def __init__(self, Lambda):
-        super().__init__()
+        super().__init__(Lambda)
         self.Lambda = Lambda
 
     def train(self, X_train, y_train):

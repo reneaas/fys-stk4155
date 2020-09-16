@@ -1,4 +1,5 @@
 from ridge import Ridge
+from lasso import Lasso
 import matplotlib.pyplot as plt
 import sys
 import numpy as np
@@ -20,7 +21,7 @@ MSE_scores_test = []
 
 for l in Lambda:
     print("lambda = ", l)
-    solver = Ridge(l) #Initiate solver
+    solver = Lasso(l) #Initiate solver
     solver.read_data(filename, polynomial_degree) #Read data from file
     solver.split_data()
     #solver.bootstrap(100)

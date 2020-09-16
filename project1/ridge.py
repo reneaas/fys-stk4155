@@ -1,9 +1,9 @@
-from ols import OLS
+from regression import Regression
 import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-class Ridge(OLS):
+class Ridge(Regression):
     def __init__(self, Lambda):
         super().__init__()
         self.Lambda = Lambda
@@ -18,14 +18,14 @@ class Ridge(OLS):
         b = X_train.T @ y_train
         self.w = np.linalg.solve(A, b)
 
-    def bootstrap_ridge(self, B):
+    def call_bootstrap(self, B):
         Lambdas = [1/10**i for i in range(-10,10)]
         for l in Lambdas:
             self.Lambda = l
             print("lambda = ", l)
             self.bootstrap(B)
 
-    def cross_validate_ridge(self, k):
+    def call_cross_validate(self, k):
         Lambdas = [1/10**i for i in range(-10,10)]
         for l in Lambdas:
             self.Lambda = l
