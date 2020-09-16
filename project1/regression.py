@@ -99,8 +99,9 @@ class Regression:
         Compute 95% confidence intervals for each parameter w_i
         """
         self.confidence_interval = np.zeros([self.p,2])
-        standard_error = sigma/np.sqrt(self.n)  # Litt usikker på det her
+        inv_X = np.linalg.inv(self.X_train.T@self.X_train)
         for i in range(self.p):
+            standard_error = np.sqrt(sigma**2 * inv_X[i,i])
             lower_limit = self.w[i] - 1.96*standard_error
             upper_limit = self.w[i] + 1.96*standard_error
             self.confidence_interval[i,0] = lower_limit
