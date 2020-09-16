@@ -7,7 +7,7 @@ from matplotlib import cm
 # Load the terrain
 terrain1 = imread("./datasets/DataFiles/SRTM_data_Norway_2.tif")
 # Show the terrain
-
+"""
 print(type(terrain1), len(terrain1))
 plt.figure()
 plt.title("Terrain over Norway 1")
@@ -15,6 +15,7 @@ plt.imshow(terrain1, cmap="gray")
 plt.xlabel("X")
 plt.ylabel("Y")
 plt.show()
+"""
 
 
 n = len(terrain1)
@@ -28,7 +29,7 @@ x = np.linspace(0, m-1, m)
 y = np.linspace(0, n-1, n)
 X,Y = np.meshgrid(x,y)
 
-
+"""
 print("X = ", X)
 print("Y = ", Y)
 plt.figure()
@@ -40,6 +41,9 @@ plt.show()
 Z = np.zeros((n,m))
 Z.flat[:] = terrain1[:]
 print("Z = ", Z)
+"""
+Z = np.zeros((n,m))
+Z.flat[:] = terrain1[:]
 
 x_data = np.zeros(n*m)
 y_data = np.zeros(n*m)
@@ -51,7 +55,7 @@ x_data[:] = X.flat[:]
 y_data[:] = Y.flat[:]
 z_data[:] = Z.flat[:]
 
-
+"""
 plt.title("Terrain over Norway 1")
 plt.imshow(terrain1, cmap="gray")
 plt.axis("equal")
@@ -59,6 +63,7 @@ plt.figure()
 plt.contourf(X,Y,Z, cmap="gray")
 plt.colorbar()
 plt.show()
+"""
 
 outfilename = "terrain_data.txt"
 
