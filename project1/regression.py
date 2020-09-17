@@ -51,9 +51,12 @@ class Regression:
         self.y_mean = np.mean(self.y)
         self.x_std = np.std(self.x)
         self.y_std = np.std(self.y)
+        self.func_vals_mean = np.mean(self.func_vals)
+        self.func_vals_std = np.std(self.func_vals)
 
         self.x = (self.x - self.x_mean)/self.x_std
         self.y = (self.y - self.y_mean)/self.y_std
+        self.func_vals = (self.func_vals - self.func_vals_mean)/self.func_vals_std
 
 
         #Set up the design matrix
@@ -158,7 +161,6 @@ class Regression:
                 idx += [i for i in range(row_ptr[l],row_ptr[l+1])]
             for l in range(j+1,k):
                 idx += [i for i in range(row_ptr[l],row_ptr[l+1])]
-
             X_train = self.X_train[idx, :]
             y_train = self.y_train[idx]
             self.train(X_train, y_train)
