@@ -10,17 +10,17 @@ class Regression:
         """
         For now this is an empty useless init function
         """
+        None
 
     def read_data(self,filename):
         """
-        deg: Degree of the polynomial p(x,y)
-
         -------------------------------------------------
         Extracts:
         x, y: n data tuples (x,y).
         func_vals: n function values f(x,y)
         self.n: Number of datapoints n
         self.p: Number of features of the model
+        -------------------------------------------------
         """
 
         self.x = []
@@ -41,10 +41,11 @@ class Regression:
         self.x = np.array(self.x)
         self.y = np.array(self.y)
         self.func_vals = np.array(self.func_vals)
-        #self.scale_data()
+        self.scale_data()
 
         #Reshuffle data to minimize risk of human bias
         self.shuffled_idx = np.random.permutation(self.n)
+        self.func_vals = self.func_vals[self.shuffled_idx] #Shuffle z = f(x,y) exactly once.
 
     def scale_data(self):
         self.x_mean = np.mean(self.x)
@@ -61,9 +62,12 @@ class Regression:
 
         #Set up the design matrix
     def create_design_matrix(self, deg):
-
-        self.p = int((deg+1) * (deg+2) / 2) #Closed form expression for the number of features
-
+        """
+        -------------------------------------------------------------
+        deg: degree of polynomial p(x,y)
+        -------------------------------------------------------------
+        """
+        self.p = int((deg+1) * (deg+2) / 2) #Closed-form expression for the number of features
         self.design_matrix = np.zeros([self.n, self.p])
         self.design_matrix[:,0] = 1.0 #First column is simply 1s.
         col_idx = 1
@@ -74,15 +78,13 @@ class Regression:
                 self.design_matrix[:,col_idx] = self.x[:]**(max_degree-i)*self.y[:]**i
                 #print(col_idx,max_degree-i, i) #Nice way to visualize how the features are placed in the design matrix.
                 col_idx += 1
+        self.design_matrix = self.design_matrix[self.shuffled_idx,:] #Shuffle the design matrix
 
     def split_data(self):
         """
         Reshuffles and splits the data into a training set
         Training/test is by default 80/20 ratio.
         """
-
-        self.design_matrix = self.design_matrix[self.shuffled_idx,:]
-        self.func_vals = self.func_vals[self.shuffled_idx]
 
         #Split data into training and test set.
         self.n_train = 4*(self.n // 5) + 4*(self.n % 5)
@@ -104,8 +106,7 @@ class Regression:
         y_prediction = X_data @ self.w
         mean_model = np.mean(y_prediction)
         bias = np.mean((y_data - mean_model)**2)
-        variance = np.mean((mean_model - y_prediction)**2)
-        print(variance)
+        variance = np.mean((y_prediction-mean_model)**2)
         return bias, variance
 
 
