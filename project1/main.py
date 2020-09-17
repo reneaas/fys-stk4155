@@ -16,7 +16,8 @@ filename = path_to_datasets + "_".join(["frankefunction", "dataset", "N", str(n)
 
 polynomial_degree = 2 #Maximum degree of polynomial
 solver = OLS() #Initiate solver
-solver.read_data(filename, polynomial_degree) #Read data from file
-solver.split_data()
+#solver.read_data(filename, polynomial_degree) #Read data from file
+#solver.split_data()
 #solver.bootstrap(100)
 #solver.k_fold_cross_validation(10)
+solver.plot_OLS_MSE_bootstrap(n,sigma)

@@ -119,12 +119,11 @@ class Regression:
             y_train = self.y_train[idx]
             self.train(X_train, y_train)
             self.w_boots[i, :] = self.w[:]
-        self.compute_statistics()
+        self.compute_statistics(self.w_boots)
 
     def k_fold_cross_validation(self,k):
 
-        R2_test = np.zeros(k)
-        MSE_test = np.zeros(k)
+        self.w_k_fold = np.zeros((k, self.p))
 
         int_size = self.n_train//k
         rest = self.n_train%k
@@ -151,22 +150,19 @@ class Regression:
             X_train = self.X_train[idx, :]
             y_train = self.y_train[idx]
             self.train(X_train, y_train)
-            R2_score, MSE = self.predict(X_test, y_test)
+            self.w_k_fold[j, :] = self.w[:]
 
-            R2_test[j] = R2_score
-            MSE_test[j] = MSE
+        self.compute_statistics(self.w_k_fold)
 
-        print("Mean R score = ", np.mean(R2_test))
-        print("Mean MSE score =", np.mean(MSE_test))
 
-    def compute_statistics(self):
+    def compute_statistics(self,w):
         self.w_mean = np.zeros(self.p)
         self.w_std = np.zeros(self.p)
         for i in range(self.p):
-            self.w_mean[i] = np.mean(self.w_boots[:, i])
-            self.w_std[i] = np.std(self.w_boots[:,i])
+            self.w_mean[i] = np.mean(w[:, i])
+            self.w_std[i] = np.std(w[:,i])
         self.w[:] = self.w_mean[:]
-        print("w_mean = ", self.w_mean)
+        #print("w_mean = ", self.w_mean)
         #print("w_std = ", self.w_std)
 
     def predict(self, X_data, y_data):
