@@ -10,7 +10,6 @@ plt.rc("text", usetex=True)
 #sigma = float(sys.argv[2]) #Standard deviation of noise from data
 path_to_datasets = "./datasets/" #relative path into subdirectory for datasets.
 #filename = path_to_datasets + "_".join(["frankefunction", "dataset", "N", str(n), "sigma", str(sigma)]) + ".txt"
-<<<<<<< HEAD
 filename = "terrain_data.txt"
 
 filename_plots = ["regularization_path_R2_p5.pdf", "regularization_path_MSE_p5.pdf"]
@@ -20,16 +19,6 @@ path_plots = "./results/plots/terrain"
 #Testing Ridge regression module
 polynomial_degree = 5 #Maximum degree of polynomial
 Lambda = [1/10**i for i in range(-2,2+1)]
-=======
-filename = path_to_datasets + "terrain_data.txt"
-filename_plots = ["regularization_path_R2.pdf", "regularization_path_MSE.pdf"]
-path_plots = "./results/plots"
-
-
-#Testing Ridge regression module
-polynomial_degree = 2 #Maximum degree of polynomial
-Lambda = [1/10**i for i in range(-10,10)]
->>>>>>> 586fb7d29f5413b4ce72e8f4f5d6ba68d5f9b216
 R2_scores_train = [[],[]]
 MSE_scores_train = [[],[]]
 R2_scores_test = [[],[]]

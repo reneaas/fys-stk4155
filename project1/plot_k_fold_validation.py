@@ -22,27 +22,37 @@ def plot_OLS_k_fold_validation():
     MSE_test = []
     R2_train = []
     R2_test = []
-    degrees = [1,2,3,4,5,7,8,9,10,11,12,13,14,15]
-    k = 1000
+    bias = []
+    variance = []
+    degrees = [i for i in range(15)]
+    k = 10
     solver = OLS()
-
+    solver.read_data(filename)
     for deg in degrees:
-        solver.read_data(filename,deg)
+        solver.create_design_matrix(deg)
         solver.split_data()
-        solver.k_fold_cross_validation(k)
+        solver.train(solver.X_train, solver.y_train)
+        #solver.k_fold_cross_validation(k)
         RTrain, MTrain = solver.predict(solver.X_train, solver.y_train)
         RTest, MTest = solver.predict(solver.X_test, solver.y_test)
+        Bias, Variance = solver.compute_bias_variance(solver.X_test, solver.y_test)
         MSE_train.append(MTrain)
         MSE_test.append(MTest)
         R2_train.append(RTrain)
         R2_test.append(RTest)
+        bias.append(Bias)
+        variance.append(Variance)
 
     MSE_train = np.array(MSE_train)
     MSE_test = np.array(MSE_test)
     degrees = np.array(degrees)
     R2_train = np.array(R2_train)
     R2_test = np.array(R2_test)
+    bias = np.array(bias)
+    variance = np.array(variance)
 
+
+    """
     path = "./results/OLS/plots/kfold/"
 
     if not os.path.exists(path):
@@ -70,6 +80,16 @@ def plot_OLS_k_fold_validation():
     plt.ylabel("R2 - Score")
     plt.xlabel("Model Complexity")
     plt.savefig(plot_name)
+    """
+    plt.plot(degrees, R2_train, label="$R^2$ (training)")
+    plt.plot(degrees, R2_test, label = "$R^2$ (test)")
+    plt.figure()
+    plt.plot(degrees, MSE_test, label="$E_{out}$")
+    plt.plot(degrees, MSE_train, label="$E_{in}$")
+    plt.plot(degrees, bias, "--", label="bias")
+    plt.plot(degrees, variance, "o-", label="variance")
+    plt.legend()
+    plt.show()
 
 if regression_type == "OLS":
     plot_OLS_k_fold_validation()

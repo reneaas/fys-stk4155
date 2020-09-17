@@ -11,7 +11,7 @@ class Regression:
         For now this is an empty useless init function
         """
 
-    def read_data(self,filename, deg):
+    def read_data(self,filename):
         """
         deg: Degree of the polynomial p(x,y)
 
@@ -27,6 +27,7 @@ class Regression:
         self.y = []
         self.func_vals = []
 
+
         with open(filename, "r") as infile:
             lines = infile.readlines()
             self.n = len(lines)
@@ -36,14 +37,14 @@ class Regression:
                 self.y.append(float(words[1]))
                 self.func_vals.append(float(words[2]))
 
-        self.p = int((deg+1) * (deg+2) / 2) #Closed form expression for the number of features
-
         #Need to find a way to scale data (as suggested by the project text), but for now this works as it should.
         self.x = np.array(self.x)
         self.y = np.array(self.y)
         self.func_vals = np.array(self.func_vals)
         #self.scale_data()
-        self.create_design_matrix() #Set up initial design matrix
+
+        #Reshuffle data to minimize risk of human bias
+        self.shuffled_idx = np.random.permutation(self.n)
 
     def scale_data(self):
         self.x_mean = np.mean(self.x)
@@ -56,7 +57,10 @@ class Regression:
 
 
         #Set up the design matrix
-    def create_design_matrix(self):
+    def create_design_matrix(self, deg):
+
+        self.p = int((deg+1) * (deg+2) / 2) #Closed form expression for the number of features
+
         self.design_matrix = np.zeros([self.n, self.p])
         self.design_matrix[:,0] = 1.0 #First column is simply 1s.
         col_idx = 1
@@ -73,10 +77,9 @@ class Regression:
         Reshuffles and splits the data into a training set
         Training/test is by default 80/20 ratio.
         """
-        #Reshuffle data to minimize risk of human bias
-        shuffled_idx = np.random.permutation(self.n)
-        self.design_matrix = self.design_matrix[shuffled_idx,:]
-        self.func_vals = self.func_vals[shuffled_idx]
+
+        self.design_matrix = self.design_matrix[self.shuffled_idx,:]
+        self.func_vals = self.func_vals[self.shuffled_idx]
 
         #Split data into training and test set.
         self.n_train = 4*(self.n // 5) + 4*(self.n % 5)
@@ -93,6 +96,15 @@ class Regression:
 
     def compute_R2_score(self,y_data, y_model):
         return 1 - np.sum((y_data - y_model) ** 2) / np.sum((y_data - np.mean(y_data)) ** 2)
+
+    def compute_bias_variance(self, X_data, y_data):
+        y_prediction = X_data @ self.w
+        mean_model = np.mean(y_prediction)
+        bias = np.mean((y_data - mean_model)**2)
+        variance = np.mean((mean_model - y_prediction)**2)
+        print(variance)
+        return bias, variance
+
 
     def confidence_intervals(self, sigma):
         """
