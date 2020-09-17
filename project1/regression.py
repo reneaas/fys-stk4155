@@ -82,7 +82,7 @@ class Regression:
 
     def split_data(self):
         """
-        Reshuffles and splits the data into a training set
+        Splits the data into a training set
         Training/test is by default 80/20 ratio.
         """
 
