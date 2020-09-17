@@ -31,7 +31,7 @@ path_plots = "./results/plots"
 
 
 #Testing Ridge regression module
-polynomial_degree = 2 #Maximum degree of polynomial
+polynomial_degree = 5 #Maximum degree of polynomial
 Lambda = [1/10**i for i in range(-10,10)]
 
 R2_scores_train = [[],[]]
@@ -82,28 +82,34 @@ R2_test, MSE_test = solver.predict(solver.X_test, solver.y_test)
 
 print("Training R2 = ", R2_train)
 print("Test R2 = ", R2_test)
+print("Training MSE = ", MSE_train)
+print("Test MSE = ", MSE_test)
 
 plt.plot(np.log10(Lambda), R2_scores_train[0], "--", label = "Training (Ridge)")
 plt.plot(np.log10(Lambda), R2_scores_test[0], label = "Test (Ridge)")
 plt.plot(np.log10(Lambda), R2_scores_train[1], "--",label = "Training (Lasso)")
 plt.plot(np.log10(Lambda), R2_scores_test[1], label = "Test (Lasso)")
 plt.axhline(R2_train, color = "k" ,  label = "Training (OLS)", linestyle = "--")
-plt.axhline(R2_test, color="r" , label = "Test (OLS)", linestyle = "--")
+plt.axhline(R2_test, color="r" , label = "Test (OLS)", linestyle = "-")
 plt.xlabel(r"$\log_{10}( \lambda) $", fontsize=14)
 plt.ylabel(r"$R^2$", fontsize=14)
+plt.xticks(size=14)
+plt.yticks(size=14)
 plt.legend(fontsize=14)
 plt.savefig(filename_plots[0])
 plt.figure()
 
-plt.plot(np.log10(Lambda), MSE_scores_train[0], label = "Training (Ridge)")
+plt.plot(np.log10(Lambda), MSE_scores_train[0], "--", label = "Training (Ridge)")
 plt.plot(np.log10(Lambda), MSE_scores_test[0], label = "Test (Ridge)")
-plt.plot(np.log10(Lambda), MSE_scores_train[1], label = "Training (Lasso)")
+plt.plot(np.log10(Lambda), MSE_scores_train[1], "--", label = "Training (Lasso)")
 plt.plot(np.log10(Lambda), MSE_scores_test[1], label = "Test (Lasso)")
 plt.axhline(MSE_train, color = "k" ,  label = "Training (OLS)", linestyle = "--")
-plt.axhline(MSE_test, color="r" , label = "Test (OLS)", linestyle = "--")
+plt.axhline(MSE_test, color="r" , label = "Test (OLS)", linestyle = "-")
 plt.xlabel(r"$\log_{10}( \lambda) $", fontsize=14)
 plt.ylabel("MSE", fontsize=14)
 plt.legend(fontsize=14)
+plt.xticks(size=14)
+plt.yticks(size=14)
 plt.savefig(filename_plots[1])
 plt.show()
 
