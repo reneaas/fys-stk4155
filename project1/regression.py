@@ -173,7 +173,7 @@ class Regression:
                 idx += [i for i in range(row_ptr[l],row_ptr[l+1])]
             X_train = self.X_train[idx, :]
             f_train = self.f_train[idx]
-            self.train(X_train, f_train)
+            self.train()
             self.w_k_fold[j, :] = self.w[:]
 
         self.compute_statistics(self.w_k_fold)

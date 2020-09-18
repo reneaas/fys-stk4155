@@ -7,9 +7,9 @@ import numpy as np
 import sys
 import os
 
-n = int(sys.argv[1]) #Number of datapoints
-sigma = float(sys.argv[2]) #Standard deviation of noise from data
-path_to_datasets = "./datasets/" #relative path into subdirectory for datasets.
+n = int(sys.argv[1])
+sigma = float(sys.argv[2])
+path_to_datasets = "./datasets/"
 filename = path_to_datasets + "_".join(["frankefunction", "dataset", "N", str(n), "sigma", str(sigma)]) + ".txt"
 
 regression_type = sys.argv[3]
@@ -17,30 +17,26 @@ regression_type = sys.argv[3]
 
 def plot_OLS_bootstrap():
 
-    MSE_train = []
-    MSE_test = []
-    R2_train = []
-    R2_test = []
-    degrees = [1,2,3,4,5,7,8,9,10,11,12,13]
-    b = 10000
     solver = OLS()
+    solver.read_data(filename)
 
-    for deg in degrees:
-        solver.read_data(filename,deg)
+    degrees = [i for i in range(1,14)]
+    p = len(degrees)
+    b = 10000
+    MSE_train = np.zeros(p)
+    MSE_test = np.zeros(p)
+    R2_train = np.zeros(p)
+    R2_test = np.zeros(p)
+
+    for i in range(p):
+        solver.create_design_matrix(degrees[i])
         solver.split_data()
         solver.bootstrap(b)
-        RTrain, MTrain = solver.predict(solver.X_train, solver.y_train)
-        RTest, MTest = solver.predict(solver.X_test, solver.y_test)
-        MSE_train.append(MTrain)
-        MSE_test.append(MTest)
-        R2_train.append(RTrain)
-        R2_test.append(RTest)
+        R2_train[i], MSE_train[i] = solver.predict_train()
+        R2_test[i], MSE_test[i] = solver.predict_test()
 
-    MSE_train = np.array(MSE_train)
-    MSE_test = np.array(MSE_test)
-    degrees = np.array(degrees)
-    R2_train = np.array(R2_train)
-    R2_test = np.array(R2_test)
+    lowest_MSE_val_idx = np.argmin(MSE_test)
+    print("Polynomial degree which provides lowest MSE score on test data: %i" % (lowest_MSE_val_idx+1))
 
     path = "./results/OLS/plots/bootstrap/"
     if not os.path.exists(path):
