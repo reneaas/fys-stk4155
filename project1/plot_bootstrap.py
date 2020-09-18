@@ -22,7 +22,7 @@ def plot_OLS_bootstrap():
 
     degrees = [i for i in range(1,14)]
     p = len(degrees)
-    b = 10000
+    b = 1000
     MSE_train = np.zeros(p)
     MSE_test = np.zeros(p)
     R2_train = np.zeros(p)
