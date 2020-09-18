@@ -10,7 +10,7 @@ sigma = sys.argv[2]
 path_to_datasets = "./datasets/"
 filename = path_to_datasets + "_".join(["frankefunction", "dataset", "N", str(N), "sigma", str(sigma)]) + ".txt"
 
-polynomial = [i for i in range(1,15)]
+polynomial = [i for i in range(1,14)]
 p = len(polynomial)
 R2_boot = np.zeros(p)
 
@@ -25,7 +25,7 @@ solver.read_data(filename)
 for i in range(len(polynomial)):
     solver.create_design_matrix(polynomial[i])
     solver.split_data()
-    solver.bootstrap(10000)
+    solver.bootstrap(1000)
     R2_boot[i], MSE_boot[i] = solver.predict_test()
     solver.k_fold_cross_validation(10)
     R2_k_fold[i], MSE_k_fold[i] = solver.predict_test()
