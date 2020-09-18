@@ -121,7 +121,7 @@ class Regression:
             self.confidence_interval[i,1] = upper_limit
 
 
-    def train(self, X_train, f_train):
+    def train(self):
         return None
 
     def bootstrap(self, B):
@@ -133,10 +133,11 @@ class Regression:
         self.w_boots = np.zeros((B, self.p))
         for i in range(B):
             idx = np.random.randint(0,self.n_train, size=self.n_train)
-            self.X_train[idx,:]
-            self.f_train[idx]
+            self.X_train = X_train[idx,:]
+            self.f_train = f_train[idx]
             self.train()
             self.w_boots[i, :] = self.w[:]
+
         self.compute_statistics(self.w_boots)
 
         #Recopy the initial dataset.
@@ -145,8 +146,8 @@ class Regression:
 
     def k_fold_cross_validation(self,k):
         #Copy data
-        X_train = np.copy(self.X_train)
-        f_train = np.copy(self.f_train)
+        X_train_copy = np.copy(self.X_train)
+        f_train_copy = np.copy(self.f_train)
 
 
         int_size = self.n_train // k
@@ -179,8 +180,8 @@ class Regression:
         self.compute_statistics(self.w_k_fold)
 
         #Recopy the initial dataset.
-        self.X_train = X_train
-        self.f_train = f_train
+        self.X_train = X_train_copy
+        self.f_train = f_train_copy
 
     def compute_statistics(self,w):
         self.w_mean = np.zeros(self.p)
@@ -189,6 +190,7 @@ class Regression:
             self.w_mean[i] = np.mean(w[:, i])
             self.w_std[i] = np.std(w[:,i])
         self.w[:] = self.w_mean[:]
+
 
     def predict_train(self):
         f_model = self.X_train @ self.w
