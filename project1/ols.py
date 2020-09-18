@@ -6,10 +6,11 @@ class OLS(Regression):
     def __init__(self):
         super().__init__()
 
-    def train(self, X_train, y_train):
+    def train(self):
         """
         Perform ordinary least squares to find the parameters of the model denoted w.
         """
-        A = X_train.T @ X_train
-        b = X_train.T @ y_train
+        A = self.X_train.T @ self.X_train
+        b = self.X_train.T @ self.f_train
+
         self.w = np.linalg.solve(A, b)

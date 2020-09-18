@@ -1,11 +1,12 @@
-from regression import Regression
+#from regression import Regression
 from ols import OLS
 from ridge import Ridge
 from lasso import Lasso
-from plot import *
+#from plot import *
 import numpy as np
 import sys
 import os
+import matplotlib.pyplot as plt
 
 n = int(sys.argv[1]) #Number of datapoints
 sigma = float(sys.argv[2]) #Standard deviation of noise from data
@@ -15,6 +16,7 @@ filename = path_to_datasets + "_".join(["frankefunction", "dataset", "N", str(n)
 
 regression_type = sys.argv[3]
 
+filename = "./datasets/frankefunction_dataset_N_1000_sigma_0.1.txt"
 
 def plot_OLS_k_fold_validation():
 
@@ -24,7 +26,7 @@ def plot_OLS_k_fold_validation():
     R2_test = []
     bias = []
     variance = []
-    degrees = [i for i in range(15)]
+    degrees = [i for i in range(21)]
     k = 10
     solver = OLS()
     solver.read_data(filename)
@@ -42,6 +44,7 @@ def plot_OLS_k_fold_validation():
         R2_test.append(RTest)
         bias.append(Bias)
         variance.append(Variance)
+
 
     MSE_train = np.array(MSE_train)
     MSE_test = np.array(MSE_test)

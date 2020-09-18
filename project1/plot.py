@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from ols import *
+from ols import OLS
 
 
 def plot_OLS_MSE_R2(filename,n,sigma):
