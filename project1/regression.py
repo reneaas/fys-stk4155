@@ -1,8 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 np.random.seed(1001)
-from sklearn.model_selection import train_test_split
-#import random
 
 
 class Regression:
@@ -17,7 +15,7 @@ class Regression:
         -------------------------------------------------
         Extracts:
         x, y: n data tuples (x,y).
-        func_vals: n function values f(x,y)
+        f_data: n function values f(x,y)
         self.n: Number of datapoints n
         self.p: Number of features of the model
         -------------------------------------------------
@@ -25,7 +23,7 @@ class Regression:
 
         self.x = []
         self.y = []
-        self.func_vals = []
+        self.f_data = []
 
 
         with open(filename, "r") as infile:
@@ -35,29 +33,29 @@ class Regression:
                 words = line.split()
                 self.x.append(float(words[0]))
                 self.y.append(float(words[1]))
-                self.func_vals.append(float(words[2]))
+                self.f_data.append(float(words[2]))
 
         #Need to find a way to scale data (as suggested by the project text), but for now this works as it should.
         self.x = np.array(self.x)
         self.y = np.array(self.y)
-        self.func_vals = np.array(self.func_vals)
+        self.f_data = np.array(self.f_data)
         self.scale_data()
 
         #Reshuffle data to minimize risk of human bias
         self.shuffled_idx = np.random.permutation(self.n)
-        self.func_vals = self.func_vals[self.shuffled_idx] #Shuffle z = f(x,y) exactly once.
+        self.f_data = self.f_data[self.shuffled_idx] #Shuffle z = f(x,y) exactly once.
 
     def scale_data(self):
         self.x_mean = np.mean(self.x)
         self.y_mean = np.mean(self.y)
         self.x_std = np.std(self.x)
         self.y_std = np.std(self.y)
-        self.func_vals_mean = np.mean(self.func_vals)
-        self.func_vals_std = np.std(self.func_vals)
+        self.f_data_mean = np.mean(self.f_data)
+        self.f_data_std = np.std(self.f_data)
 
         self.x = (self.x - self.x_mean)/self.x_std
         self.y = (self.y - self.y_mean)/self.y_std
-        self.func_vals = (self.func_vals - self.func_vals_mean)/self.func_vals_std
+        self.f_data = (self.f_data - self.f_data_mean)/self.f_data_std
 
 
         #Set up the design matrix
@@ -85,28 +83,27 @@ class Regression:
         Splits the data into a training set
         Training/test is by default 80/20 ratio.
         """
-
         #Split data into training and test set.
         self.n_train = 4*(self.n // 5) + 4*(self.n % 5)
         self.n_test = (self.n // 5) + (self.n % 5)
         self.X_train = self.design_matrix[:self.n_train,:]
         self.X_test = self.design_matrix[self.n_train:,:]
-        self.y_train = self.func_vals[:self.n_train]
-        self.y_test = self.func_vals[self.n_train:]
+        self.f_train = self.f_data[:self.n_train]
+        self.f_test = self.f_data[self.n_train:]
 
 
-    def compute_MSE(self, y_data, y_model):
-        return np.mean((y_model - y_data)**2)
+    def compute_MSE(self, f_data, f_model):
+        return np.mean((f_model - f_data)**2)
 
 
-    def compute_R2_score(self,y_data, y_model):
-        return 1 - np.sum((y_data - y_model) ** 2) / np.sum((y_data - np.mean(y_data)) ** 2)
+    def compute_R2_score(self, f_data, f_model):
+        return 1 - np.sum((f_data - f_model) ** 2) / np.sum((f_data - np.mean(f_data)) ** 2)
 
-    def compute_bias_variance(self, X_data, y_data):
-        y_prediction = X_data @ self.w
-        mean_model = np.mean(y_prediction)
-        bias = np.mean((y_data - mean_model)**2)
-        variance = np.mean((y_prediction-mean_model)**2)
+    def compute_bias_variance(self):
+        f_model = self.X_test @ self.w
+        mean_model = np.mean(f_model)
+        bias = np.mean((self.f_test - mean_model)**2)
+        variance = np.mean((f_model-mean_model)**2)
         return bias, variance
 
 
@@ -115,7 +112,7 @@ class Regression:
         Compute 95% confidence intervals for each parameter w_i
         """
         self.confidence_interval = np.zeros([self.p,2])
-        inv_X = np.linalg.inv(self.X_train.T@self.X_train)
+        inv_X = np.linalg.inv(self.X_train.T @ self.X_train)
         for i in range(self.p):
             standard_error = np.sqrt(sigma**2 * inv_X[i,i])
             lower_limit = self.w[i] - 1.96*standard_error
@@ -124,51 +121,66 @@ class Regression:
             self.confidence_interval[i,1] = upper_limit
 
 
-    def train(self, X_train, y_train):
+    def train(self, X_train, f_train):
         return None
 
     def bootstrap(self, B):
+        #Copy data
+        X_train = np.copy(self.X_train)
+        f_train = np.copy(self.f_train)
+
+        #Run bootstrap resampling
         self.w_boots = np.zeros((B, self.p))
         for i in range(B):
             idx = np.random.randint(0,self.n_train, size=self.n_train)
-            X_train = self.X_train[idx,:]
-            y_train = self.y_train[idx]
-            self.train(X_train, y_train)
+            self.X_train[idx,:]
+            self.f_train[idx]
+            self.train()
             self.w_boots[i, :] = self.w[:]
         self.compute_statistics(self.w_boots)
 
+        #Recopy the initial dataset.
+        self.X_train = X_train
+        self.f_train = f_train
+
     def k_fold_cross_validation(self,k):
+        #Copy data
+        X_train = np.copy(self.X_train)
+        f_train = np.copy(self.f_train)
 
-        self.w_k_fold = np.zeros((k, self.p))
 
-        int_size = self.n_train//k
-        rest = self.n_train%k
-
+        int_size = self.n_train // k
+        remainder = self.n_train % k
         fold_size = np.zeros(k, dtype ="int")
         for i in range(k):
-            fold_size[i] = int_size + (rest > 0)
-            rest -= 1
+            fold_size[i] = int_size + (remainder > 0)
+            remainder -= 1
 
-
+        #Construct row pointer
         row_ptr = np.zeros(k+1, dtype="int")
         for i in range(1,k+1):
             row_ptr[i] += row_ptr[i-1]+fold_size[i-1]
 
+        #Perform k-fold cross validation
+        self.w_k_fold = np.zeros((k, self.p))
         for j in range(k):
             X_test = self.X_train[[i for i in range(row_ptr[j],row_ptr[j+1])], :]
-            y_test = self.y_train[[i for i in range(row_ptr[j],row_ptr[j+1])]]
+            f_test = self.f_train[[i for i in range(row_ptr[j],row_ptr[j+1])]]
             idx = []
             for l in range(j):
                 idx += [i for i in range(row_ptr[l],row_ptr[l+1])]
             for l in range(j+1,k):
                 idx += [i for i in range(row_ptr[l],row_ptr[l+1])]
             X_train = self.X_train[idx, :]
-            y_train = self.y_train[idx]
-            self.train(X_train, y_train)
+            f_train = self.f_train[idx]
+            self.train(X_train, f_train)
             self.w_k_fold[j, :] = self.w[:]
 
         self.compute_statistics(self.w_k_fold)
 
+        #Recopy the initial dataset.
+        self.X_train = X_train
+        self.f_train = f_train
 
     def compute_statistics(self,w):
         self.w_mean = np.zeros(self.p)
@@ -177,11 +189,15 @@ class Regression:
             self.w_mean[i] = np.mean(w[:, i])
             self.w_std[i] = np.std(w[:,i])
         self.w[:] = self.w_mean[:]
-        #print("w_mean = ", self.w_mean)
-        #print("w_std = ", self.w_std)
 
-    def predict(self, X_data, y_data):
-        y_prediction = X_data @ self.w
-        R2_score = self.compute_R2_score(y_data, y_prediction)
-        MSE = self.compute_MSE(y_data, y_prediction)
+    def predict_train(self):
+        f_model = self.X_train @ self.w
+        R2_score = self.compute_R2_score(self.f_train, f_model)
+        MSE = self.compute_MSE(self.f_train, f_model)
+        return R2_score, MSE
+
+    def predict_test(self):
+        f_model = self.X_test @ self.w
+        R2_score = self.compute_R2_score(self.f_test, f_model)
+        MSE = self.compute_MSE(self.f_test, f_model)
         return R2_score, MSE
