@@ -23,7 +23,7 @@ def f(x,y):
 
 noise = np.random.normal(0,sigma,size=N)
 
-data = FrankeFunction(x,y) + noise
+data = FrankeFunction(x,y)
 #data = f(x,y)
 
 names = ["frankefunction", "dataset", "N", str(N), "sigma", str(sigma)]

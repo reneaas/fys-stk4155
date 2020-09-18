@@ -20,19 +20,17 @@ filename_plots = ["regularization_path_R2_p5.pdf", "regularization_path_MSE_p5.p
 path_plots = "./results/plots/terrain"
 
 
-#Testing Ridge regression module
-polynomial_degree = 5 #Maximum degree of polynomial
-Lambda = [1/10**i for i in range(-2,2+1)]
 
 #filename = path_to_datasets + "terrain_data.txt"
-filename = "./datasets/frankefunction_dataset_N_1000_sigma_0.1.txt"
+#filename = "./datasets/frankefunction_dataset_N_1000_sigma_1.0.txt"
+filename = "terrain_data_small.txt"
 filename_plots = ["regularization_path_R2.pdf", "regularization_path_MSE.pdf"]
 path_plots = "./results/plots"
 
 
 #Testing Ridge regression module
-polynomial_degree = 5 #Maximum degree of polynomial
-Lambda = [1/10**i for i in range(-10,10)]
+polynomial_degree = 2 #Maximum degree of polynomial
+Lambda = [1/10**i for i in range(2,10)]
 
 R2_scores_train = [[],[]]
 MSE_scores_train = [[],[]]
