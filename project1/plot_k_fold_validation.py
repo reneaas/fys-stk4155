@@ -12,10 +12,6 @@ sigma = float(sys.argv[2])
 path_to_datasets = "./datasets/"
 filename = path_to_datasets + "_".join(["frankefunction", "dataset", "N", str(n), "sigma", str(sigma)]) + ".txt"
 
-
-regression_type = sys.argv[3]
-
-
 def plot_OLS_k_fold_validation():
 
     solver = OLS()
@@ -67,5 +63,4 @@ def plot_OLS_k_fold_validation():
     plt.xlabel("Model Complexity")
     plt.savefig(plot_name)
 
-if regression_type == "OLS":
-    plot_OLS_k_fold_validation()
+plot_OLS_k_fold_validation()

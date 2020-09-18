@@ -12,9 +12,6 @@ sigma = float(sys.argv[2])
 path_to_datasets = "./datasets/"
 filename = path_to_datasets + "_".join(["frankefunction", "dataset", "N", str(n), "sigma", str(sigma)]) + ".txt"
 
-regression_type = sys.argv[3]
-
-
 def plot_OLS_bootstrap():
 
     solver = OLS()
@@ -65,5 +62,4 @@ def plot_OLS_bootstrap():
     plt.xlabel("Model Complexity")
     plt.savefig(plot_name)
 
-if regression_type =="OLS":
-    plot_OLS_bootstrap()
+plot_OLS_bootstrap()
