@@ -7,8 +7,8 @@ import numpy as np
 import os
 plt.rc("text", usetex=True)
 
-#n = int(sys.argv[1]) #Number of datapoints
-#sigma = float(sys.argv[2]) #Standard deviation of noise from data
+n = int(sys.argv[1]) #Number of datapoints
+sigma = float(sys.argv[2]) #Standard deviation of noise from data
 path_to_datasets = "./datasets/" #relative path into subdirectory for datasets.
 #filename = path_to_datasets + "_".join(["frankefunction", "dataset", "N", str(n), "sigma", str(sigma)]) + ".txt"
 
@@ -21,16 +21,15 @@ path_plots = "./results/plots/terrain"
 
 
 
-#filename = path_to_datasets + "terrain_data.txt"
-#filename = "./datasets/frankefunction_dataset_N_1000_sigma_1.0.txt"
-filename = "terrain_data_small.txt"
+filename = path_to_datasets + "_".join(["frankefunction", "dataset", "N", str(N), "sigma", str(sigma)]) + ".txt"
+#filename = "terrain_data_small.txt"
 filename_plots = ["regularization_path_R2.pdf", "regularization_path_MSE.pdf"]
 path_plots = "./results/plots"
 
 
 #Testing Ridge regression module
-polynomial_degree = 2 #Maximum degree of polynomial
-Lambda = [1/10**i for i in range(2,10)]
+polynomial_degree = 5 #Maximum degree of polynomial
+Lambda = [1/10**i for i in range(-5,10)]
 
 R2_scores_train = [[],[]]
 MSE_scores_train = [[],[]]
@@ -94,7 +93,7 @@ plt.ylabel(r"$R^2$", fontsize=14)
 plt.xticks(size=14)
 plt.yticks(size=14)
 plt.legend(fontsize=14)
-plt.savefig(filename_plots[0])
+#plt.savefig(filename_plots[0])
 plt.figure()
 
 plt.plot(np.log10(Lambda), MSE_scores_train[0], "--", label = "Training (Ridge)")
@@ -108,7 +107,7 @@ plt.ylabel("MSE", fontsize=14)
 plt.legend(fontsize=14)
 plt.xticks(size=14)
 plt.yticks(size=14)
-plt.savefig(filename_plots[1])
+#plt.savefig(filename_plots[1])
 plt.show()
 
 if not os.path.exists(path_plots):
