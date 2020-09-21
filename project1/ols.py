@@ -12,5 +12,4 @@ class OLS(Regression):
         """
         A = self.X_train.T @ self.X_train
         b = self.X_train.T @ self.f_train
-
         self.w = np.linalg.solve(A, b)

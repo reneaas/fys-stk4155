@@ -102,7 +102,7 @@ class Regression:
     def compute_bias_variance(self):
         f_model = self.X_test @ self.w
         mean_model = np.mean(f_model)
-        bias = np.mean((self.f_test - mean_model)**2)
+        bias = np.mean((self.f_test - f_model)**2)
         variance = np.mean((f_model-mean_model)**2)
         return bias, variance
 
@@ -129,6 +129,32 @@ class Regression:
         X_train = np.copy(self.X_train)
         f_train = np.copy(self.f_train)
 
+        f_predictions = np.zeros((B, self.n_test))
+        R2, MSE = np.zeros(B), np.zeros(B)
+
+        for i in range(B):
+            idx = np.random.randint(0,self.n_train, size=self.n_train)
+            self.X_train = X_train[idx,:]
+            self.f_train = f_train[idx]
+            self.train()
+            R2[i], MSE[i] = self.predict_test()
+            f_predictions[i, :] = self.f_model[:]
+
+        f_mean_predictions = np.mean(f_predictions, axis=0)  #Computes the mean value for each model value f_model(x_i). Each column i corresponds to many measurements of f_model(x_i), therefore we choose axis=0 so average over the columns.
+        mean_R2 = np.mean(R2)
+        mean_MSE = np.mean(MSE)
+        bias = np.mean( (self.f_test - f_mean_predictions)**2 )
+        variance = np.mean( np.var(f_predictions, axis=0) )
+
+        self.X_train = X_train
+        self.f_train = f_train
+        return mean_R2, mean_MSE, bias, variance
+
+    def bootstrap_old(self, B):
+        #Copy data
+        X_train = np.copy(self.X_train)
+        f_train = np.copy(self.f_train)
+
         #Run bootstrap resampling
         self.w_boots = np.zeros((B, self.p))
         for i in range(B):
@@ -144,7 +170,8 @@ class Regression:
         self.X_train = X_train
         self.f_train = f_train
 
-    def k_fold_cross_validation(self,k):
+
+    def k_fold_cross_validation_old(self,k):
         #Copy data
         X_train_copy = np.copy(self.X_train)
         f_train_copy = np.copy(self.f_train)
@@ -193,13 +220,13 @@ class Regression:
 
 
     def predict_train(self):
-        f_model = self.X_train @ self.w
-        R2_score = self.compute_R2_score(self.f_train, f_model)
-        MSE = self.compute_MSE(self.f_train, f_model)
+        self.f_model = self.X_train @ self.w
+        R2_score = self.compute_R2_score(self.f_train, self.f_model)
+        MSE = self.compute_MSE(self.f_train, self.f_model)
         return R2_score, MSE
 
     def predict_test(self):
-        f_model = self.X_test @ self.w
-        R2_score = self.compute_R2_score(self.f_test, f_model)
-        MSE = self.compute_MSE(self.f_test, f_model)
+        self.f_model = self.X_test @ self.w
+        R2_score = self.compute_R2_score(self.f_test, self.f_model)
+        MSE = self.compute_MSE(self.f_test, self.f_model)
         return R2_score, MSE
