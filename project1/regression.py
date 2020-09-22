@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 np.random.seed(1001)
-
+from progress.bar import Bar, IncrementalBar
 
 class Regression:
     def __init__(self):
@@ -65,6 +65,7 @@ class Regression:
         deg: degree of polynomial p(x,y)
         -------------------------------------------------------------
         """
+        self.deg = deg
         self.p = int((deg+1) * (deg+2) / 2) #Closed-form expression for the number of features
         self.design_matrix = np.zeros([self.n, self.p])
         self.design_matrix[:,0] = 1.0 #First column is simply 1s.
@@ -93,7 +94,7 @@ class Regression:
 
 
     def compute_MSE(self, f_data, f_model):
-        return np.sum((f_model - f_data)**2)
+        return np.mean((f_model - f_data)**2)
 
 
     def compute_R2_score(self, f_data, f_model):
@@ -131,20 +132,21 @@ class Regression:
 
         f_predictions = np.zeros((B, self.n_test))
         R2, MSE = np.zeros(B), np.zeros(B)
-
+        bar = Bar("Polynomial Degree = " + str(self.deg) + "; Progress", max = B)
         for i in range(B):
+            bar.next()
             idx = np.random.randint(0,self.n_train, size=self.n_train)
             self.X_train = X_train[idx,:]
             self.f_train = f_train[idx]
             self.train()
             R2[i], MSE[i] = self.predict_test()
             f_predictions[i, :] = self.f_model[:]
-
+        bar.finish()
         f_mean_predictions = np.mean(f_predictions, axis=0)  #Computes the mean value for each model value f_model(x_i). Each column i corresponds to many measurements of f_model(x_i), therefore we choose axis=0 so average over the columns.
         mean_R2 = np.mean(R2)
         mean_MSE = np.mean(MSE)
-        bias =  np.sum((self.f_test - f_mean_predictions)**2)
-        variance = np.sum( np.var(f_predictions, axis=0) )
+        bias =  np.mean((self.f_test - f_mean_predictions)**2)
+        variance = np.mean( np.var(f_predictions, axis=0) )
 
         self.X_train = X_train
         self.f_train = f_train
@@ -171,6 +173,7 @@ class Regression:
 
         #Perform k-fold cross validation
         self.w_k_fold = np.zeros((k, self.p))
+
         for j in range(k):
             X_test = self.X_train[[i for i in range(row_ptr[j],row_ptr[j+1])], :]
             f_test = self.f_train[[i for i in range(row_ptr[j],row_ptr[j+1])]]

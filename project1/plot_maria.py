@@ -37,9 +37,8 @@ solver.read_data(filename)
 for i in range(len(polynomial)):
     solver.create_design_matrix(polynomial[i])
     solver.split_data()
-    R2_bootstrap[i], MSE_bootstrap[i], bias_bootstrap[i], variance_bootstrap[i] = solver.bootstrap(100)
+    R2_bootstrap[i], MSE_bootstrap[i], bias_bootstrap[i], variance_bootstrap[i] = solver.bootstrap(1000)
     #R2_cross_val[i], MSE_cross_val[i], bias_cross_val[i], variance_cross_val[i] = solver.k_fold_cross_validation(100)
-    print("Irreducible error = ", MSE_bootstrap[i] - bias_bootstrap[i] - variance_bootstrap[i])
 
 plt.plot(polynomial, MSE_bootstrap, label="MSE (bootstrap)")
 plt.plot(polynomial, bias_bootstrap, label = "Bias (bootstrap)")
