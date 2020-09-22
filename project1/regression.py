@@ -93,7 +93,7 @@ class Regression:
 
 
     def compute_MSE(self, f_data, f_model):
-        return np.mean((f_model - f_data)**2)
+        return np.sum((f_model - f_data)**2)
 
 
     def compute_R2_score(self, f_data, f_model):
@@ -143,8 +143,8 @@ class Regression:
         f_mean_predictions = np.mean(f_predictions, axis=0)  #Computes the mean value for each model value f_model(x_i). Each column i corresponds to many measurements of f_model(x_i), therefore we choose axis=0 so average over the columns.
         mean_R2 = np.mean(R2)
         mean_MSE = np.mean(MSE)
-        bias = np.mean( (self.f_test - f_mean_predictions)**2 )
-        variance = np.mean( np.var(f_predictions, axis=0) )
+        bias =  np.sum((self.f_test - f_mean_predictions)**2)
+        variance = np.sum( np.var(f_predictions, axis=0) )
 
         self.X_train = X_train
         self.f_train = f_train

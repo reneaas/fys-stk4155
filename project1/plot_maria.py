@@ -39,6 +39,7 @@ for i in range(len(polynomial)):
     solver.split_data()
     R2_bootstrap[i], MSE_bootstrap[i], bias_bootstrap[i], variance_bootstrap[i] = solver.bootstrap(100)
     #R2_cross_val[i], MSE_cross_val[i], bias_cross_val[i], variance_cross_val[i] = solver.k_fold_cross_validation(100)
+    print("Irreducible error = ", MSE_bootstrap[i] - bias_bootstrap[i] - variance_bootstrap[i])
 
 plt.plot(polynomial, MSE_bootstrap, label="MSE (bootstrap)")
 plt.plot(polynomial, bias_bootstrap, label = "Bias (bootstrap)")
@@ -49,7 +50,7 @@ plt.ylabel("MSE")
 plt.title("FrankeFunction with N={}, $\sigma ={}$".format(N, sigma))
 plt.grid()
 plt.legend()
-plt.figure()
+plt.show()
 """
 print(variance_cross_val)
 plt.plot(polynomial, MSE_cross_val, label="MSE (cross-validation)")
@@ -61,4 +62,3 @@ plt.title("FrankeFunction with N={}, $\sigma ={}$".format(N, sigma))
 plt.grid()
 plt.legend()
 """
-plt.show()
