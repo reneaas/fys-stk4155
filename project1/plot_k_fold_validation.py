@@ -64,5 +64,4 @@ def plot_OLS_k_fold_validation():
     plt.xlabel("Model Complexity")
     plt.savefig(plot_name)
 
-if regression_type == "OLS":
-    plot_OLS_k_fold_validation()
+plot_OLS_k_fold_validation()

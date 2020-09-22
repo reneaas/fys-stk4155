@@ -150,26 +150,6 @@ class Regression:
         self.f_train = f_train
         return mean_R2, mean_MSE, bias, variance
 
-    def bootstrap_old(self, B):
-        #Copy data
-        X_train = np.copy(self.X_train)
-        f_train = np.copy(self.f_train)
-
-        #Run bootstrap resampling
-        self.w_boots = np.zeros((B, self.p))
-        for i in range(B):
-            idx = np.random.randint(0,self.n_train, size=self.n_train)
-            self.X_train = X_train[idx,:]
-            self.f_train = f_train[idx]
-            self.train()
-            self.w_boots[i, :] = self.w[:]
-
-        self.compute_statistics(self.w_boots)
-
-        #Recopy the initial dataset.
-        self.X_train = X_train
-        self.f_train = f_train
-
 
     def k_fold_cross_validation_old(self,k):
         #Copy data
