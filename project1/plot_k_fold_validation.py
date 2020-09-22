@@ -11,10 +11,7 @@ n = int(sys.argv[1])
 sigma = float(sys.argv[2])
 path_to_datasets = "./datasets/"
 filename = path_to_datasets + "_".join(["frankefunction", "dataset", "N", str(n), "sigma", str(sigma)]) + ".txt"
-<<<<<<< HEAD
-=======
 regression_type = sys.argv[3]
->>>>>>> b66b8fa44bf22cbc8daae6f8cbd75a33b1224424
 
 def plot_OLS_k_fold_validation():
 
