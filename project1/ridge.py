@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import os
 
 class Ridge(Regression):
-    def __init__(self, Lambda):
+    def __init__(self, Lambda=None):
         super().__init__()
         self.Lambda = Lambda
 

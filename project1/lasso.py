@@ -5,7 +5,7 @@ from ridge import Ridge
 
 class Lasso(Ridge):
 
-    def __init__(self, Lambda):
+    def __init__(self, Lambda = None):
         super().__init__(Lambda)
         self.Lambda = Lambda
 

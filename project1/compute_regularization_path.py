@@ -7,111 +7,88 @@ import numpy as np
 import os
 plt.rc("text", usetex=True)
 
-n = int(sys.argv[1]) #Number of datapoints
-sigma = float(sys.argv[2]) #Standard deviation of noise from data
+N = 1000 #Number of datapoints
+sigma = 1.0
 path_to_datasets = "./datasets/" #relative path into subdirectory for datasets.
-#filename = path_to_datasets + "_".join(["frankefunction", "dataset", "N", str(n), "sigma", str(sigma)]) + ".txt"
-
-filename = "terrain_data_small.txt"
-
-filename = "terrain_data.txt"
-
-filename_plots = ["regularization_path_R2_p5.pdf", "regularization_path_MSE_p5.pdf"]
-path_plots = "./results/plots/terrain"
-
-
 
 filename = path_to_datasets + "_".join(["frankefunction", "dataset", "N", str(N), "sigma", str(sigma)]) + ".txt"
-#filename = "terrain_data_small.txt"
-filename_plots = ["regularization_path_R2.pdf", "regularization_path_MSE.pdf"]
-path_plots = "./results/plots"
+
+method = sys.argv[1]
+Polynomial_degrees = [i for i in range(12)]
+P = len(Polynomial_degrees)
+
+if method == "Ridge":
+
+    path_to_plot = "./results/FrankeFunction/Ridge/"
+    if not os.path.exists(path_to_plot):
+        os.makedirs(path_to_plot)
+
+    Lambdas = [1/10**i for i in range(-5,5)]
+
+    L = len(Lambdas)
+    MSE_Test_Ridge = np.zeros([L,P])
 
 
-#Testing Ridge regression module
-polynomial_degree = 5 #Maximum degree of polynomial
-Lambda = [1/10**i for i in range(-5,10)]
+    solver = Ridge()
+    solver.read_data(filename)
+    for i in range(P):
+        solver.create_design_matrix(Polynomial_degrees[i])
+        solver.split_data()
+        for j in range(L):
+            solver.Lambda = Lambdas[j]
+            solver.train()
+            R2, MSE = solver.predict_test()
+            MSE_Test_Ridge[j,i] = MSE
 
-R2_scores_train = [[],[]]
-MSE_scores_train = [[],[]]
-R2_scores_test = [[],[]]
-MSE_scores_test = [[],[]]
+    idx_L, idx_P = np.where(MSE_Test_Ridge == np.min(MSE_Test_Ridge))
+    Lambdas = np.log10(Lambdas)
+    P_deg, Lam = np.meshgrid(Polynomial_degrees, Lambdas)
 
-#Compute regularization path for Ridge
-print("Ridge")
-solver = Ridge(0.0001)
-solver.read_data(filename) #Read data from file
-solver.create_design_matrix(polynomial_degree)
-solver.split_data()
-for l in Lambda:
-    print("lambda = ", l)
-    solver.Lambda = l
-    solver.train()
-    R2_train, MSE_train = solver.predict_train()
-    R2_test, MSE_test = solver.predict_test()
-    R2_scores_train[0].append(R2_train)
-    MSE_scores_train[0].append(MSE_train)
-    R2_scores_test[0].append(R2_test)
-    MSE_scores_test[0].append(MSE_test)
+    plot_name = path_to_plot + "Regularization_Path.pdf"
 
-print("Lasso")
-solver = Lasso(0.0001)
-solver.read_data(filename) #Read data from file
-solver.create_design_matrix(polynomial_degree)
-solver.split_data()
-for l in Lambda:
-    print("lambda = ", l)
-    solver.Lambda = l
-    solver.train()
-    R2_train, MSE_train = solver.predict_train()
-    R2_test, MSE_test = solver.predict_test()
-    R2_scores_train[1].append(R2_train)
-    MSE_scores_train[1].append(MSE_train)
-    R2_scores_test[1].append(R2_test)
-    MSE_scores_test[1].append(MSE_test)
+    plt.contourf(P_deg, Lam, MSE_Test_Ridge, cmap = "inferno", levels=20)
+    plt.plot(Polynomial_degrees[idx_P[0]],Lambdas[idx_L[0]], "w+")
+    plt.title("MSE Ridge")
+    plt.xlabel("Polynomial Degree")
+    plt.ylabel("Lambda")
+    plt.colorbar()
+    plt.savefig(plot_name)
 
-solver = OLS()
-solver.read_data(filename) #Read data from file
-solver.create_design_matrix(polynomial_degree)
-solver.split_data()
-solver.train()
-R2_train, MSE_train = solver.predict_train()
-R2_test, MSE_test = solver.predict_test()
 
-print("Training R2 = ", R2_train)
-print("Test R2 = ", R2_test)
-print("Training MSE = ", MSE_train)
-print("Test MSE = ", MSE_test)
 
-plt.plot(np.log10(Lambda), R2_scores_train[0], "--", label = "Training (Ridge)")
-plt.plot(np.log10(Lambda), R2_scores_test[0], label = "Test (Ridge)")
-plt.plot(np.log10(Lambda), R2_scores_train[1], "--",label = "Training (Lasso)")
-plt.plot(np.log10(Lambda), R2_scores_test[1], label = "Test (Lasso)")
-plt.axhline(R2_train, color = "k" ,  label = "Training (OLS)", linestyle = "--")
-plt.axhline(R2_test, color="r" , label = "Test (OLS)", linestyle = "-")
-plt.xlabel(r"$\log_{10}( \lambda) $", fontsize=14)
-plt.ylabel(r"$R^2$", fontsize=14)
-plt.xticks(size=14)
-plt.yticks(size=14)
-plt.legend(fontsize=14)
-#plt.savefig(filename_plots[0])
-plt.figure()
 
-plt.plot(np.log10(Lambda), MSE_scores_train[0], "--", label = "Training (Ridge)")
-plt.plot(np.log10(Lambda), MSE_scores_test[0], label = "Test (Ridge)")
-plt.plot(np.log10(Lambda), MSE_scores_train[1], "--", label = "Training (Lasso)")
-plt.plot(np.log10(Lambda), MSE_scores_test[1], label = "Test (Lasso)")
-plt.axhline(MSE_train, color = "k" ,  label = "Training (OLS)", linestyle = "--")
-plt.axhline(MSE_test, color="r" , label = "Test (OLS)", linestyle = "-")
-plt.xlabel(r"$\log_{10}( \lambda) $", fontsize=14)
-plt.ylabel("MSE", fontsize=14)
-plt.legend(fontsize=14)
-plt.xticks(size=14)
-plt.yticks(size=14)
-#plt.savefig(filename_plots[1])
-plt.show()
+if method == "Lasso":
 
-if not os.path.exists(path_plots):
-    os.makedirs(path_plots)
+    path_to_plot = "./results/FrankeFunction/Lasso/"
+    if not os.path.exists(path_to_plot):
+        os.makedirs(path_to_plot)
 
-filenames = " ".join(filename_plots)
-os.system(" ".join(["mv", filenames, path_plots]))
+    Lambdas = [1/10**i for i in range(-1,6)]
+    L = len(Lambdas)
+    MSE_Test_Lasso = np.zeros([L,P])
+
+    solver = Lasso()
+    solver.read_data(filename)
+    for i in range(P):
+        solver.create_design_matrix(Polynomial_degrees[i])
+        solver.split_data()
+        for j in range(L):
+            solver.Lambda = Lambdas[j]
+            solver.train()
+            R2, MSE = solver.predict_test()
+            MSE_Test_Lasso[j,i] = MSE
+
+
+    plot_name = path_to_plot + "Regularization_Path.pdf"
+
+    idx_L, idx_P = np.where(MSE_Test_Lasso == np.min(MSE_Test_Lasso))
+    Lambdas = np.log10(Lambdas)
+    P_deg, Lam = np.meshgrid(Polynomial_degrees, Lambdas)
+
+    plt.contourf(P_deg, Lam, MSE_Test_Lasso, cmap = "inferno", levels=20)
+    plt.plot(Polynomial_degrees[idx_P[0]],Lambdas[idx_L[0]], "w+")
+    plt.title("MSE Lasso")
+    plt.xlabel("Polynomial Degree")
+    plt.ylabel("Lambda")
+    plt.colorbar()
+    plt.savefig(plot_name)
