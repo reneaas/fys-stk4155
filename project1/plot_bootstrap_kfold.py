@@ -54,6 +54,7 @@ plt.title("Statistical values from Bootstrap w/ %i Re-samples" % b)
 plt.grid()
 plt.legend()
 plt.savefig(plot_name)
+plt.close()
 
 
 plot_name = path + "MSE_Compare_MaxPdeg_" + str(p) + ".pdf"
