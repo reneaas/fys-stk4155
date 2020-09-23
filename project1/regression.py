@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 np.random.seed(1001)
-from progress.bar import Bar, IncrementalBar
+from progress.bar import Bar
 
 class Regression:
     def __init__(self):
@@ -132,7 +132,7 @@ class Regression:
 
         f_predictions = np.zeros((B, self.n_test))
         R2, MSE = np.zeros(B), np.zeros(B)
-        bar = Bar("Polynomial Degree = " + str(self.deg) + "; Progress", max = B)
+        bar = Bar(" ".join(["Polynomial degree", str(self.deg), ";", "Progress"]), max = B)
         for i in range(B):
             bar.next()
             idx = np.random.randint(0,self.n_train, size=self.n_train)
