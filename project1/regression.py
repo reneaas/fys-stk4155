@@ -171,6 +171,7 @@ class Regression:
         #Perform k-fold cross validation
         bar = Bar(" ".join(["Polynomial degree", str(self.deg), ";", "Folds"]), max = k)
         for j in range(k):
+            bar.next()
             self.X_test = self.design_matrix[[i for i in range(row_ptr[j],row_ptr[j+1])], :]
             self.f_test = self.f_data[[i for i in range(row_ptr[j],row_ptr[j+1])]]
             idx = []
@@ -182,6 +183,7 @@ class Regression:
             self.f_train = self.f_data[idx]
             self.train()
             R2[j], MSE[j] = self.predict_test()
+        bar.finish()
 
         mean_R2 = np.mean(R2)
         mean_MSE = np.mean(MSE)

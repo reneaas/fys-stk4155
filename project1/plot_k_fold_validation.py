@@ -20,7 +20,7 @@ def plot_OLS_k_fold_validation():
 
     degrees = [i for i in range(1,14)]
     p = len(degrees)
-    k = 10
+    k = 1000
     MSE_train = np.zeros(p)
     MSE_test = np.zeros(p)
     R2_train = np.zeros(p)
