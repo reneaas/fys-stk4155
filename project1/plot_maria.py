@@ -37,8 +37,14 @@ solver.read_data(filename)
 for i in range(len(polynomial)):
     solver.create_design_matrix(polynomial[i])
     solver.split_data()
+<<<<<<< HEAD
     R2_bootstrap[i], MSE_bootstrap[i], bias_bootstrap[i], variance_bootstrap[i] = solver.bootstrap(1000)
     #R2_cross_val[i], MSE_cross_val[i], bias_cross_val[i], variance_cross_val[i] = solver.k_fold_cross_validation(100)
+=======
+    R2_bootstrap[i], MSE_bootstrap[i], bias_bootstrap[i], variance_bootstrap[i] = solver.bootstrap(100)
+    #R2_cross_val[i], MSE_cross_val[i], bias_cross_val[i], variance_cross_val[i] = solver.k_fold_cross_validation_old(100)
+    R2_cross_val[i], MSE_cross_val[i] = solver.k_fold_cross_validation(100)
+>>>>>>> 4077d092c40939b6a8f38f31c87c9726823e26df
 
 plt.plot(polynomial, MSE_bootstrap, label="MSE (bootstrap)")
 plt.plot(polynomial, bias_bootstrap, label = "Bias (bootstrap)")
@@ -49,15 +55,26 @@ plt.ylabel("MSE")
 plt.title("FrankeFunction with N={}, $\sigma ={}$".format(N, sigma))
 plt.grid()
 plt.legend()
+<<<<<<< HEAD
 plt.show()
 """
 print(variance_cross_val)
+=======
+plt.figure()
+
+#print(variance_cross_val)
+>>>>>>> 4077d092c40939b6a8f38f31c87c9726823e26df
 plt.plot(polynomial, MSE_cross_val, label="MSE (cross-validation)")
-plt.plot(polynomial, bias_cross_val, label = "Bias (cross-validation)")
-plt.plot(polynomial, variance_cross_val, label = "variance (cross-validation)")
+#plt.plot(polynomial, bias_cross_val, label = "Bias (cross-validation)")
+#plt.plot(polynomial, variance_cross_val, label = "variance (cross-validation)")
 plt.xlabel("polynomial degree")
 plt.ylabel("MSE")
 plt.title("FrankeFunction with N={}, $\sigma ={}$".format(N, sigma))
 plt.grid()
 plt.legend()
+<<<<<<< HEAD
 """
+=======
+
+plt.show()
+>>>>>>> 4077d092c40939b6a8f38f31c87c9726823e26df
