@@ -45,11 +45,16 @@ if not os.path.exists(path):
 
 plot_name = path + "Bootstrap_MaxPdeg_" + str(p) + ".pdf"
 
+
+font_size = 14
+tick_size = 14
 plt.plot(polynomial, MSE_bootstrap, label="MSE")
 plt.plot(polynomial, bias_bootstrap,"--",label = "Bias")
 plt.plot(polynomial, variance_bootstrap,"--" ,label = "variance")
-plt.xlabel("Polynomial degree")
-plt.ylabel("MSE")
+plt.xlabel("Polynomial degree", fontsize=font_size)
+plt.ylabel("MSE", fontsize=font_size)
+plt.xticks(size=tick_size)
+plt.yticks(size=tick_size)
 plt.title("Statistical values from Bootstrap w/ %i Re-samples" % b)
 plt.grid()
 plt.legend()
@@ -65,8 +70,10 @@ plt.plot(polynomial[Min_bootstrap_MSE], MSE_bootstrap[Min_bootstrap_MSE], "o")
 plt.plot(polynomial, MSE_cross_val, label="%i-fold Cross-Validation" % k)
 plt.plot(polynomial, MSE_cross_val, "*")
 plt.plot(polynomial[Min_kfold_MSE], MSE_cross_val[Min_kfold_MSE], "o")
-plt.xlabel("Polynomial degree")
-plt.ylabel("MSE")
+plt.xlabel("Polynomial degree", fontsize=font_size)
+plt.ylabel("MSE", fontsize=font_size)
+plt.xticks(size=tick_size)
+plt.yticks(size=tick_size)
 plt.title("MSE values from Bootstrap and K-fold")
 plt.grid()
 plt.legend()

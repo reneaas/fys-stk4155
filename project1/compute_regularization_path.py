@@ -46,13 +46,20 @@ if method == "Ridge":
 
     plot_name = path_to_plot + "Regularization_Path.pdf"
 
-    plt.contourf(P_deg, Lam, MSE_Test_Ridge, cmap = "inferno", levels=20)
+    font_size = 14
+    tick_size = 14
+    plt.contourf(P_deg, Lam, MSE_Test_Ridge, cmap = "inferno", levels=40)
     plt.plot(Polynomial_degrees[idx_P[0]],Lambdas[idx_L[0]], "w+")
-    plt.title("MSE Ridge")
-    plt.xlabel("Polynomial Degree")
-    plt.ylabel("Lambda")
-    plt.colorbar()
+    plt.title("Regularization path - Ridge", fontsize=font_size)
+    plt.xlabel("Polynomial Degree", size=font_size)
+    plt.ylabel(r"$\log_{10}(\lambda)$", size=font_size)
+    plt.xticks(size=tick_size)
+    plt.yticks(size=tick_size)
+    cb = plt.colorbar()
+    cb.set_label(label="MSE", size=14)
+    cb.ax.tick_params(labelsize=14)
     plt.savefig(plot_name)
+    plt.close()
 
 
 
@@ -85,10 +92,17 @@ if method == "Lasso":
     Lambdas = np.log10(Lambdas)
     P_deg, Lam = np.meshgrid(Polynomial_degrees, Lambdas)
 
-    plt.contourf(P_deg, Lam, MSE_Test_Lasso, cmap = "inferno", levels=20)
+    font_size = 14
+    tick_size = 14
+    plt.contourf(P_deg, Lam, MSE_Test_Lasso, cmap = "inferno", levels=40)
     plt.plot(Polynomial_degrees[idx_P[0]],Lambdas[idx_L[0]], "w+")
-    plt.title("MSE Lasso")
-    plt.xlabel("Polynomial Degree")
-    plt.ylabel("Lambda")
-    plt.colorbar()
+    plt.title("Regularization path - Lasso", fontsize=font_size)
+    plt.xlabel("Polynomial Degree", fontsize=font_size)
+    plt.ylabel(r"$\log_{10}(\lambda)$", fontsize=font_size)
+    plt.xticks(size=tick_size)
+    plt.yticks(size=tick_size)
+    cb = plt.colorbar()
+    cb.set_label(label="MSE", size=font_size)
+    cb.ax.tick_params(labelsize=tick_size)
     plt.savefig(plot_name)
+    plt.close()
