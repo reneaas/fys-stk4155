@@ -100,13 +100,6 @@ class Regression:
     def compute_R2_score(self, f_data, f_model):
         return 1 - np.sum((f_data - f_model) ** 2) / np.sum((f_data - np.mean(f_data)) ** 2)
 
-    def compute_bias_variance(self):
-        f_model = self.X_test @ self.w
-        mean_model = np.mean(f_model)
-        bias = np.mean((self.f_test - f_model)**2)
-        variance = np.mean((f_model-mean_model)**2)
-        return bias, variance
-
 
     def confidence_intervals(self, sigma):
         """
@@ -176,11 +169,7 @@ class Regression:
             row_ptr[i] += row_ptr[i-1]+fold_size[i-1]
 
         #Perform k-fold cross validation
-<<<<<<< HEAD
-        self.w_k_fold = np.zeros((k, self.p))
-
-=======
->>>>>>> 4077d092c40939b6a8f38f31c87c9726823e26df
+        bar = Bar(" ".join(["Polynomial degree", str(self.deg), ";", "Folds"]), max = k)
         for j in range(k):
             self.X_test = self.design_matrix[[i for i in range(row_ptr[j],row_ptr[j+1])], :]
             self.f_test = self.f_data[[i for i in range(row_ptr[j],row_ptr[j+1])]]
