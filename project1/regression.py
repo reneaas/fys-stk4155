@@ -151,14 +151,18 @@ class Regression:
         return mean_R2, mean_MSE, bias, variance
 
 
-    def k_fold_cross_validation_old(self,k):
+    def k_fold_cross_validation(self,k):
+
         #Copy data
+        X_test_copy = np.copy(self.X_test)
         X_train_copy = np.copy(self.X_train)
+        f_test_copy = np.copy(self.f_test)
         f_train_copy = np.copy(self.f_train)
 
+        R2, MSE = np.zeros(k), np.zeros(k)
 
-        int_size = self.n_train // k
-        remainder = self.n_train % k
+        int_size = self.n // k
+        remainder = self.n % k
         fold_size = np.zeros(k, dtype ="int")
         for i in range(k):
             fold_size[i] = int_size + (remainder > 0)
@@ -170,33 +174,29 @@ class Regression:
             row_ptr[i] += row_ptr[i-1]+fold_size[i-1]
 
         #Perform k-fold cross validation
-        self.w_k_fold = np.zeros((k, self.p))
         for j in range(k):
-            X_test = self.X_train[[i for i in range(row_ptr[j],row_ptr[j+1])], :]
-            f_test = self.f_train[[i for i in range(row_ptr[j],row_ptr[j+1])]]
+            self.X_test = self.design_matrix[[i for i in range(row_ptr[j],row_ptr[j+1])], :]
+            self.f_test = self.f_data[[i for i in range(row_ptr[j],row_ptr[j+1])]]
             idx = []
             for l in range(j):
                 idx += [i for i in range(row_ptr[l],row_ptr[l+1])]
             for l in range(j+1,k):
                 idx += [i for i in range(row_ptr[l],row_ptr[l+1])]
-            X_train = self.X_train[idx, :]
-            f_train = self.f_train[idx]
+            self.X_train = self.design_matrix[idx, :]
+            self.f_train = self.f_data[idx]
             self.train()
-            self.w_k_fold[j, :] = self.w[:]
+            R2[j], MSE[j] = self.predict_test()
 
-        self.compute_statistics(self.w_k_fold)
+        mean_R2 = np.mean(R2)
+        mean_MSE = np.mean(MSE)
 
         #Recopy the initial dataset.
+        self.X_test = X_test_copy
         self.X_train = X_train_copy
         self.f_train = f_train_copy
+        self.f_test = f_test_copy
 
-    def compute_statistics(self,w):
-        self.w_mean = np.zeros(self.p)
-        self.w_std = np.zeros(self.p)
-        for i in range(self.p):
-            self.w_mean[i] = np.mean(w[:, i])
-            self.w_std[i] = np.std(w[:,i])
-        self.w[:] = self.w_mean[:]
+        return mean_R2, mean_MSE
 
 
     def predict_train(self):
