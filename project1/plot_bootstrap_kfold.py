@@ -7,11 +7,11 @@ import os
 
 N = sys.argv[1]
 sigma = sys.argv[2]
+p = int(sys.argv[3])
 path_to_datasets = "./datasets/"
 filename = path_to_datasets + "_".join(["frankefunction", "dataset", "N", str(N), "sigma", str(sigma)]) + ".txt"
 
-polynomial = [i for i in range(8)]
-p = len(polynomial)
+polynomial = [i for i in range(p)]
 b = 1000
 k = 10
 
@@ -34,6 +34,10 @@ for i in range(len(polynomial)):
     R2_cross_val[i], MSE_cross_val[i] = solver.k_fold_cross_validation(k)
 
 
+Min_bootstrap_MSE = np.argmin(MSE_bootstrap)
+Min_kfold_MSE = np.argmin(MSE_cross_val)
+
+
 path = "./results/FrankeFunction/OLS/" + "_".join(["N", str(N),"Sigma",str(sigma)]) +"/"
 
 if not os.path.exists(path):
@@ -42,24 +46,27 @@ if not os.path.exists(path):
 plot_name = path + "Bootstrap_MaxPdeg_" + str(p) + ".pdf"
 
 plt.plot(polynomial, MSE_bootstrap, label="MSE")
-plt.plot(polynomial, bias_bootstrap, label = "Bias")
-plt.plot(polynomial, variance_bootstrap, label = "variance")
+plt.plot(polynomial, bias_bootstrap,"--",label = "Bias")
+plt.plot(polynomial, variance_bootstrap,"--" ,label = "variance")
 plt.xlabel("Polynomial degree")
 plt.ylabel("MSE")
 plt.title("Statistical values from Bootstrap w/ %i Re-samples" % b)
 plt.grid()
 plt.legend()
-plt.figure()
 plt.savefig(plot_name)
+
 
 plot_name = path + "MSE_Compare_MaxPdeg_" + str(p) + ".pdf"
 
 plt.plot(polynomial, MSE_bootstrap, label="Bootstrap w/ %i Re-samples" % b)
+plt.plot(polynomial, MSE_bootstrap, "*")
+plt.plot(polynomial[Min_bootstrap_MSE], MSE_bootstrap[Min_bootstrap_MSE], "o")
 plt.plot(polynomial, MSE_cross_val, label="%i-fold Cross-Validation" % k)
+plt.plot(polynomial, MSE_cross_val, "*")
+plt.plot(polynomial[Min_kfold_MSE], MSE_cross_val[Min_kfold_MSE], "o")
 plt.xlabel("Polynomial degree")
 plt.ylabel("MSE")
 plt.title("MSE values from Bootstrap and K-fold")
 plt.grid()
 plt.legend()
 plt.savefig(plot_name)
-plt.show()
