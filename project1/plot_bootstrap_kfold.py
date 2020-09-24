@@ -13,7 +13,7 @@ filename = path_to_datasets + "_".join(["frankefunction", "dataset", "N", str(N)
 
 polynomial = [i for i in range(p)]
 b = 1000
-k = 10
+k = 5
 
 
 R2_bootstrap = np.zeros(p)
