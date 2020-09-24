@@ -8,13 +8,13 @@ import os
 plt.rc("text", usetex=True)
 
 N = 1000 #Number of datapoints
-sigma = 1.0
+sigma = 0.1
 path_to_datasets = "./datasets/" #relative path into subdirectory for datasets.
 
 filename = path_to_datasets + "_".join(["frankefunction", "dataset", "N", str(N), "sigma", str(sigma)]) + ".txt"
 
 method = sys.argv[1]
-Polynomial_degrees = [i for i in range(10)]
+Polynomial_degrees = [i for i in range(22)]
 P = len(Polynomial_degrees)
 b = 1000
 
@@ -39,7 +39,8 @@ if method == "Ridge":
         solver.split_data()
         for j in range(L):
             solver.Lambda = Lambdas[j]
-            R2, MSE, bias_bootstrap, variance_bootstrap = solver.bootstrap(b)
+            solver.train()
+            R2, MSE = solver.predict_test()
             MSE_Test_Ridge[j,i] = MSE
             R2_Test_Ridge[j,i] = R2
 
@@ -92,9 +93,9 @@ if method == "Lasso":
     if not os.path.exists(path_to_plot):
         os.makedirs(path_to_plot)
 
-    Lambdas = [1/10**i for i in range(-1,10)]
+    Lambdas = [1/10**i for i in range(-1,20)]
     L = len(Lambdas)
-    
+
     MSE_Test_Lasso = np.zeros([L,P])
     R2_Test_Lasso = np.zeros([L,P])
 
@@ -106,7 +107,8 @@ if method == "Lasso":
         solver.split_data()
         for j in range(L):
             solver.Lambda = Lambdas[j]
-            R2, MSE, bias_bootstrap, variance_bootstrap = solver.bootstrap(b)
+            solver.train()
+            R2, MSE = solver.predict_test()
             MSE_Test_Lasso[j,i] = MSE
             R2_Test_Lasso[j,i] = R2
 
