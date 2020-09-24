@@ -6,7 +6,7 @@ from matplotlib import cm
 import os
 
 # Load the terrain
-terrain1 = imread("./TerrainFiles/SRTM_data_Norway_1.tif")
+terrain1 = imread("./datasets/TerrainFiles/SRTM_data_Norway_1.tif")
 # Show the terrain
 
 
@@ -38,9 +38,9 @@ x_data = X.flat[:]
 y_data = Y.flat[:]
 z_data = Z.flat[:]
 
-outfilename = "terrain_data.txt"
+outfilename = "./datasets/TerrainFiles/terrain_data.txt"
 
-with open("TerrainFiles/" + outfilename, "w") as outfile:
+with open(outfilename, "w") as outfile:
     for i in range(len(x_data)):
         outfile.write(" ".join([str(x_data[i]), str(y_data[i]), str(z_data[i])]))
         outfile.write("\n")
