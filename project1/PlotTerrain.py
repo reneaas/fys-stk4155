@@ -9,9 +9,10 @@ plt.rc("text", usetex=True)
 
 
 filename = "./datasets/TerrainFiles/terrain_data.txt"
+#filename = "./datasets/frankefunction_dataset_N_1000_sigma_0.1.txt"
 
 method = sys.argv[1]
-Polynomial_degrees = [i for i in range(30)]
+Polynomial_degrees = [i for i in range(25)]
 P = len(Polynomial_degrees)
 
 if method == "Ridge":
@@ -20,7 +21,7 @@ if method == "Ridge":
     if not os.path.exists(path_to_plot):
         os.makedirs(path_to_plot)
 
-    Lambdas = [1/10**i for i in range(-5,5)]
+    Lambdas = [1/10**i for i in range(-2,7)]
 
     L = len(Lambdas)
     MSE_Test_Ridge = np.zeros([L,P])
@@ -66,7 +67,7 @@ if method == "Ridge":
     plot_name = path_to_plot + "Regularization_Path_R2.pdf"
 
     plt.contourf(P_deg, Lam, R2_Test_Ridge, cmap = "inferno", levels=40)
-    plt.plot(Polynomial_degrees[idx_P[0]],Lambdas[idx_L[0]], "w+")
+    plt.plot(Polynomial_degrees[idx_P[0]],Lambdas[idx_L[0]], "k+")
     plt.title("Regularization path - Ridge", fontsize=font_size)
     plt.xlabel("Polynomial Degree", size=font_size)
     plt.ylabel(r"$\log_{10}(\lambda)$", size=font_size)
