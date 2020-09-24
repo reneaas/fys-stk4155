@@ -23,12 +23,12 @@ m = len(terrain1[0])
 
 
 terrain1 = terrain1[::-1,:]
-q = 1000
+N = 50
 x = np.linspace(0, m-1, m)
 y = np.linspace(0, n-1, n)
 X,Y = np.meshgrid(x,y)
-X = X[:q,:q]; Y = Y[:q,:q]
-terrain1 = terrain1[:q,:q]
+X = X[:N,:N]; Y = Y[:N,:N]
+terrain1 = terrain1[:N,:N]
 
 """
 print("X = ", X)
@@ -57,12 +57,12 @@ x_data[:] = X.flat[:]
 y_data[:] = Y.flat[:]
 z_data[:] = Z.flat[:]
 """
-Z = np.zeros((q,q))
+Z = np.zeros((N,N))
 Z.flat[:] = terrain1[:]
 
-x_data = np.zeros(q*q)
-y_data = np.zeros(q*q)
-z_data = np.zeros(q*q)
+x_data = np.zeros(N*N)
+y_data = np.zeros(N*N)
+z_data = np.zeros(N*N)
 
 
 
@@ -73,7 +73,7 @@ z_data[:] = Z.flat[:]
 """
 plt.title("Terrain over Norway 1")
 plt.imshow(terrain1, cmap="gray")
-plt.axis("equal")
+plt.axis("eNual")
 plt.figure()
 plt.contourf(X,Y,Z, cmap="gray")
 plt.colorbar()

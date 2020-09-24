@@ -14,7 +14,6 @@ for n in N:
             os.system(" ".join(["python3", "generate_data.py", str(n), str(s)]))
 
 
-
 for n in N:
     print("N = ", n)
     for s in sigma:
