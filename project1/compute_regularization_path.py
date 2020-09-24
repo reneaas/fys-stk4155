@@ -6,13 +6,13 @@ import sys
 import numpy as np
 import os
 plt.rc("text", usetex=True)
-
+"""
 N = 1000 #Number of datapoints
 sigma = 1.0
 path_to_datasets = "./datasets/" #relative path into subdirectory for datasets.
 
 filename = path_to_datasets + "_".join(["frankefunction", "dataset", "N", str(N), "sigma", str(sigma)]) + ".txt"
-
+"""
 method = sys.argv[1]
 Polynomial_degrees = [i for i in range(12)]
 P = len(Polynomial_degrees)
