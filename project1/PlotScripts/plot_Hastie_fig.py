@@ -1,16 +1,19 @@
-from ols import OLS
 import matplotlib.pyplot as plt
 import sys
 import numpy as np
 import os
 plt.rc("text", usetex=True)
 
+path = "../results/FrankeFunction/OLS/Hasties/"
+plot_name = path + "HastieFig.pdf"
 
+if not os.path.exists(path):
+    os.makedirs(path)
 
 p = [i for i in range(15)]
 
-MSE_train = np.load("MSE_train.npy")
-MSE_test = np.load("MSE_test.npy")
+MSE_train = np.load(path + "MSE_train.npy")
+MSE_test = np.load(path + "MSE_test.npy")
 
 plt.plot(p, MSE_train, label = "In-sample error")
 plt.plot(p, MSE_test, label = "Out-of-sample error")
@@ -25,4 +28,4 @@ plt.xticks(size=tick_size)
 plt.yticks(size=tick_size)
 plt.grid()
 plt.legend(fontsize=font_size)
-plt.show()
+plt.savefig(plot_name)
