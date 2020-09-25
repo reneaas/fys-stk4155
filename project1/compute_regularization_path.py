@@ -44,10 +44,13 @@ if method == "Ridge":
             MSE_Test_Ridge[j,i] = MSE
             R2_Test_Ridge[j,i] = R2
 
+    np.save("MSE_Ridge_franke_boot.npy", MSE_Test_Ridge)
+    np.save("R2_Ridge_franke_boot.npy", R2_Test_Ridge)
+
     idx_L, idx_P = np.where(MSE_Test_Ridge == np.min(MSE_Test_Ridge))
     R2_idx_L, R2_idx_P = np.where(R2_Test_Ridge == np.max(R2_Test_Ridge))
     print("Ridge; min MSE = ", np.min(MSE_Test_Ridge))
-    print(Polynomial_degrees[idx_P[0]],Lambdas[idx_L[0]])
+    print("Best p = ",Polynomial_degrees[idx_P[0]], "Best lambda = ",Lambdas[idx_L[0]])
     Lambdas = np.log10(Lambdas)
     P_deg, Lam = np.meshgrid(Polynomial_degrees, Lambdas)
 
@@ -112,6 +115,9 @@ if method == "Lasso":
             MSE_Test_Lasso[j,i] = MSE
             R2_Test_Lasso[j,i] = R2
 
+
+    np.save("MSE_lasso_franke_boot.npy", MSE_Test_Lasso)
+    np.save("R2_lasso_franke_boot.npy", R2_Test_Lasso)
 
     plot_name = path_to_plot + "MSE_Regularization_Path.pdf"
 
