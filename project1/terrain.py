@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 import os
+plt.rc("text", usetex=True)
 
 # Load the terrain
 terrain1 = imread("./datasets/TerrainFiles/SRTM_data_Norway_1.tif")
@@ -28,17 +29,25 @@ Y = Y[start_y:start_y + N_y,start_y: start_y + N_y]
 Z = terrain1[start_x:start_x + N_x, start_y:start_y + N_y]
 #Z = terrain1
 
-
+font_size = 16
+tick_size = 14
 plt.figure()
-plt.title("Terrain over Norway 1")
 plt.imshow(Z, cmap="gray")
-plt.xlabel("X")
-plt.ylabel("Y")
+plt.xlabel(r"$x$", fontsize=font_size)
+plt.ylabel(r"$y$", fontsize=font_size)
+plt.xticks(size=tick_size)
+plt.yticks(size=tick_size)
+cb = plt.colorbar()
+cb.set_label(label="$z(x,y)$", size=16)
+cb.ax.tick_params(labelsize=14)
+plt.savefig("terrain_image.pdf")
 plt.show()
 
+"""
 x_data = X.flat[:]
 y_data = Y.flat[:]
 z_data = Z.flat[:]
+
 
 outfilename = "./datasets/TerrainFiles/terrain_data.txt"
 
@@ -46,3 +55,4 @@ with open(outfilename, "w") as outfile:
     for i in range(len(x_data)):
         outfile.write(" ".join([str(x_data[i]), str(y_data[i]), str(z_data[i])]))
         outfile.write("\n")
+"""
