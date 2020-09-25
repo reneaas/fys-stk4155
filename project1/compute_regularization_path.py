@@ -18,11 +18,12 @@ Polynomial_degrees = [i for i in range(20)]
 P = len(Polynomial_degrees)
 b = 100
 
+
 if method == "Ridge":
 
-    path_to_plot = "./results/FrankeFunction/Ridge/"
-    if not os.path.exists(path_to_plot):
-        os.makedirs(path_to_plot)
+    save_path = "./results/FrankeFunction/Ridge/Data/"
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
 
     Lambdas = [1/10**i for i in range(-5,10)]
     L = len(Lambdas)
@@ -51,9 +52,9 @@ if method == "Ridge":
 
 if method == "Lasso":
 
-    path_to_plot = "./results/FrankeFunction/Lasso/"
-    if not os.path.exists(path_to_plot):
-        os.makedirs(path_to_plot)
+    save_path = "./results/FrankeFunction/Lasso/Data/"
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
 
     Lambdas = [1/10**i for i in range(-1,20)]
     L = len(Lambdas)
@@ -74,5 +75,5 @@ if method == "Lasso":
             R2_Test_Lasso[j,i] = R2
 
 
-    np.save("MSE_lasso_franke_boot_" + str(b) + ".npy", MSE_Test_Lasso)
-    np.save("R2_lasso_franke_boot_" + str(b) + ".npy", R2_Test_Lasso)
+    np.save(save_path + "MSE_lasso_franke_boot_" + str(b) + ".npy", MSE_Test_Lasso)
+    np.save(save_path + "R2_lasso_franke_boot_" + str(b) + ".npy", R2_Test_Lasso)

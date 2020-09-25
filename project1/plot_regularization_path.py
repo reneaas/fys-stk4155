@@ -13,9 +13,11 @@ b = sys.argv[2]
 
 if method == "Ridge":
 
-    MSE = np.load("MSE_Ridge_franke_boot_" + str(b) + ".npy")
+    load_path = "./results/FrankeFunction/Ridge/Data/"
 
-    path_to_plot = "./results/FrankeFunction/Ridge/"
+    MSE = np.load(load_path + "MSE_Ridge_franke_boot_" + str(b) + ".npy")
+
+    path_to_plot = "./results/FrankeFunction/Ridge/Plots/"
     if not os.path.exists(path_to_plot):
         os.makedirs(path_to_plot)
     plot_name = path_to_plot + "MSE_Regularization_Path_Boot_" + str(b) + ".pdf"
@@ -46,7 +48,7 @@ if method == "Ridge":
     plt.close()
 
 
-    R2 = np.load("R2_Ridge_franke_boot_" + str(b) + ".npy")
+    R2 = np.load(load_path + "R2_Ridge_franke_boot_" + str(b) + ".npy")
     R2_idx_L, R2_idx_P = np.where(R2 == np.max(R2))
     plot_name = path_to_plot + "R2_Regularization_Path_Boot_" + str(b) + ".pdf"
 
@@ -70,10 +72,12 @@ if method == "Ridge":
 
 if method == "Lasso":
 
-    MSE = np.load("MSE_lasso_franke_boot_" + str(b) + ".npy")
+    load_path = "./results/FrankeFunction/Lasso/Data/"
+
+    MSE = np.load(load_path + "MSE_lasso_franke_boot_" + str(b) + ".npy")
     M_idx_L, M_idx_P = np.where(MSE == np.min(MSE))
 
-    path_to_plot = "./results/FrankeFunction/Lasso/"
+    path_to_plot = "./results/FrankeFunction/Lasso/Plots/"
     if not os.path.exists(path_to_plot):
         os.makedirs(path_to_plot)
     plot_name = path_to_plot + "MSE_Regularization_Path_Boot_" + str(b) + ".pdf"
@@ -105,7 +109,7 @@ if method == "Lasso":
     print("best p = ", Polynomial_degrees[M_idx_P[0]], "best lambda = ", Lambdas[M_idx_L[0]])
 
     plot_name = path_to_plot + "R2_Regularization_Path_Boot_" + str(b) + ".pdf"
-    R2 = np.load("R2_lasso_franke_boot_" + str(b) + ".npy")
+    R2 = np.load(load_path + "R2_lasso_franke_boot_" + str(b) + ".npy")
     R2_idx_L, R2_idx_P = np.where(R2 == np.max(R2))
 
     font_size = 14
