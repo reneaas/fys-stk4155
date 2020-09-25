@@ -13,11 +13,11 @@ b = sys.argv[2]
 
 if method == "Ridge":
 
-    load_path = "./results/FrankeFunction/Ridge/Data/"
+    load_path = "../results/FrankeFunction/Ridge/Data/"
 
     MSE = np.load(load_path + "MSE_Ridge_franke_boot_" + str(b) + ".npy")
 
-    path_to_plot = "./results/FrankeFunction/Ridge/Plots/"
+    path_to_plot = "../results/FrankeFunction/Ridge/Plots/"
     if not os.path.exists(path_to_plot):
         os.makedirs(path_to_plot)
     plot_name = path_to_plot + "MSE_Regularization_Path_Boot_" + str(b) + ".pdf"
@@ -72,12 +72,12 @@ if method == "Ridge":
 
 if method == "Lasso":
 
-    load_path = "./results/FrankeFunction/Lasso/Data/"
+    load_path = "../results/FrankeFunction/Lasso/Data/"
 
     MSE = np.load(load_path + "MSE_lasso_franke_boot_" + str(b) + ".npy")
     M_idx_L, M_idx_P = np.where(MSE == np.min(MSE))
 
-    path_to_plot = "./results/FrankeFunction/Lasso/Plots/"
+    path_to_plot = "../results/FrankeFunction/Lasso/Plots/"
     if not os.path.exists(path_to_plot):
         os.makedirs(path_to_plot)
     plot_name = path_to_plot + "MSE_Regularization_Path_Boot_" + str(b) + ".pdf"
