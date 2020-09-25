@@ -6,10 +6,10 @@ plt.rc("text", usetex=True)
 method = sys.argv[1]
 
 if method == "Ridge":
-    R2_Test_Ridge = np.load("R2_Test_Ridge_Terrain.npy")
-    MSE_Test_Ridge = np.load("MSE_Test_Ridge_Terrain.npy")
+    R2_Test_Ridge = np.load("../results/TerrainData/Ridge/Data/R2_Test_Ridge_Terrain.npy")
+    MSE_Test_Ridge = np.load("../results/TerrainData/Ridge/Data/MSE_Test_Ridge_Terrain.npy")
 
-    path_to_plot = "./results/TerrainData/Ridge/"
+    path_to_plot = "../results/TerrainData/Ridge/Plots/"
     if not os.path.exists(path_to_plot):
         os.makedirs(path_to_plot)
 

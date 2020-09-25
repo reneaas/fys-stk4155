@@ -4,6 +4,9 @@ from lasso import Lasso
 
 filename = "./datasets/frankefunction_dataset_N_1000_sigma_0.1.txt" #Test file
 
+if not os.path.exists(filename):
+    os.system("python3 generate_data.py 1000 0.1")
+
 deg = 5 #Highest polynomial degree.
 #Show-case usage of OLS class:
 my_solver = OLS() #Initiates the solver.
