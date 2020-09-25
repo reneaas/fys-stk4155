@@ -63,7 +63,7 @@ if method == "Ridge":
 
     idx_L, idx_P = np.where(R2_Test_Ridge == np.max(R2_Test_Ridge))
     P_deg, Lam = np.meshgrid(Polynomial_degrees, Lambdas)
-
+    print("Ridge; min MSE = ", np.min(MSE_Test_Ridge))
     plot_name = path_to_plot + "Regularization_Path_R2.pdf"
 
     plt.contourf(P_deg, Lam, R2_Test_Ridge, cmap = "inferno", levels=40)

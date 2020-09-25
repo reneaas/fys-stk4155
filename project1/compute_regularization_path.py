@@ -14,7 +14,7 @@ path_to_datasets = "./datasets/" #relative path into subdirectory for datasets.
 filename = path_to_datasets + "_".join(["frankefunction", "dataset", "N", str(N), "sigma", str(sigma)]) + ".txt"
 
 method = sys.argv[1]
-Polynomial_degrees = [i for i in range(22)]
+Polynomial_degrees = [i for i in range(20)]
 P = len(Polynomial_degrees)
 b = 100
 
@@ -46,7 +46,8 @@ if method == "Ridge":
 
     idx_L, idx_P = np.where(MSE_Test_Ridge == np.min(MSE_Test_Ridge))
     R2_idx_L, R2_idx_P = np.where(R2_Test_Ridge == np.max(R2_Test_Ridge))
-
+    print("Ridge; min MSE = ", np.min(MSE_Test_Ridge))
+    print(Polynomial_degrees[idx_P[0]],Lambdas[idx_L[0]])
     Lambdas = np.log10(Lambdas)
     P_deg, Lam = np.meshgrid(Polynomial_degrees, Lambdas)
 
@@ -56,7 +57,7 @@ if method == "Ridge":
     tick_size = 14
     plt.contourf(P_deg, Lam, MSE_Test_Ridge, cmap = "inferno", levels=40)
     plt.plot(Polynomial_degrees[idx_P[0]],Lambdas[idx_L[0]], "w+")
-    plt.text(Polynomial_degrees[idx_P[0]] + 0.3,Lambdas[idx_L[0]] + 0.3, "Min." + r"$\text{MSE}($\lambda, p$)", color = "w")
+    plt.text(Polynomial_degrees[idx_P[0]] + 0.3,Lambdas[idx_L[0]] + 0.3, "Min. MSE" + r"($\lambda, p$)", color = "w")
     plt.xlabel("Polynomial Degree", size=font_size)
     plt.ylabel(r"$\log_{10}(\lambda)$", size=font_size-2)
     plt.xticks(size=tick_size)
@@ -116,6 +117,8 @@ if method == "Lasso":
 
     idx_L, idx_P = np.where(MSE_Test_Lasso == np.min(MSE_Test_Lasso))
     R2_idx_L, R2_idx_P = np.where(R2_Test_Lasso == np.max(R2_Test_Lasso))
+    print("Lasso; min MSE = ", np.min(MSE_Test_Lasso))
+    print("best p = ", Polynomial_degrees[idx_P[0]], "best lambda = ", Lambdas[idx_L[0]])
 
     Lambdas = np.log10(Lambdas)
     P_deg, Lam = np.meshgrid(Polynomial_degrees, Lambdas)
