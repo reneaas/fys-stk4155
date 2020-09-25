@@ -16,6 +16,25 @@ We've developed a set of classes with the following structure:
   - Implements Lasso regression using the Scikit-Learn module.
   - Inherts all methods declared in *regression.py*
 
+### Producing data
+
+1. To produce data for the Franke function, run the script *generate_data.py*, with the following in a Linux/Unix command line:
+
+```terminal
+python3 generate_data.py N sigma
+```
+- *N* is the number of points
+- *sigma* is the desired standard deviation.
+
+2. Extracting the image used in the report (LINK HER) from the terrain data is done using the script *terrain.py*. Simply run the following in a Linux/Unix command line:
+
+```terminal
+python3 terrain.py
+```
+
+  - This produces an image of 1000 x 1000 pixels.
+
+
 ### Usage of codes
 
 The usage of the derived classes are identical, and they all have access to the methods in the Regression superclass.
