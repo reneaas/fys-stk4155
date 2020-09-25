@@ -16,7 +16,7 @@ filename = path_to_datasets + "_".join(["frankefunction", "dataset", "N", str(N)
 method = sys.argv[1]
 Polynomial_degrees = [i for i in range(22)]
 P = len(Polynomial_degrees)
-b = 1000
+b = 100
 
 if method == "Ridge":
 
@@ -39,8 +39,8 @@ if method == "Ridge":
         solver.split_data()
         for j in range(L):
             solver.Lambda = Lambdas[j]
-            solver.train()
-            R2, MSE = solver.predict_test()
+
+            R2, MSE, bias, variance = solver.bootstrap(b)
             MSE_Test_Ridge[j,i] = MSE
             R2_Test_Ridge[j,i] = R2
 
@@ -107,8 +107,7 @@ if method == "Lasso":
         solver.split_data()
         for j in range(L):
             solver.Lambda = Lambdas[j]
-            solver.train()
-            R2, MSE = solver.predict_test()
+            R2, MSE, bias, variance = solver.bootstrap(b)
             MSE_Test_Lasso[j,i] = MSE
             R2_Test_Lasso[j,i] = R2
 
