@@ -12,8 +12,9 @@ filename = "./datasets/TerrainFiles/terrain_data.txt"
 #filename = "./datasets/frankefunction_dataset_N_1000_sigma_0.1.txt"
 
 method = sys.argv[1]
-Polynomial_degrees = [i for i in range(25)]
+Polynomial_degrees = [i for i in range(24)]
 P = len(Polynomial_degrees)
+k = 10
 
 if method == "Ridge":
 
@@ -35,8 +36,9 @@ if method == "Ridge":
         solver.split_data()
         for j in range(L):
             solver.Lambda = Lambdas[j]
-            solver.train()
-            R2, MSE = solver.predict_test()
+            #solver.train()
+            #R2, MSE = solver.predict_test()
+            R2, MSE = solver.k_fold_cross_validation(k)
             MSE_Test_Ridge[j,i] = MSE
             R2_Test_Ridge[j,i] = R2
 
@@ -74,7 +76,7 @@ if method == "Ridge":
     plt.xticks(size=tick_size)
     plt.yticks(size=tick_size)
     cb = plt.colorbar()
-    cb.set_label(label="R2", size=14)
+    cb.set_label(label=r"$R^2$", size=14)
     cb.ax.tick_params(labelsize=14)
     plt.savefig(plot_name)
     plt.close()
@@ -99,8 +101,9 @@ if method == "Lasso":
         solver.split_data()
         for j in range(L):
             solver.Lambda = Lambdas[j]
-            solver.train()
-            R2, MSE = solver.predict_test()
+            #solver.train()
+            #R2, MSE = solver.predict_test()
+            R2, MSE, variance, bias = solver.bootstrap(B)
             MSE_Test_Lasso[j,i] = MSE
             R2_Test_Ridge[j,i] = R2
 
@@ -139,7 +142,7 @@ if method == "Lasso":
     plt.xticks(size=tick_size)
     plt.yticks(size=tick_size)
     cb = plt.colorbar()
-    cb.set_label(label="R2", size=14)
+    cb.set_label(label=r"$R^2$", size=14)
     cb.ax.tick_params(labelsize=14)
     plt.savefig(plot_name)
     plt.close()
