@@ -4,6 +4,7 @@ from progress.bar import Bar
 
 N = [100,1000]
 sigma = [0.1, 1.0]
+poly = [5, 8, 15, 20]
 
 path_to_datasets = "../datasets/"
 for n in N:
@@ -16,4 +17,5 @@ for n in N:
 for n in N:
     print("N = ", n)
     for s in sigma:
-        os.system("python3 plot_bootstrap_kfold.py" + " " + str(n) + " " + str(s))
+        for p in poly:
+            os.system("python3 plot_bootstrap_kfold.py" + " " + str(n) + " " + str(s) + " " + str(p))
