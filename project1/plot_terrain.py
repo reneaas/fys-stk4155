@@ -12,7 +12,7 @@ filename = "./datasets/TerrainFiles/terrain_data.txt"
 #filename = "./datasets/frankefunction_dataset_N_1000_sigma_0.1.txt"
 
 method = sys.argv[1]
-Polynomial_degrees = [i for i in range(10)]
+Polynomial_degrees = [i for i in range(24)]
 P = len(Polynomial_degrees)
 k = 10
 
