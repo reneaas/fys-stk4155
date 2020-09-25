@@ -87,7 +87,7 @@ R2, MSE = my_solver.k_fold_cross_validation(k)
 
 ### Test program
 
-As as simple test program, we've implemented [test_program.py](link here) which show-cases all of the above using a generated dataset on the Franke function. Simply run the follow command in any Linux/Unix command
+As as simple test program, we've implemented [test_program.py](https://github.com/reneaas/fys-stk4155/blob/master/project1/test_program.py) which show-cases all of the above using a generated dataset on the Franke function. Simply run the follow command in any Linux/Unix command
 
 ```terminal
 python3 test_program.py
