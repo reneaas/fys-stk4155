@@ -44,50 +44,8 @@ if method == "Ridge":
             MSE_Test_Ridge[j,i] = MSE
             R2_Test_Ridge[j,i] = R2
 
-    np.save("MSE_Ridge_franke_boot.npy", MSE_Test_Ridge)
-    np.save("R2_Ridge_franke_boot.npy", R2_Test_Ridge)
-
-    idx_L, idx_P = np.where(MSE_Test_Ridge == np.min(MSE_Test_Ridge))
-    R2_idx_L, R2_idx_P = np.where(R2_Test_Ridge == np.max(R2_Test_Ridge))
-    print("Ridge; min MSE = ", np.min(MSE_Test_Ridge))
-    print("Best p = ",Polynomial_degrees[idx_P[0]], "Best lambda = ",Lambdas[idx_L[0]])
-    Lambdas = np.log10(Lambdas)
-    P_deg, Lam = np.meshgrid(Polynomial_degrees, Lambdas)
-
-    plot_name = path_to_plot + "MSE_Regularization_Path.pdf"
-
-    font_size = 14
-    tick_size = 14
-    plt.contourf(P_deg, Lam, MSE_Test_Ridge, cmap = "inferno", levels=40)
-    plt.plot(Polynomial_degrees[idx_P[0]],Lambdas[idx_L[0]], "w+")
-    plt.text(Polynomial_degrees[idx_P[0]] + 0.3,Lambdas[idx_L[0]] + 0.3, "Min. MSE" + r"($\lambda, p$)", color = "w")
-    plt.xlabel("Polynomial Degree", size=font_size)
-    plt.ylabel(r"$\log_{10}(\lambda)$", size=font_size-2)
-    plt.xticks(size=tick_size)
-    plt.yticks(size=tick_size)
-    cb = plt.colorbar()
-    cb.set_label(label="MSE", size=14)
-    cb.ax.tick_params(labelsize=14)
-    plt.savefig(plot_name)
-    plt.close()
-
-    plot_name = path_to_plot + "R2_Regularization_Path.pdf"
-
-    font_size = 14
-    tick_size = 14
-    plt.contourf(P_deg, Lam, R2_Test_Ridge, cmap = "inferno", levels=40)
-    plt.plot(Polynomial_degrees[R2_idx_P[0]],Lambdas[R2_idx_L[0]], "k+")
-    plt.text(Polynomial_degrees[R2_idx_P[0]] + 0.3,Lambdas[R2_idx_L[0]] + 0.3, "Max." + r"$R^2(\lambda, p$)", color = "k")
-    plt.xlabel("Polynomial Degree", size=font_size)
-    plt.ylabel(r"$\log_{10}(\lambda)$", size=font_size-2)
-    plt.xticks(size=tick_size)
-    plt.yticks(size=tick_size)
-    cb = plt.colorbar()
-    cb.set_label(label=r"$R^2$", size=14)
-    cb.ax.tick_params(labelsize=14)
-    plt.savefig(plot_name)
-    plt.close()
-
+    np.save("MSE_Ridge_franke_boot_" + str(b) + ".npy", MSE_Test_Ridge)
+    np.save("R2_Ridge_franke_boot_" + str(b) + ".npy", R2_Test_Ridge)
 
 
 
@@ -116,47 +74,5 @@ if method == "Lasso":
             R2_Test_Lasso[j,i] = R2
 
 
-    np.save("MSE_lasso_franke_boot.npy", MSE_Test_Lasso)
-    np.save("R2_lasso_franke_boot.npy", R2_Test_Lasso)
-
-    plot_name = path_to_plot + "MSE_Regularization_Path.pdf"
-
-    idx_L, idx_P = np.where(MSE_Test_Lasso == np.min(MSE_Test_Lasso))
-    R2_idx_L, R2_idx_P = np.where(R2_Test_Lasso == np.max(R2_Test_Lasso))
-    print("Lasso; min MSE = ", np.min(MSE_Test_Lasso))
-    print("best p = ", Polynomial_degrees[idx_P[0]], "best lambda = ", Lambdas[idx_L[0]])
-
-    Lambdas = np.log10(Lambdas)
-    P_deg, Lam = np.meshgrid(Polynomial_degrees, Lambdas)
-
-    font_size = 14
-    tick_size = 14
-    plt.contourf(P_deg, Lam, MSE_Test_Lasso, cmap = "inferno", levels=40)
-    plt.plot(Polynomial_degrees[idx_P[0]],Lambdas[idx_L[0]], "w+")
-    plt.text(Polynomial_degrees[idx_P[0]] + 0.3,Lambdas[idx_L[0]] + 0.3, "Min." + r"$\text{MSE}($\lambda, p$)", color = "w")
-    plt.xlabel("Polynomial Degree", fontsize=font_size)
-    plt.ylabel(r"$\log_{10}(\lambda)$", fontsize=font_size-4)
-    plt.xticks(size=tick_size)
-    plt.yticks(size=tick_size)
-    cb = plt.colorbar()
-    cb.set_label(label="MSE", size=font_size)
-    cb.ax.tick_params(labelsize=tick_size)
-    plt.savefig(plot_name)
-    plt.close()
-
-    plot_name = path_to_plot + "R2_Regularization_Path.pdf"
-
-    font_size = 14
-    tick_size = 14
-    plt.contourf(P_deg, Lam, R2_Test_Lasso, cmap = "inferno", levels=40)
-    plt.plot(Polynomial_degrees[R2_idx_P[0]],Lambdas[R2_idx_L[0]], "k+")
-    plt.text(Polynomial_degrees[R2_idx_P[0]] + 0.3,Lambdas[R2_idx_L[0]] + 0.3, "Max. " + r"$R^2(\lambda, p$)", color = "k")
-    plt.xlabel("Polynomial Degree", fontsize=font_size)
-    plt.ylabel(r"$\log_{10}(\lambda)$", fontsize=font_size-4)
-    plt.xticks(size=tick_size)
-    plt.yticks(size=tick_size)
-    cb = plt.colorbar()
-    cb.set_label(label=r"$R^2$", size=14)
-    cb.ax.tick_params(labelsize=tick_size)
-    plt.savefig(plot_name)
-    plt.close()
+    np.save("MSE_lasso_franke_boot_" + str(b) + ".npy", MSE_Test_Lasso)
+    np.save("R2_lasso_franke_boot_" + str(b) + ".npy", R2_Test_Lasso)
