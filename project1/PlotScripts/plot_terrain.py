@@ -67,19 +67,20 @@ if method == "Ridge":
 
 
 if method == "Lasso":
+
     path_to_plot = "../results/TerrainData/Lasso/Plots/"
     if not os.path.exists(path_to_plot):
         os.makedirs(path_to_plot)
 
+    load_path = "../results/TerrainData/Lasso/Data/"
 
-    R2_Test_Lasso = np.load("../results/TerrainData/Lasso/Data/R2_Test_Lasso_Terrain.npy")
-    MSE_Test_Lasso = np.load("../results/TerrainData/Lasso/Data/MSE_Test_Lasso_Terrain.npy")
-
-    Polynomial_degrees = [i for i in range(19, 23)]
-    Lambdas = [1/10**i for i in range(3, 10)]
+    Polynomial_degrees = [i for i in range(24)]
+    Lambdas = [1/10**i for i in range(-1,6)]
     L = len(Lambdas)
     P = len(Polynomial_degrees)
 
+    R2_Test_Lasso = np.load(load_path + "R2_Test_Lasso_Terrain.npy")
+    MSE_Test_Lasso = np.load(load_path +"MSE_Test_Lasso_Terrain.npy")
 
     Lambdas = np.log10(Lambdas)
     P_deg, Lam = np.meshgrid(Polynomial_degrees, Lambdas)
