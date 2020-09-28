@@ -18,11 +18,11 @@ MSE_test = np.load(path + "MSE_test.npy")
 plt.plot(p, MSE_train, label = "In-sample error")
 plt.plot(p, MSE_test, label = "Out-of-sample error")
 
-font_size = 14
-tick_size = 14
+font_size = 16
+tick_size = 16
 
 
-plt.xlabel("Polynomial Degree", size=font_size)
+plt.xlabel(r"$d$", size=font_size)
 plt.ylabel("MSE", size=font_size)
 plt.xticks(size=tick_size)
 plt.yticks(size=tick_size)

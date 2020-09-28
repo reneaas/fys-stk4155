@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sys
 import os
+plt.rc("text", usetex=True)
 
 N = sys.argv[1]
 sigma = sys.argv[2]
@@ -32,16 +33,15 @@ Min_kfold_MSE = np.where(MSE_k[:p] == np.min(MSE_k[:p]))
 plot_name = save_path + "Bootstrap_statvals_maxdeg_" + str(p-1) + ".pdf"
 
 
-font_size = 14
-tick_size = 14
+font_size = 16
+tick_size = 16
 plt.plot(polynomial, MSE_boot[:p], label="MSE")
 plt.plot(polynomial, bias_boot[:p],"--",label = "Bias")
 plt.plot(polynomial, variance_boot[:p],"--" ,label = "variance")
-plt.xlabel("Polynomial degree", fontsize=font_size)
+plt.xlabel(r"$d$", fontsize=font_size)
 plt.ylabel("MSE", fontsize=font_size)
 plt.xticks(size=tick_size)
 plt.yticks(size=tick_size)
-plt.title("Statistical values from Bootstrap w/1000 Re-samples")
 plt.grid()
 plt.legend(fontsize=font_size)
 plt.savefig(plot_name)
@@ -56,11 +56,10 @@ plt.plot(polynomial[int(Min_bootstrap_MSE[0])], MSE_boot[int(Min_bootstrap_MSE[0
 plt.plot(polynomial, MSE_k[:p], label="5-fold Cross-Validation")
 plt.plot(polynomial, MSE_k[:p], "*")
 plt.plot(polynomial[int(Min_kfold_MSE[0])], MSE_k[int(Min_kfold_MSE[0])], "o")
-plt.xlabel("Polynomial degree", fontsize=font_size)
+plt.xlabel(r"$d$", fontsize=font_size)
 plt.ylabel("MSE", fontsize=font_size)
 plt.xticks(size=tick_size)
 plt.yticks(size=tick_size)
-plt.title("MSE values from Bootstrap and K-fold")
 plt.grid()
 plt.legend(fontsize=font_size)
 plt.savefig(plot_name)
