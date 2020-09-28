@@ -6,6 +6,7 @@ from matplotlib import cm
 import os
 plt.rc("text", usetex=True)
 
+
 # Load the terrain
 terrain1 = imread("./datasets/TerrainFiles/SRTM_data_Norway_1.tif")
 # Show the terrain
@@ -14,6 +15,11 @@ terrain1 = imread("./datasets/TerrainFiles/SRTM_data_Norway_1.tif")
 n = len(terrain1)
 m = len(terrain1[0])
 
+path_to_plot = "./results/TerrainData/IMGS/"
+if not os.path.exists(path_to_plot):
+    os.makedirs(path_to_plot)
+
+plot_name = path_to_plot + "terrain_image.pdf"
 
 terrain1 = terrain1[::-1,:]
 print(terrain1)
@@ -40,7 +46,7 @@ plt.yticks(size=tick_size)
 cb = plt.colorbar()
 cb.set_label(label="$z(x,y)$", size=16)
 cb.ax.tick_params(labelsize=14)
-plt.savefig("terrain_image.pdf")
+plt.savefig(plot_name)
 plt.show()
 
 """
