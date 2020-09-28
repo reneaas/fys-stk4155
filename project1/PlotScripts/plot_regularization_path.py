@@ -36,8 +36,8 @@ if method == "Ridge":
     tick_size = 14
     plt.contourf(P_deg, Lam, MSE, cmap = "inferno", levels=40)
     plt.plot(Polynomial_degrees[M_idx_P[0]],Lambdas[M_idx_L[0]], "w+")
-    plt.text(Polynomial_degrees[M_idx_P[0]] + 0.3,Lambdas[M_idx_L[0]] + 0.3, "Min.MSE" + r"($\lambda, p$)", color = "w")
-    plt.xlabel("Polynomial Degree", size=font_size)
+    plt.text(Polynomial_degrees[M_idx_P[0]] + 0.3,Lambdas[M_idx_L[0]] + 0.3, "Min.MSE" + r"($d,\lambda$)", color = "w")
+    plt.xlabel(r"$d$", size=font_size)
     plt.ylabel(r"$\log_{10}(\lambda)$", size=font_size-2)
     plt.xticks(size=tick_size)
     plt.yticks(size=tick_size)
@@ -56,8 +56,8 @@ if method == "Ridge":
     tick_size = 14
     plt.contourf(P_deg, Lam, R2, cmap = "inferno", levels=40)
     plt.plot(Polynomial_degrees[R2_idx_P[0]],Lambdas[R2_idx_L[0]], "k+")
-    plt.text(Polynomial_degrees[R2_idx_P[0]] + 0.3,Lambdas[R2_idx_L[0]] + 0.3, "Max." + r"$R^2(\lambda, p$)", color = "k")
-    plt.xlabel("Polynomial Degree", size=font_size)
+    plt.text(Polynomial_degrees[R2_idx_P[0]] + 0.3,Lambdas[R2_idx_L[0]] + 0.3, "Max." + r"$R^2(d,\lambda$)", color = "k")
+    plt.xlabel(r"$d$", size=font_size)
     plt.ylabel(r"$\log_{10}(\lambda)$", size=font_size-2)
     plt.xticks(size=tick_size)
     plt.yticks(size=tick_size)
@@ -94,8 +94,8 @@ if method == "Lasso":
     tick_size = 14
     plt.contourf(P_deg, Lam, MSE, cmap = "inferno", levels=40)
     plt.plot(Polynomial_degrees[M_idx_P[0]],Lambdas[M_idx_L[0]], "w+")
-    plt.text(Polynomial_degrees[M_idx_P[0]] + 0.3, Lambdas[M_idx_L[0]] + 0.3, "Min.MSE" + r"($\lambda, p$)", color = "w")
-    plt.xlabel("Polynomial Degree", fontsize=font_size)
+    plt.text(Polynomial_degrees[M_idx_P[0]] + 0.3, Lambdas[M_idx_L[0]] + 0.3, "Min.MSE" + r"($d,\lambda$)", color = "w")
+    plt.xlabel(r"$d$", fontsize=font_size)
     plt.ylabel(r"$\log_{10}(\lambda)$", fontsize=font_size-4)
     plt.xticks(size=tick_size)
     plt.yticks(size=tick_size)
@@ -116,8 +116,8 @@ if method == "Lasso":
     tick_size = 14
     plt.contourf(P_deg, Lam, R2, cmap = "inferno", levels=40)
     plt.plot(Polynomial_degrees[R2_idx_P[0]],Lambdas[R2_idx_L[0]], "k+")
-    plt.text(Polynomial_degrees[R2_idx_P[0]] + 0.3,Lambdas[R2_idx_L[0]] + 0.3, "Max. " + r"$R^2(\lambda, p$)", color = "k")
-    plt.xlabel("Polynomial Degree", fontsize=font_size)
+    plt.text(Polynomial_degrees[R2_idx_P[0]] + 0.3,Lambdas[R2_idx_L[0]] + 0.3, "Max. " + r"$R^2(d,\lambda$)", color = "k")
+    plt.xlabel(r"$d$", fontsize=font_size)
     plt.ylabel(r"$\log_{10}(\lambda)$", fontsize=font_size-4)
     plt.xticks(size=tick_size)
     plt.yticks(size=tick_size)

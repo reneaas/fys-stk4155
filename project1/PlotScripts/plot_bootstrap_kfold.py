@@ -28,7 +28,7 @@ R2_k = np.load(load_path + "R2_k_5.npy")
 
 Min_bootstrap_MSE = np.where(MSE_boot[:p] == np.min(MSE_boot[:p]))
 Min_kfold_MSE = np.where(MSE_k[:p] == np.min(MSE_k[:p]))
-
+print(polynomial[Min_bootstrap_MSE[0][0]], MSE_boot[Min_bootstrap_MSE[0][0]])
 
 plot_name = save_path + "Bootstrap_statvals_maxdeg_" + str(p-1) + ".pdf"
 
