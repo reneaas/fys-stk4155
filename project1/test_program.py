@@ -1,6 +1,7 @@
 from ols import OLS
 from ridge import Ridge
 from lasso import Lasso
+import os
 
 filename = "./datasets/frankefunction_dataset_N_1000_sigma_0.1.txt" #Test file
 

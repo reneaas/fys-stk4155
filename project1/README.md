@@ -49,6 +49,7 @@ Given a datafile with tuples (x, y, f(x, y)) on each line, the usage of all clas
   my_solver = OLS() #Initiates the solver.
   my_solver.read_data(filename) #Reads data and scales it according to Z-score
   my_solver.create_design_matrix(deg) #Creates design matrix for a polynomial of degree deg
+  my_solver.split_data()
   my_solver.train()  #Computes the parameters of the model
   R2, MSE = my_solver.predict_test() #Computes R2-score and MSE on the test data.
   ```
@@ -59,6 +60,7 @@ from ridge import Ridge
 my_solver = Ridge(Lambda = value) #Initiates the solver with a given value for the regularization parameter.
 my_solver.read_data(filename) #Reads data and scales it according to Z-score
 my_solver.create_design_matrix(deg) #Creates design matrix for a polynomial of degree deg
+my_solver.split_data()
 my_solver.train()  #Computes the parameters of the model
 R2, MSE = my_solver.predict_test() #Computes R2-score and MSE on the test data.
 ```
@@ -74,6 +76,7 @@ from lasso import Lasso
 my_solver = Lasso(Lambda = value) #Initiates the solver with a given value for the regularization parameter.
 my_solver.read_data(filename) #Reads data and scales it according to Z-score
 my_solver.create_design_matrix(deg) #Creates design matrix for a polynomial of degree deg
+my_solver.split_data()
 my_solver.train()  #Computes the parameters of the model
 R2, MSE = my_solver.predict_test() #Computes R2-score and MSE on the test data.
 ```

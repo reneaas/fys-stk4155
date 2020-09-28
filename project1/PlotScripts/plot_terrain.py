@@ -67,29 +67,31 @@ if method == "Ridge":
 
 
 if method == "Lasso":
-    path_to_plot = "./results/TerrainData/Lasso/"
+    path_to_plot = "../results/TerrainData/Lasso/Plots/"
     if not os.path.exists(path_to_plot):
         os.makedirs(path_to_plot)
 
-    Polynomial_degrees = [i for i in range(24)]
-    Lambdas = [1/10**i for i in range(-1,6)]
+
+    R2_Test_Lasso = np.load("../results/TerrainData/Lasso/Data/R2_Test_Lasso_Terrain.npy")
+    MSE_Test_Lasso = np.load("../results/TerrainData/Lasso/Data/MSE_Test_Lasso_Terrain.npy")
+
+    Polynomial_degrees = [i for i in range(19, 23)]
+    Lambdas = [1/10**i for i in range(3, 10)]
     L = len(Lambdas)
     P = len(Polynomial_degrees)
 
-    R2_Test_Lasso = np.load("R2_Test_Lasso_Terrain.npy")
-    MSE_Test_Lasso = np.load("MSE_Test_Lasso_Terrain.npy")
 
     Lambdas = np.log10(Lambdas)
     P_deg, Lam = np.meshgrid(Polynomial_degrees, Lambdas)
     idx_L, idx_P = np.where(MSE_Test_Lasso == np.min(MSE_Test_Lasso))
     print("Lasso; min MSE ", np.min(MSE_Test_Lasso))
     print("Lasso; argmin lambda = ", Lambdas[idx_L[0]])
-    print("Lasso; argmin p = ", Polynomial_degrees[idx_P[0]])
+    print("Lasso; argmin d = ", Polynomial_degrees[idx_P[0]])
 
     idx_L, idx_P = np.where(R2_Test_Lasso == np.max(R2_Test_Lasso))
     print("Lasso; max R2 = ", np.max(R2_Test_Lasso))
     print("Lasso; argmax lambda = ", Lambdas[idx_L[0]])
-    print("Lasso; argmax p = ", Polynomial_degrees[idx_P[0]])
+    print("Lasso; argmax d = ", Polynomial_degrees[idx_P[0]])
     P_deg, Lam = np.meshgrid(Polynomial_degrees, Lambdas)
 
     plot_name = path_to_plot + "Regularization_Path.pdf"
@@ -98,7 +100,7 @@ if method == "Lasso":
     tick_size = 14
     plt.contourf(P_deg, Lam, MSE_Test_Lasso, cmap = "inferno", levels=40)
     plt.plot(Polynomial_degrees[idx_P[0]],Lambdas[idx_L[0]], "w+")
-    plt.text(Polynomial_degrees[idx_P[0]] + 0.3,Lambdas[idx_L[0]] + 0.3, "min MSE" + r"$(d, \lambda)$", color = "k")
+    plt.text(Polynomial_degrees[idx_P[0]] - 5, Lambdas[idx_L[0]] + 0.3, "min MSE" + r"$(d, \lambda)$", color = "k")
     plt.xlabel("Polynomial Degree", fontsize=font_size)
     plt.ylabel(r"$\log_{10}(\lambda)$", fontsize=font_size)
     plt.xticks(size=tick_size)
@@ -120,7 +122,7 @@ if method == "Lasso":
 
     plt.contourf(P_deg, Lam, R2_Test_Lasso, cmap = "inferno", levels=40)
     plt.plot(Polynomial_degrees[idx_P[0]],Lambdas[idx_L[0]], "w+")
-    plt.text(Polynomial_degrees[idx_P[0]] + 0.3,Lambdas[idx_L[0]] + 0.3, "max " + r"$R^2(\lambda, p)$", color = "k")
+    plt.text(Polynomial_degrees[idx_P[0]] - 5, Lambdas[idx_L[0]] + 0.3, "max " + r"$R^2(\lambda, p)$", color = "k")
     plt.xlabel("Polynomial Degree", size=font_size)
     plt.ylabel(r"$\log_{10}(\lambda)$", size=font_size)
     plt.xticks(size=tick_size)
@@ -130,3 +132,19 @@ if method == "Lasso":
     cb.ax.tick_params(labelsize=14)
     plt.savefig(plot_name)
     plt.close()
+
+
+if method == "OLS":
+    R2 = np.load("../results/TerrainData/OLS/Data/R2_test_OLS_terrain.npy")
+    MSE = np.load("../results/TerrainData/OLS/Data/MSE_test_OLS_terrain.npy")
+
+    P = [i for i in range(len(R2))]
+
+    plt.plot(P, R2)
+    plt.xlabel(r"$d$")
+    plt.ylabel(r"$R^2$")
+    plt.figure()
+    plt.plot(P, MSE)
+    plt.xlabel(r"$d$")
+    plt.ylabel("MSE")
+    plt.show()
