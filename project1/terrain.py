@@ -19,14 +19,14 @@ path_to_plot = "./results/TerrainData/IMGS/"
 if not os.path.exists(path_to_plot):
     os.makedirs(path_to_plot)
 
-plot_name = path_to_plot + "terrain_image.pdf"
+plot_name = path_to_plot + "terrain_image_2.pdf"
 
 terrain1 = terrain1[::-1,:]
 print(terrain1)
-N_x = 1000
-N_y = 1000
-start_x = 0
-start_y = 0
+N_x = 50
+N_y = 50
+start_x = 150
+start_y = 300
 x = np.linspace(0, m-1, m)
 y = np.linspace(0, n-1, n)
 X,Y = np.meshgrid(x,y)
@@ -49,16 +49,15 @@ cb.ax.tick_params(labelsize=14)
 plt.savefig(plot_name)
 plt.show()
 
-"""
+
 x_data = X.flat[:]
 y_data = Y.flat[:]
 z_data = Z.flat[:]
 
 
-outfilename = "./datasets/TerrainFiles/terrain_data.txt"
+outfilename = "./datasets/TerrainFiles/terrain_data_2.txt"
 
 with open(outfilename, "w") as outfile:
     for i in range(len(x_data)):
         outfile.write(" ".join([str(x_data[i]), str(y_data[i]), str(z_data[i])]))
         outfile.write("\n")
-"""
