@@ -6,16 +6,16 @@ The important codes for this project is found [here](https://github.com/reneaas/
 We've developed a set of classes with the following structure:
 
 1. A superclass called [Regression](https://github.com/reneaas/fys-stk4155/blob/master/project1/codes/regression.py).
-  - This class contains class methods that are used by all algorithms.
+    - This class contains class methods that are used by all algorithms.
 2. A derived class called [OLS](https://github.com/reneaas/fys-stk4155/blob/master/project1/codes/ols.py)
-  - This derived class implements the *ordinary least squares* method.
-  - It inherits all methods declared in *regression.py*.
+    - This derived class implements the *ordinary least squares* method.
+    - It inherits all methods declared in *regression.py*.
 3. Another derived class called [Ridge](https://github.com/reneaas/fys-stk4155/blob/master/project1/codes/ridge.py)
-  - Implements Ridge regression.
-  - Inherits all methods declared in *regression.py*
+    - Implements Ridge regression.
+    - Inherits all methods declared in *regression.py*
 4. A derived class called [Lasso](https://github.com/reneaas/fys-stk4155/blob/master/project1/codes/lasso.py)
-  - Implements Lasso regression using the Scikit-Learn module.
-  - Inherts all methods declared in *regression.py*
+    - Implements Lasso regression using the Scikit-Learn module.
+    - Inherts all methods declared in *regression.py*
 
 ### Producing data
 
@@ -24,8 +24,8 @@ We've developed a set of classes with the following structure:
 ```terminal
 python3 generate_data.py N sigma
 ```
-- *N* is the number of points
-- *sigma* is the desired standard deviation.
+    - *N* is the number of points
+    - *sigma* is the desired standard deviation.
 
 2. Extracting the image used in the report (LINK HER) from the terrain data is done using the script *terrain.py*. Simply run the following in a Linux/Unix command line:
 
@@ -33,7 +33,7 @@ python3 generate_data.py N sigma
 python3 terrain.py
 ```
 
-  - This produces an image of 1000 x 1000 pixels.
+    - This produces an image of 1000 x 1000 pixels.
 
 
 ### Usage of codes
@@ -81,11 +81,11 @@ my_solver.split_data()
 my_solver.train()  #Computes the parameters of the model
 R2, MSE = my_solver.predict_test() #Computes R2-score and MSE on the test data.
 ```
-  - Here too, *Lambda = None* by default. You can specify Lambda at any point after initiation of the solver by
-  ```Python
-  my_solver.Lambda = value
-  ```
-  - Note that *train* and *predict_test* will not work if Lambda is not specified.
+    - Here too, *Lambda = None* by default. You can specify Lambda at any point after initiation of the solver by
+    ```Python
+    my_solver.Lambda = value
+    ```
+    - Note that *train* and *predict_test* will not work if Lambda is not specified.
 
 
 #### Bootstrap analysis
@@ -95,8 +95,8 @@ If the sample size of the dataset is limited, bootstrap analysis can be perfomed
 R2, MSE, bias, variance = my_solver.bootstrap(B)
 ```
 
-  - *B* is the number of bootstrap samples.
-  - The methods returns an average R2-score, MSE, bias and variance computed on the test data.
+    - *B* is the number of bootstrap samples.
+    - The methods returns an average R2-score, MSE, bias and variance computed on the test data.
 
 #### k-fold cross-validation
 To perform k-fold cross-validation on the whole dataset, the initialization of the solvers as above combined with the following code-segment gives you the computed performance metrics R2 and MSE:
@@ -104,9 +104,9 @@ To perform k-fold cross-validation on the whole dataset, the initialization of t
 ```Python
 R2, MSE = my_solver.k_fold_cross_validation(k)
 ```
-  - *k* is the number of folds to perform cross-validation for.
-  - It returns the average R2-score and MSE on the test data.
-  - The k-fold cross-validation is performed on the full data set.
+    - *k* is the number of folds to perform cross-validation for.
+    - It returns the average R2-score and MSE on the test data.
+    - The k-fold cross-validation is performed on the full data set.
 
 ### Test program
 
