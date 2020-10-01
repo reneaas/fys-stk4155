@@ -24,8 +24,8 @@ We've developed a set of classes with the following structure:
 ```terminal
 python3 generate_data.py N sigma
 ```
-    - *N* is the number of points
-    - *sigma* is the desired standard deviation.
+  - *N* is the number of points
+  - *sigma* is the desired standard deviation.
 
 2. Extracting the image used in the report (LINK HER) from the terrain data is done using the script *terrain.py*. Simply run the following in a Linux/Unix command line:
 
@@ -33,7 +33,7 @@ python3 generate_data.py N sigma
 python3 terrain.py
 ```
 
-    - This produces an image of 1000 x 1000 pixels.
+  - This produces an image of 1000 x 1000 pixels.
 
 
 ### Usage of codes
@@ -95,8 +95,8 @@ If the sample size of the dataset is limited, bootstrap analysis can be perfomed
 R2, MSE, bias, variance = my_solver.bootstrap(B)
 ```
 
-    - *B* is the number of bootstrap samples.
-    - The methods returns an average R2-score, MSE, bias and variance computed on the test data.
+  - *B* is the number of bootstrap samples.
+  - The methods returns an average R2-score, MSE, bias and variance computed on the test data.
 
 #### k-fold cross-validation
 To perform k-fold cross-validation on the whole dataset, the initialization of the solvers as above combined with the following code-segment gives you the computed performance metrics R2 and MSE:
@@ -104,9 +104,9 @@ To perform k-fold cross-validation on the whole dataset, the initialization of t
 ```Python
 R2, MSE = my_solver.k_fold_cross_validation(k)
 ```
-    - *k* is the number of folds to perform cross-validation for.
-    - It returns the average R2-score and MSE on the test data.
-    - The k-fold cross-validation is performed on the full data set.
+  - *k* is the number of folds to perform crossvalidation for.
+  - It returns the average R2-score and MSE on thetest data.
+  - The k-fold cross-validation is performed on the full data set.
 
 ### Test program
 
