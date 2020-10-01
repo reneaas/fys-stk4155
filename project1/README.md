@@ -1,18 +1,19 @@
 ## Code documentation
 
+The important codes for this project is found [here](https://github.com/reneaas/fys-stk4155/tree/master/project1/codes).
 ### Structure of the codes
 
 We've developed a set of classes with the following structure:
 
-1. A superclass called [Regression](https://github.com/reneaas/fys-stk4155/blob/master/project1/regression.py).
+1. A superclass called [Regression](https://github.com/reneaas/fys-stk4155/blob/master/project1/codes/regression.py).
   - This class contains class methods that are used by all algorithms.
-2. A derived class called [OLS](https://github.com/reneaas/fys-stk4155/blob/master/project1/ols.py)
+2. A derived class called [OLS](https://github.com/reneaas/fys-stk4155/blob/master/project1/codes/ols.py)
   - This derived class implements the *ordinary least squares* method.
   - It inherits all methods declared in *regression.py*.
-3. Another derived class called [Ridge](https://github.com/reneaas/fys-stk4155/blob/master/project1/ridge.py)
+3. Another derived class called [Ridge](https://github.com/reneaas/fys-stk4155/blob/master/project1/codes/ridge.py)
   - Implements Ridge regression.
   - Inherits all methods declared in *regression.py*
-4. A derived class called [Lasso](https://github.com/reneaas/fys-stk4155/blob/master/project1/lasso.py)
+4. A derived class called [Lasso](https://github.com/reneaas/fys-stk4155/blob/master/project1/codes/lasso.py)
   - Implements Lasso regression using the Scikit-Learn module.
   - Inherts all methods declared in *regression.py*
 
@@ -109,7 +110,7 @@ R2, MSE = my_solver.k_fold_cross_validation(k)
 
 ### Test program
 
-As as simple test program, we've implemented [test_program.py](https://github.com/reneaas/fys-stk4155/blob/master/project1/test_program.py) which show-cases all of the above using a generated dataset on the Franke function. Simply run the follow command in any Linux/Unix command
+As as simple test program, we've implemented [test_program.py](https://github.com/reneaas/fys-stk4155/blob/master/project1/codes/test_program.py) which show-cases all of the above using a generated dataset on the Franke function. Simply run the follow command in any Linux/Unix command line
 
 ```terminal
 python3 test_program.py
