@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 np.random.seed(1001)
-from progress.bar import Bar
 
 class Regression:
     def __init__(self):
@@ -125,19 +124,18 @@ class Regression:
 
         f_predictions = np.zeros((B, self.n_test))
         R2, MSE = np.zeros(B), np.zeros(B)
-        #bar = Bar(" ".join(["Polynomial degree", str(self.deg), ";", "Progress"]), max = B)
         for i in range(B):
-            #bar.next()
             idx = np.random.randint(0,self.n_train, size=self.n_train)
             self.X_train = X_train[idx,:]
             self.f_train = f_train[idx]
             self.train()
             R2[i], MSE[i] = self.predict_test()
             f_predictions[i, :] = self.f_model[:]
-        #bar.finish()
         f_mean_predictions = np.mean(f_predictions, axis=0)  #Computes the mean value for each model value f_model(x_i). Each column i corresponds to many measurements of f_model(x_i), therefore we choose axis=0 so average over the columns.
         mean_R2 = np.mean(R2)
         mean_MSE = np.mean(MSE)
+        std_MSE = np.std(MSE)
+        print("Std = ", std_MSE)
         bias =  np.mean((self.f_test - f_mean_predictions)**2)
         variance = np.mean( np.var(f_predictions, axis=0) )
 
@@ -169,9 +167,7 @@ class Regression:
             row_ptr[i] += row_ptr[i-1]+fold_size[i-1]
 
         #Perform k-fold cross validation
-        #bar = Bar(" ".join(["Polynomial degree", str(self.deg), ";", "Folds"]), max = k)
         for j in range(k):
-            #bar.next()
             self.X_test = self.design_matrix[[i for i in range(row_ptr[j],row_ptr[j+1])], :]
             self.f_test = self.f_data[[i for i in range(row_ptr[j],row_ptr[j+1])]]
             idx = []
@@ -183,10 +179,13 @@ class Regression:
             self.f_train = self.f_data[idx]
             self.train()
             R2[j], MSE[j] = self.predict_test()
-        #bar.finish()
 
         mean_R2 = np.mean(R2)
         mean_MSE = np.mean(MSE)
+        std_MSE = np.std(MSE)
+        std_R2 = np.std(R2)
+        print("STD MSE = ", std_MSE)
+        print("STD R2 = ", std_R2)
 
         #Recopy the initial dataset.
         self.X_test = X_test_copy
