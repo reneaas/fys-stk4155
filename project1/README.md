@@ -81,11 +81,12 @@ my_solver.split_data()
 my_solver.train()  #Computes the parameters of the model
 R2, MSE = my_solver.predict_test() #Computes R2-score and MSE on the test data.
 ```
-    - Here too, *Lambda = None* by default. You can specify Lambda at any point after initiation of the solver by
+
+  - Here too, *Lambda = None* by default. You can specify Lambda at any point after initiation of the solver by
     ```Python
     my_solver.Lambda = value
     ```
-    - Note that *train* and *predict_test* will not work if Lambda is not specified.
+  - Note that *train* and *predict_test* will not work if Lambda is not specified.
 
 
 #### Bootstrap analysis
