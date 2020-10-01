@@ -27,7 +27,7 @@ python3 generate_data.py N sigma
   - *N* is the number of points
   - *sigma* is the desired standard deviation.
 
-2. Extracting the image used in the report (LINK HER) from the terrain data is done using the script *terrain.py*. Simply run the following in a Linux/Unix command line:
+2. Extracting the image used in the [report](https://github.com/reneaas/fys-stk4155/blob/master/project1/report/Project_1___Linear_Regression.pdf) from the terrain data is done using the script *terrain.py*. Simply run the following in a Linux/Unix command line:
 
 ```terminal
 python3 terrain.py
