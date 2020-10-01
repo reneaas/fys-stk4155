@@ -42,7 +42,7 @@ The usage of the derived classes are identical, and they all have access to the 
 
 #### Standard training and testing of the model:
 
-Given a datafile with tuples (x, y, f(x, y)) on each line, the usage of all classes is pretty straight forward.
+Given a datafile with tuples (x, y, f(x, y)) on each line, the usage of each class is pretty straight forward.
 
 1. OLS
   ```Python
@@ -65,7 +65,7 @@ my_solver.split_data()
 my_solver.train()  #Computes the parameters of the model
 R2, MSE = my_solver.predict_test() #Computes R2-score and MSE on the test data.
 ```
-  - If the value of Lambda is not initalized, it's set to *Lambda = None* by default. You can then specify it at any point after initialization with
+  - If the value of Lambda is not initialized, it's set to *Lambda = None* by default. You can then specify it at any point after initialization with
 
     ```Python
     my_solver.Lambda = value
