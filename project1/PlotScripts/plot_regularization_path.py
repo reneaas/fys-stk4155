@@ -32,17 +32,14 @@ if method == "Ridge":
     print("Ridge; min MSE = ", np.min(MSE))
     print("Best p = ",Polynomial_degrees[M_idx_P[0]], "Best lambda = ",Lambdas[M_idx_L[0]])
 
-    font_size = 14
-    tick_size = 12
+    font_size = 16
+    tick_size = 14
     plt.contourf(P_deg, Lam, MSE, cmap = "inferno", levels=40)
     plt.plot(Polynomial_degrees[M_idx_P[0]],Lambdas[M_idx_L[0]], "w+")
     plt.text(Polynomial_degrees[M_idx_P[0]] + 0.3,Lambdas[M_idx_L[0]] + 0.3, "Min.MSE" + r"($d,\lambda$)", color = "w")
     plt.xlabel(r"$d$", size=font_size)
-<<<<<<< HEAD
-    plt.ylabel(r"$\log_{10}(\lambda)$", size=font_size-2)
-=======
+
     plt.ylabel(r"$\log_{10}(\lambda)$", size=font_size)
->>>>>>> 690a4b98d63fb08fe19d7fb296f874d7887ceeed
     plt.xticks(size=tick_size)
     plt.yticks(size=tick_size)
     cb = plt.colorbar()
@@ -56,17 +53,15 @@ if method == "Ridge":
     R2_idx_L, R2_idx_P = np.where(R2 == np.max(R2))
     plot_name = path_to_plot + "R2_Regularization_Path_Boot_" + str(b) + ".pdf"
 
-    font_size = 14
-    tick_size = 12
+    font_size = 16
+    tick_size = 14
     plt.contourf(P_deg, Lam, R2, cmap = "inferno", levels=40)
     plt.plot(Polynomial_degrees[R2_idx_P[0]],Lambdas[R2_idx_L[0]], "k+")
     plt.text(Polynomial_degrees[R2_idx_P[0]] + 0.3,Lambdas[R2_idx_L[0]] + 0.3, "Max." + r"$R^2(d,\lambda$)", color = "k")
     plt.xlabel(r"$d$", size=font_size)
-<<<<<<< HEAD
-    plt.ylabel(r"$\log_{10}(\lambda)$", size=font_size-2)
-=======
+
     plt.ylabel(r"$\log_{10}(\lambda)$", size=font_size)
->>>>>>> 690a4b98d63fb08fe19d7fb296f874d7887ceeed
+
     plt.xticks(size=tick_size)
     plt.yticks(size=tick_size)
     cb = plt.colorbar()
@@ -99,16 +94,14 @@ if method == "Lasso":
     P_deg, Lam = np.meshgrid(Polynomial_degrees, Lambdas)
 
     font_size = 14
-    tick_size = 12
+    tick_size = 14
     plt.contourf(P_deg, Lam, MSE, cmap = "inferno", levels=40)
     plt.plot(Polynomial_degrees[M_idx_P[0]],Lambdas[M_idx_L[0]], "w+")
     plt.text(Polynomial_degrees[M_idx_P[0]] + 0.3, Lambdas[M_idx_L[0]] + 0.3, "Min.MSE" + r"($d,\lambda$)", color = "w")
     plt.xlabel(r"$d$", fontsize=font_size)
-<<<<<<< HEAD
-    plt.ylabel(r"$\log_{10}(\lambda)$", fontsize=font_size-4)
-=======
+
     plt.ylabel(r"$\log_{10}(\lambda)$", fontsize=font_size)
->>>>>>> 690a4b98d63fb08fe19d7fb296f874d7887ceeed
+
     plt.xticks(size=tick_size)
     plt.yticks(size=tick_size)
     cb = plt.colorbar()
@@ -130,11 +123,9 @@ if method == "Lasso":
     plt.plot(Polynomial_degrees[R2_idx_P[0]],Lambdas[R2_idx_L[0]], "k+")
     plt.text(Polynomial_degrees[R2_idx_P[0]] + 0.3,Lambdas[R2_idx_L[0]] + 0.3, "Max. " + r"$R^2(d,\lambda$)", color = "k")
     plt.xlabel(r"$d$", fontsize=font_size)
-<<<<<<< HEAD
-    plt.ylabel(r"$\log_{10}(\lambda)$", fontsize=font_size-4)
-=======
+
     plt.ylabel(r"$\log_{10}(\lambda)$", fontsize=font_size)
->>>>>>> 690a4b98d63fb08fe19d7fb296f874d7887ceeed
+
     plt.xticks(size=tick_size)
     plt.yticks(size=tick_size)
     cb = plt.colorbar()
