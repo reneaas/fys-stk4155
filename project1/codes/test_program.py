@@ -1,6 +1,4 @@
-from ols import OLS
-from ridge import Ridge
-from lasso import Lasso
+from regression import OLS, Ridge, Lasso
 import os
 
 filename = "./datasets/frankefunction_dataset_N_1000_sigma_0.1.txt" #Test file
@@ -8,7 +6,7 @@ filename = "./datasets/frankefunction_dataset_N_1000_sigma_0.1.txt" #Test file
 if not os.path.exists(filename):
     os.system("python3 generate_data.py 1000 0.1")
 
-deg = 5 #Highest polynomial degree.
+deg = 5 #Highest polynomial degree, gives 15 features in the model.
 #Show-case usage of OLS class:
 my_solver = OLS() #Initiates the solver.
 my_solver.read_data(filename) #Reads data and scales it according to Z-score

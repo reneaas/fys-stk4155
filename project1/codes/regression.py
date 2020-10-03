@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn import linear_model
 np.random.seed(1001)
 
 class Regression:
@@ -207,3 +208,59 @@ class Regression:
         R2_score = self.compute_R2_score(self.f_test, self.f_model)
         MSE = self.compute_MSE(self.f_test, self.f_model)
         return R2_score, MSE
+
+
+class OLS(Regression):
+    def __init__(self):
+        super().__init__()
+
+    def train(self):
+        """
+        Perform ordinary least squares to find the parameters of the model denoted w.
+        """
+        A = self.X_train.T @ self.X_train
+        b = self.X_train.T @ self.f_train
+        self.w = np.linalg.solve(A, b)
+
+
+class Ridge(Regression):
+    def __init__(self, Lambda=None):
+        super().__init__()
+        self.Lambda = Lambda
+
+    def train(self):
+        """
+        Perform Ridge to find the parameters of the model denoted w.
+        """
+        A = self.X_train.T @ self.X_train
+        shape = np.shape(A)
+        A += self.Lambda*np.eye(shape[0])
+        b = self.X_train.T @ self.f_train
+        self.w = np.linalg.solve(A, b)
+
+    def call_bootstrap(self, B):
+        Lambdas = [1/10**i for i in range(-10,10)]
+        for l in Lambdas:
+            self.Lambda = l
+            print("lambda = ", l)
+            self.bootstrap(B)
+
+    def call_cross_validate(self, k):
+        Lambdas = [1/10**i for i in range(-10,10)]
+        for l in Lambdas:
+            self.Lambda = l
+            print("lambda = ", l)
+            self.k_fold_cross_validation(k)
+
+
+class Lasso(Ridge):
+    def __init__(self, Lambda = None):
+        super().__init__(Lambda)
+        self.Lambda = Lambda
+
+    def train(self):
+        self.X_train = np.asfortranarray(self.X_train)
+        self.f_train = np.asfortranarray(self.f_train)
+        self.clf_lasso = linear_model.Lasso(alpha=self.Lambda, max_iter=1000, normalize=False).fit(self.X_train, self.f_train)
+        self.w = (self.clf_lasso.coef_)
+        self.w[0] = float(self.clf_lasso.intercept_)
