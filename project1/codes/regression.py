@@ -86,7 +86,7 @@ class Regression:
         """
         #Split data into training and test set.
         self.n_train = 4*(self.n // 5) + 4*(self.n % 5)
-        self.n_test = (self.n // 5) + (self.n % 5)
+        self.n_test = self.n - self.n_train
         self.X_train = self.design_matrix[:self.n_train,:]
         self.X_test = self.design_matrix[self.n_train:,:]
         self.f_train = self.f_data[:self.n_train]

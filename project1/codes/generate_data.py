@@ -1,7 +1,7 @@
 import numpy as np
 import sys
 import os
-np.random.seed(1001)
+np.random.seed(1002)
 
 N = int(sys.argv[1])
 sigma = float(sys.argv[2])
@@ -27,7 +27,7 @@ noise = np.random.normal(0,sigma,size=N)
 data = FrankeFunction(x,y) + noise
 #data = f(x,y)
 
-names = ["frankefunction", "dataset", "N", str(N), "sigma", str(sigma)]
+names = ["frankefunction", "dataset", "N", str(N), "sigma", str(sigma), "TEST"]
 outfilename = "_".join(names) + ".txt"
 
 with open(outfilename, "w") as outfile:
