@@ -8,7 +8,7 @@ plt.rc("text", usetex=True)
 
 
 # Load the terrain
-terrain1 = imread("./datasets/TerrainFiles/SRTM_data_Norway_1.tif")
+terrain1 = imread("../datasets/TerrainFiles/SRTM_data_Norway_1.tif")
 # Show the terrain
 
 
@@ -19,12 +19,12 @@ path_to_plot = "./results/TerrainData/IMGS/"
 if not os.path.exists(path_to_plot):
     os.makedirs(path_to_plot)
 
-plot_name = path_to_plot + "terrain_image_2.pdf"
+plot_name = path_to_plot + "terrain_image_1.pdf"
 
 terrain1 = terrain1[::-1,:]
 print(terrain1)
-N_x = 1000
-N_y = 1000
+N_x = 32
+N_y = 32
 start_x = 0
 start_y = 0
 x = np.linspace(0, m-1, m)
@@ -46,7 +46,7 @@ plt.yticks(size=tick_size)
 cb = plt.colorbar()
 cb.set_label(label="$z(x,y)$", size=16)
 cb.ax.tick_params(labelsize=14)
-#plt.savefig(plot_name)
+plt.savefig(plot_name)
 plt.show()
 
 
@@ -55,11 +55,10 @@ y_data = Y.flat[:]
 z_data = Z.flat[:]
 
 
-"""
-outfilename = "./datasets/TerrainFiles/terrain_data_2.txt"
+
+outfilename = "../datasets/TerrainFiles/terrain_data_1.txt"
 
 with open(outfilename, "w") as outfile:
     for i in range(len(x_data)):
         outfile.write(" ".join([str(x_data[i]), str(y_data[i]), str(z_data[i])]))
         outfile.write("\n")
-"""

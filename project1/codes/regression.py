@@ -79,14 +79,14 @@ class Regression:
                 col_idx += 1
         self.design_matrix = self.design_matrix[self.shuffled_idx,:] #Shuffle the design matrix
 
-    def split_data(self):
+    def split_data(self, fraction = 0.9):
         """
         Splits the data into a training set
         Training/test is by default 80/20 ratio.
         """
         #Split data into training and test set.
-        self.n_train = 4*(self.n // 5) + 4*(self.n % 5)
-        self.n_test = (self.n // 5) + (self.n % 5)
+        self.n_train = int(fraction*self.n)
+        self.n_test = self.n - self.n_train
         self.X_train = self.design_matrix[:self.n_train,:]
         self.X_test = self.design_matrix[self.n_train:,:]
         self.f_train = self.f_data[:self.n_train]
@@ -120,6 +120,8 @@ class Regression:
 
     def bootstrap(self, B):
         #Copy data
+        print(len(self.X_test))
+        print(self.n_test)
         X_train = np.copy(self.X_train)
         f_train = np.copy(self.f_train)
 
@@ -146,7 +148,6 @@ class Regression:
 
 
     def k_fold_cross_validation(self,k):
-
         #Copy data
         X_test_copy = np.copy(self.X_test)
         X_train_copy = np.copy(self.X_train)
@@ -169,17 +170,17 @@ class Regression:
 
         #Perform k-fold cross validation
         for j in range(k):
-            self.X_test = self.X_train[[i for i in range(row_ptr[j],row_ptr[j+1])], :]
-            self.f_test = self.f_train[[i for i in range(row_ptr[j],row_ptr[j+1])]]
+            self.X_test = X_train_copy[[i for i in range(row_ptr[j],row_ptr[j+1])], :]
+            self.f_test = f_train_copy[[i for i in range(row_ptr[j],row_ptr[j+1])]]
             idx = []
             for l in range(j):
                 idx += [i for i in range(row_ptr[l],row_ptr[l+1])]
             for l in range(j+1,k):
                 idx += [i for i in range(row_ptr[l],row_ptr[l+1])]
-            self.X_train = self.X_train[idx, :]
-            self.f_train = self.f_train[idx]
+            self.X_train = X_train_copy[idx, :]
+            self.f_train = f_train_copy[idx]
             self.train()
-            R2[j], MSE[j] = self.predict_train()
+            R2[j], MSE[j] = self.predict_test()
 
         mean_R2 = np.mean(R2)
         mean_MSE = np.mean(MSE)
