@@ -155,8 +155,8 @@ class Regression:
 
         R2, MSE = np.zeros(k), np.zeros(k)
 
-        int_size = self.n // k
-        remainder = self.n % k
+        int_size = self.n_train // k
+        remainder = self.n_train % k
         fold_size = np.zeros(k, dtype ="int")
         for i in range(k):
             fold_size[i] = int_size + (remainder > 0)
@@ -169,17 +169,17 @@ class Regression:
 
         #Perform k-fold cross validation
         for j in range(k):
-            self.X_test = self.design_matrix[[i for i in range(row_ptr[j],row_ptr[j+1])], :]
-            self.f_test = self.f_data[[i for i in range(row_ptr[j],row_ptr[j+1])]]
+            self.X_test = self.X_train[[i for i in range(row_ptr[j],row_ptr[j+1])], :]
+            self.f_test = self.f_train[[i for i in range(row_ptr[j],row_ptr[j+1])]]
             idx = []
             for l in range(j):
                 idx += [i for i in range(row_ptr[l],row_ptr[l+1])]
             for l in range(j+1,k):
                 idx += [i for i in range(row_ptr[l],row_ptr[l+1])]
-            self.X_train = self.design_matrix[idx, :]
-            self.f_train = self.f_data[idx]
+            self.X_train = self.X_train[idx, :]
+            self.f_train = self.f_train[idx]
             self.train()
-            R2[j], MSE[j] = self.predict_test()
+            R2[j], MSE[j] = self.predict_train()
 
         mean_R2 = np.mean(R2)
         mean_MSE = np.mean(MSE)
@@ -230,7 +230,7 @@ class Ridge(Regression):
 
     def train(self):
         """
-        Perform Ridge to find the parameters of the model denoted w.
+        Perform Ridge regression to find the parameters of the model denoted w.
         """
         A = self.X_train.T @ self.X_train
         shape = np.shape(A)
@@ -259,6 +259,9 @@ class Lasso(Ridge):
         self.Lambda = Lambda
 
     def train(self):
+        """
+        Perform Lasso regression to find the parameters of the model denoted w.
+        """
         self.X_train = np.asfortranarray(self.X_train)
         self.f_train = np.asfortranarray(self.f_train)
         self.clf_lasso = linear_model.Lasso(alpha=self.Lambda, max_iter=1000, normalize=False).fit(self.X_train, self.f_train)
