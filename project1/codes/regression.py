@@ -120,8 +120,6 @@ class Regression:
 
     def bootstrap(self, B):
         #Copy data
-        print(len(self.X_test))
-        print(self.n_test)
         X_train = np.copy(self.X_train)
         f_train = np.copy(self.f_train)
 
@@ -138,7 +136,7 @@ class Regression:
         mean_R2 = np.mean(R2)
         mean_MSE = np.mean(MSE)
         std_MSE = np.std(MSE)
-        print("Std = ", std_MSE)
+        #print("Std = ", std_MSE)
         bias =  np.mean((self.f_test - f_mean_predictions)**2)
         variance = np.mean( np.var(f_predictions, axis=0) )
 
@@ -186,8 +184,8 @@ class Regression:
         mean_MSE = np.mean(MSE)
         std_MSE = np.std(MSE)
         std_R2 = np.std(R2)
-        print("STD MSE = ", std_MSE)
-        print("STD R2 = ", std_R2)
+        #print("STD MSE = ", std_MSE)
+        #print("STD R2 = ", std_R2)
 
         #Recopy the initial dataset.
         self.X_test = X_test_copy

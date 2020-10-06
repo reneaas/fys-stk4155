@@ -1,7 +1,7 @@
 from regression import OLS, Ridge, Lasso
 import os
 
-filename = "./datasets/frankefunction_dataset_N_1000_sigma_0.1.txt" #Test file
+filename = "../datasets/frankefunction_dataset_N_1000_sigma_0.1.txt" #Test file
 
 if not os.path.exists(filename):
     os.system("python3 generate_data.py 1000 0.1")
