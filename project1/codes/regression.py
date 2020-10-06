@@ -79,7 +79,7 @@ class Regression:
                 col_idx += 1
         self.design_matrix = self.design_matrix[self.shuffled_idx,:] #Shuffle the design matrix
 
-    def split_data(self, fraction = 0.9):
+    def split_data(self, fraction = 0.8):
         """
         Splits the data into a training set
         Training/test is by default 80/20 ratio.
