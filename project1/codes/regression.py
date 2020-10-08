@@ -3,21 +3,18 @@ from sklearn import linear_model
 np.random.seed(1001)
 
 class Regression:
+    """
+    Superclass for regression.
+    """
     def __init__(self):
-        """
-        For now this is an empty useless init function
-        """
         None
 
     def read_data(self,filename):
         """
-        -------------------------------------------------
-        Extracts:
-        x, y: n data tuples (x,y).
-        f_data: n function values f(x,y)
-        self.n: Number of datapoints n
-        self.p: Number of features of the model
-        -------------------------------------------------
+        Reads data from a file where each line is of the form "x y z(x,y)".
+
+        Input parameters:
+        filename - filename of the file containing the dataset.
         """
 
         self.x = []
@@ -45,6 +42,9 @@ class Regression:
         self.f_data = self.f_data[self.shuffled_idx] #Shuffle z = f(x,y) exactly once.
 
     def scale_data(self):
+        """
+        Scales the dataset according to standard score.
+        """
         self.x_mean = np.mean(self.x)
         self.y_mean = np.mean(self.y)
         self.x_std = np.std(self.x)
@@ -60,9 +60,10 @@ class Regression:
         #Set up the design matrix
     def create_design_matrix(self, deg):
         """
-        -------------------------------------------------------------
-        deg: degree of polynomial p(x,y)
-        -------------------------------------------------------------
+        Creates the design matrix of the model.
+
+        Input parameters:
+        deg - maximum degree of polynomial to be fitted
         """
         self.deg = deg
         self.p = int((deg+1) * (deg+2) / 2) #Closed-form expression for the number of features
@@ -78,13 +79,17 @@ class Regression:
                 col_idx += 1
         self.design_matrix = self.design_matrix[self.shuffled_idx,:] #Shuffle the design matrix
 
-    def split_data(self, fraction = 0.8):
+    def split_data(self, fraction_train = 0.8):
         """
-        Splits the data into a training set
+        Splits the data into a training set and a test set
         Training/test is by default 80/20 ratio.
+
+        Input parameters:
+
+        fraction_train - fraction of the dataset used for training.
         """
         #Split data into training and test set.
-        self.n_train = int(fraction*self.n)
+        self.n_train = int(fraction_train*self.n)
         self.n_test = self.n - self.n_train
         self.X_train = self.design_matrix[:self.n_train,:]
         self.X_test = self.design_matrix[self.n_train:,:]
@@ -93,10 +98,26 @@ class Regression:
 
 
     def compute_MSE(self, f_data, f_model):
+        """
+        Computes the mean squared error between the model and the datapoints sent in
+
+        Parameters:
+
+        f_data - response data z(x,y)
+        f_model - predicted response data.
+        """
         return np.mean((f_model - f_data)**2)
 
 
     def compute_R2_score(self, f_data, f_model):
+        """
+        Computes the R2 score between the model and the datapoints sent in
+
+        Parameters:
+
+        f_data - response data z(x,y)
+        f_model - predicted response data.
+        """
         return 1 - np.sum((f_data - f_model) ** 2) / np.sum((f_data - np.mean(f_data)) ** 2)
 
 
@@ -115,9 +136,26 @@ class Regression:
 
 
     def train(self):
+        """
+        Empty function to be specified by derived classes.
+        """
         return None
 
     def bootstrap(self, B):
+        """
+        Performs bootstrap sampling on the training data for B samples and tests each bootstrap model
+        on the test data.
+
+        Inputs parameters:
+        B - numer of bootstrap samples.
+
+        returned parameters:
+        mean_R2 - mean R2-score of all bootstrap models
+        mean_MSE - mean MSE of all bootstrap models.
+        bias - bias of the bootstrap models
+        viarnace - variance of the bootstrap models.
+        """
+
         #Copy data
         X_train = np.copy(self.X_train)
         f_train = np.copy(self.f_train)
@@ -145,6 +183,17 @@ class Regression:
 
 
     def k_fold_cross_validation(self,k):
+        """
+        Performs k-fold cross-validation on the the training data.
+        Computes the mean validation error (both MSE and R2-score) and returns it.
+
+        Input parameters:
+        k - number of folds to be used in cross-validation
+
+        returned parameters:
+        mean_R2: mean validation R2-score
+        mean_MSE: mean validation MSE
+        """
         #Copy data
         X_test_copy = np.copy(self.X_test)
         X_train_copy = np.copy(self.X_train)
@@ -196,12 +245,18 @@ class Regression:
 
 
     def predict_train(self):
+        """
+        Computes predictions on training data using a trained model.
+        """
         self.f_model = self.X_train @ self.w
         R2_score = self.compute_R2_score(self.f_train, self.f_model)
         MSE = self.compute_MSE(self.f_train, self.f_model)
         return R2_score, MSE
 
     def predict_test(self):
+        """
+        Computes predictions on test data using a trained model.
+        """
         self.f_model = self.X_test @ self.w
         R2_score = self.compute_R2_score(self.f_test, self.f_model)
         MSE = self.compute_MSE(self.f_test, self.f_model)
