@@ -27,7 +27,7 @@ noise = np.random.normal(0,sigma,size=N)
 data = FrankeFunction(x,y) + noise
 #data = f(x,y)
 
-names = ["frankefunction", "dataset", "N", str(N), "sigma", str(sigma)]
+names = ["frankefunction", "dataset", "N", str(N), "sigma", str(sigma)  ]
 outfilename = "_".join(names) + ".txt"
 
 with open(outfilename, "w") as outfile:
@@ -35,7 +35,7 @@ with open(outfilename, "w") as outfile:
         outfile.write(str(x[i]) + " " + str(y[i]) + " " + str(data[i]))
         outfile.write("\n")
 
-path = "datasets"
+path = "../datasets"
 if not os.path.exists(path):
     os.makedirs(path)
 
