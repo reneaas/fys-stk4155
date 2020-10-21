@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 from time import time
 
-print("Loading dataset...")
+print("Loading dataset...\n")
 mnist = tf.keras.datasets.mnist
 (trainX, trainY), (testX, testY) = mnist.load_data()
 Ntrain, n, m = np.shape(trainX)
@@ -15,7 +15,7 @@ testX, testY = testX[shuffled_indices], testY[shuffled_indices]
 
 print(np.shape(trainY))
 
-print("Flatten and scale dataset...")
+print("Flatten and scale dataset...\n")
 size_of_dataset = 1000
 trainX = trainX/255.0
 trainX_flat = np.zeros((size_of_dataset, n*m))
@@ -58,10 +58,18 @@ end = time()
 
 timeused = end - start
 
+
 print("Time used to train NN: ", timeused)
+print("\n")
 for i in range(n_tests):
     print("Image = ", i)
     y_predict = my_solver.predict(X_test[i])
     #print("Prediction ", y_predict == np.max(y_predict))
     print("Prediction = ", y_predict)
     print("Ground truth = ", y_test[i])
+    if (np.argmax(y_predict) == np.argmax(y_test[i])):
+        print("Prediction = Correct!")
+    else:
+        print("Prediction = WRONG!")
+
+    print("\n")
