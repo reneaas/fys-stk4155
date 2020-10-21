@@ -16,7 +16,7 @@ testX, testY = testX[shuffled_indices], testY[shuffled_indices]
 print(np.shape(trainY))
 
 print("Flatten and scale dataset...")
-size_of_dataset = 1000
+size_of_dataset = 60000
 trainX = trainX/255.0
 trainX_flat = np.zeros((size_of_dataset, n*m))
 
@@ -37,7 +37,7 @@ for k in range(size_of_dataset):
 
 
 #Test data
-n_tests = 10
+n_tests = 10000
 X_test = np.zeros([n_tests, n*m])
 y_test = np.zeros([n_tests, 10])
 for i in range(n_tests):
@@ -50,7 +50,7 @@ for i in range(n_tests):
     y_test[i] = testY[i] == y_values
 
 
-my_solver = FFNN(layers = 3, nodes = 100, X_data = trainX_flat, y_data = y_training, M_outputs = 10, hidden_activation = "sigmoid", epochs = 30)
+my_solver = FFNN(layers = 5, nodes = 100, X_data = trainX_flat, y_data = y_training, M_outputs = 10, hidden_activation = "sigmoid", epochs = 30)
 
 start = time()
 my_solver.train()
@@ -58,10 +58,21 @@ end = time()
 
 timeused = end - start
 
+total_images = 0
+correct_predictions = 0
 print("Time used to train NN: ", timeused)
 for i in range(n_tests):
-    print("Image = ", i)
+    #print("Image = ", i)
     y_predict = my_solver.predict(X_test[i])
-    #print("Prediction ", y_predict == np.max(y_predict))
-    print("Prediction = ", y_predict)
-    print("Ground truth = ", y_test[i])
+    #print("Prediction = ", y_predict)
+    one_hot_prediction = 1.*(y_predict == np.max(y_predict))
+    idx = np.where(one_hot_prediction == 1.)
+    correct_predictions += (one_hot_prediction[idx] == y_test[i][idx])
+    total_images += 1
+    #print("Prediction = ", one_hot_prediction)
+    #print("Sum of prediction = ", np.sum(y_predict))
+    #print("Ground truth = ", y_test[i])
+
+accuracy = correct_predictions/total_images
+
+print("Accuracy = ", accuracy*100, " %")

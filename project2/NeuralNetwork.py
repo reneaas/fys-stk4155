@@ -4,7 +4,7 @@ np.random.seed(1001)
 
 class FFNN():
 
-    def __init__(self, layers, nodes, X_data, y_data, M_outputs, epochs=10, batch_size=100, eta = 0.51, problem_type="classification", hidden_activation="sigmoid"):
+    def __init__(self, layers, nodes, X_data, y_data, M_outputs, epochs=10, batch_size=100, eta = 0.3, problem_type="classification", hidden_activation="sigmoid"):
         self.layers = layers
         self.nodes = nodes
         self.X_data = X_data
@@ -58,14 +58,13 @@ class FFNN():
         for epoch in range(self.epochs):
             bar.next()
             for b in range(batches):
-                indices = np.random.choice(total_indices, size=self.batch_size, replace=False)
+                indices = np.random.choice(total_indices, size=self.batch_size, replace=True)
                 self.X  = self.X_data[indices]
                 self.y = self.y_data[indices]
                 for i in range(self.batch_size):
                     self.feed_forward(self.X[i])
                     self.backpropagate(self.X[i], self.y[i])
                 self.update_parameters()
-
         bar.finish()
 
 
