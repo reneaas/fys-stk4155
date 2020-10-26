@@ -4,38 +4,38 @@ np.random.seed(1001)
 
 class FFNN():
 
-    def __init__(self, layers, nodes, X_data, y_data, M_outputs, epochs=10, batch_size=100, eta = 0.3, problem_type="classification", hidden_activation="sigmoid"):
+    def __init__(self, layers, nodes, X_data, y_data, N_outputs, epochs=10, batch_size=100, eta = 0.51, problem_type="classification", hidden_activation="sigmoid"):
         self.layers = layers
         self.nodes = nodes
         self.X_data = X_data
         self.y_data = y_data
         self.N_points, self.features = np.shape(X_data)
-        self.M_outputs = M_outputs
+        self.N_outputs = N_outputs
         self.epochs = epochs
         self.batch_size = batch_size
         self.eta = eta
 
         #self.error_input = np.zeros(self.nodes)
         self.error_hidden = np.zeros([self.layers,self.nodes])
-        self.error_output = np.zeros(self.M_outputs)
+        self.error_output = np.zeros(self.N_outputs)
 
         #self.grad_bias_input = np.zeros(self.nodes)
         self.grad_bias_hidden = np.zeros([self.layers, self.nodes])
-        self.grad_bias_output = np.zeros(self.M_outputs)
+        self.grad_bias_output = np.zeros(self.N_outputs)
 
         self.grad_weights_input = np.zeros([self.nodes, self.features])
         self.grad_weights_hidden = np.zeros([self.layers, self.nodes, self.nodes])
-        self.grad_weights_output = np.zeros([self.M_outputs,self.nodes])
+        self.grad_weights_output = np.zeros([self.N_outputs,self.nodes])
 
         self.activations = np.zeros([self.layers,self.nodes])
         self.bias = np.random.normal(size=[self.layers, self.nodes])
-        self.bias_output = np.random.normal(size=self.M_outputs)
+        self.bias_output = np.random.normal(size=self.N_outputs)
 
-        self.output = np.zeros(self.M_outputs)
+        self.output = np.zeros(self.N_outputs)
 
         self.weights_input = np.random.random(size=[self.nodes,self.features])
         self.weights_hidden = np.random.normal(size=[self.layers, self.nodes, self.nodes])
-        self.weights_output = np.random.random(size=[self.M_outputs,self.nodes])
+        self.weights_output = np.random.random(size=[self.N_outputs,self.nodes])
 
         #print(np.shape(self.weights))
 
