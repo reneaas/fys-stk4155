@@ -4,7 +4,7 @@ np.random.seed(1001)
 
 class FFNN():
 
-    def __init__(self, layers, nodes, X_data, y_data, N_outputs, epochs=10, batch_size=100, eta = 0.3, problem_type="classification", hidden_activation="sigmoid", Lambda=0, gamma=0):
+    def __init__(self, layers, nodes, X_data, y_data, N_outputs, epochs=10, batch_size=100, eta = 0.1, problem_type="classification", hidden_activation="sigmoid", Lambda=0, gamma=0):
         self.layers = layers
         self.nodes = nodes
         self.X_data = X_data
@@ -121,30 +121,27 @@ class FFNN():
         self.grad_weights_hidden *= scale
         self.grad_weights_output *= scale
 
-        self.weights_input -= (self.grad_weights_input + self.gamma*self.tmp_weights_input)
+        self.tmp_weights_input = (self.grad_weights_input + self.gamma*self.tmp_weights_input)
+        self.weights_input -= self.tmp_weights_input
 
         for l in range(self.layers):
-            self.bias[l] -= (self.grad_bias_hidden[l] + self.gamma*self.tmp_bias[l])
-            self.weights_hidden[l] -= (self.grad_weights_hidden[l] + self.gamma*self.tmp_weights_hidden[l])
+            self.tmp_bias[l] = (self.grad_bias_hidden[l] + self.gamma*self.tmp_bias[l])
+            self.bias[l] -= self.tmp_bias[l]
 
+            self.tmp_weights_hidden[l] = (self.grad_weights_hidden[l] + self.gamma*self.tmp_weights_hidden[l])
+            self.weights_hidden[l] -= self.tmp_weights_hidden[l]
 
-        self.bias_output -= (self.grad_bias_output + self.gamma*self.tmp_bias_output)
-        self.weights_output -= (self.grad_weights_output + self.gamma*self.tmp_weights_output)
+        self.tmp_bias_output = (self.grad_bias_output + self.gamma*self.tmp_bias_output)
+        self.bias_output -= self.tmp_bias_output
+
+        self.tmp_weights_output = (self.grad_weights_output + self.gamma*self.tmp_weights_output)
+        self.weights_output -= self.tmp_weights_output
 
         self.grad_bias_hidden[:,:] = 0.
         self.grad_bias_output[:] = 0.
         self.grad_weights_input[:,:] = 0.
         self.grad_weights_hidden[:,:,:] = 0.
         self.grad_weights_output[:,:] = 0.
-
-
-        self.tmp_weights_input, self.weights_input = self.weights_input, self.tmp_weights_input
-        self.tmp_weights_hidden, self.tmp_weights_hidden = self.tmp_weights_hidden, self.weights_hidden
-        self.tmp_weights_output, self.weights_output = self.weights_output, self.tmp_weights_output
-
-        self.tmp_bias, self.bias = self.bias, self.tmp_bias
-        self.tmp_bias_output, self.bias_output = self.bias_output, self.tmp_bias_output
-
 
     def predict(self, x):
         self.feed_forward(x)
