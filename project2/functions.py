@@ -1,4 +1,5 @@
 import numpy as np
+import tensorflow as tf
 
 def scale_data(X, y, Npoints):
     if y == None:
@@ -20,7 +21,6 @@ def scale_data(X, y, Npoints):
     return X, y
 
 def mnist_data(Ntrain, Ntest):
-    print("Loading dataset...\n")
     mnist = tf.keras.datasets.mnist
     (trainX, trainY), (testX, testY) = mnist.load_data()
     N_points_train, n, m = np.shape(trainX)
