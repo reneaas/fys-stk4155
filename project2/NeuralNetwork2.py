@@ -8,28 +8,28 @@ class FFNN():
     Feed forward Neural Network with multiple hidden layers.
     """
 
-    def __init__(self, layers, nodes, X_data, y_data, M_outputs, epochs=10, batch_size=100, eta = 0.1, momentum = 0.9, problem_type="classification", hidden_activation="sigmoid", regularization=None):
+    def __init__(self, layers, nodes, X_data, y_data, N_outputs, epochs=10, batch_size=100, eta = 0.1, momentum = 0.9, problem_type="classification", hidden_activation="sigmoid", regularization=None):
         self.layers = layers
         self.nodes = nodes
         self.X_data = X_data
         self.y_data = y_data
         self.N_points, self.features = np.shape(X_data)
-        self.M_outputs = M_outputs
+        self.N_outputs = N_outputs
         self.epochs = epochs
         self.batch_size = batch_size
         self.eta = eta
         self.momentum = momentum
 
 
-        #self.output = np.zeros(self.M_outputs)
+        #self.output = np.zeros(self.N_outputs)
 
         #self.activations = np.zeros([self.layers,self.nodes])
         #self.bias = np.random.normal(size=[self.layers, self.nodes])
-        #self.bias_output = np.random.normal(size=self.M_outputs)
+        #self.bias_output = np.random.normal(size=self.N_outputs)
 
         #weights_input = np.random.random(size=[self.nodes,self.features])
         #weights_hidden = np.random.normal(size=[self.layers, self.nodes, self.nodes])
-        #weights_output = np.random.random(size=[self.M_outputs, self.nodes])
+        #weights_output = np.random.random(size=[self.N_outputs, self.nodes])
         #self.weights = np.array([weights_input, weights_hidden, weights_output], dtype="object")
 
 
@@ -52,7 +52,7 @@ class FFNN():
         self.num_cols[1:-1] = self.nodes
 
         #top layer
-        self.num_rows[-1] = self.M_outputs
+        self.num_rows[-1] = self.N_outputs
         self.num_cols[-1] = self.nodes
 
         #Compute cumulative array elements.
