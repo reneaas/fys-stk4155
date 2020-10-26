@@ -33,6 +33,24 @@ class FFNN():
         if hidden_activation == "sigmoid":
             self.compute_hidden_act = lambda z: self.sigmoid(z)
 
+
+    def train(self, ):
+        batches = self.N_points//self.batch_size
+        total_indices = np.arange(self.N_points)
+        for epoch in range(self.epochs):
+            for b in range(batches):
+                indices = np.random.choice(total_indices, size=self.batch_size, replace=False)
+                self.X  = self.X_data[indices]
+                self.y = self.y_data[indices]
+                for i in range(self.batch_size):
+                    z = self.weights_input @ self.X[i] + self.bias[0]
+                    self.activations[0] = self.compute_hidden_act(z)
+                    for l in range(1,self.layers):
+                        z = self.weights[l] @ self.activations[l-1] + self.bias[l]
+                        self.activations[l] = self.compute_hidden_act(z)
+                    z = self.weights_output @ self.activations[-1] + self.bias_output
+                    self.compute_output(z)
+
     def softmax(self, z):
         Z = np.sum(np.exp(z))
         self.output = z/Z
@@ -48,23 +66,3 @@ class FFNN():
     @staticmethod
     def output_error_regression(activation, y):
         return None
-
-
-
-"""
-batches = self.N_points//self.batch_size
-total_indices = np.arange(self.N_points)
-for epoch in range(epochs):
-    for b in range(batches):
-        indices = np.random.choice(total_indices, size=self.batch_size, replace=False)
-        self.X  = self.X_data[indices]
-        self.y = self.y_data[indices]
-        for i in range(np.shape(self.X)[0]):
-            z = self.weights_input @ self.X[i] + self.bias[0]
-            self.activations[0] = self.compute_hidden_act(z)
-            for l in range(1,self.layers):
-                z = self.weights[l] @ self.activations[l-1] + self.bias[l]
-                self.activations[l] = self.compute_hidden_act(z)
-            z = self.weights_output @ self.activations[-1] + self.bias_output
-            self.compute_output(z)
-"""
