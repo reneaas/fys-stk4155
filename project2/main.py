@@ -16,7 +16,7 @@ testX, testY = testX[shuffled_indices], testY[shuffled_indices]
 print(np.shape(trainY))
 
 print("Flatten and scale dataset...")
-size_of_dataset = 10000         #Size of dataset to train on
+size_of_dataset = 60000       #Size of dataset to train on
 trainX = trainX/255.0
 trainX_flat = np.zeros((size_of_dataset, n*m))
 
@@ -37,7 +37,7 @@ for k in range(size_of_dataset):
 
 
 #Test data
-n_tests = 500           #Number of test data points.
+n_tests = 10000           #Number of test data points.
 X_test = np.zeros([n_tests, n*m])
 y_test = np.zeros([n_tests, 10])
 for i in range(n_tests):
