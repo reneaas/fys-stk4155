@@ -2,77 +2,20 @@ from NeuralNetwork import FFNN
 import numpy as np
 import tensorflow as tf
 from time import time
-
-print("Loading dataset...\n")
-mnist = tf.keras.datasets.mnist
-(trainX, trainY), (testX, testY) = mnist.load_data()
-Ntrain, n, m = np.shape(trainX)
-shuffled_indices = np.random.permutation(Ntrain)
-trainX, trainY = trainX[shuffled_indices], trainY[shuffled_indices]
-Ntest, n, m = np.shape(testX)
-shuffled_indices = np.random.permutation(Ntest)
-testX, testY = testX[shuffled_indices], testY[shuffled_indices]
-
-print(np.shape(trainY))
-
-print("Flatten and scale dataset...")
-size_of_dataset = 60000       #Size of dataset to train on
-trainX = trainX/255.0
-trainX_flat = np.zeros((size_of_dataset, n*m))
+from functions import scale_data, mnist_data, test_model_mnist, design_matrix
 
 
-#Flatten and scale data
+#Set up data:
+Ntrain = 5000
+Ntest = 500
+X_train, Y_train, X_test, Y_test = mnist_data(Ntrain, Ntest)
 
-y_training = np.zeros([size_of_dataset, 10])
-y_values = np.arange(0,10)
-
-for k in range(size_of_dataset):
-    y_training[k] = trainY[k] == y_values
-    x = trainX[k].flat[:]
-    x_mean = np.mean(x)
-    x_std = np.std(x)
-    x = (x - x_mean)/x_std
-    trainX_flat[k] = x[:]
-
-
-
-#Test data
-n_tests = 10000           #Number of test data points.
-X_test = np.zeros([n_tests, n*m])
-y_test = np.zeros([n_tests, 10])
-for i in range(n_tests):
-    x = testX[i].flat[:]
-    x_mean = np.mean(x)
-    x_std = np.std(x)
-    x = (x - x_mean)/x_std
-
-    X_test[i] = x
-    y_test[i] = testY[i] == y_values
-
-
-my_solver = FFNN(layers = 5, nodes = 100, X_data = trainX_flat, y_data = y_training, M_outputs = 10, hidden_activation = "sigmoid", epochs = 30)
+my_solver = FFNN(layers = 5, nodes = 100, X_data = X_train, y_data = Y_train, N_outputs = 10, hidden_activation = "sigmoid", epochs = 30)
 
 start = time()
 my_solver.train()
 end = time()
-
 timeused = end - start
-
-total_images = 0
-correct_predictions = 0
-print("Time used to train NN: ", timeused)
-for i in range(n_tests):
-    #print("Image = ", i)
-    y_predict = my_solver.predict(X_test[i])
-    #print("Prediction = ", y_predict)
-    one_hot_prediction = 1.*(y_predict == np.max(y_predict))
-    idx = np.where(one_hot_prediction == 1.)
-    correct_predictions += (one_hot_prediction[idx] == y_test[i][idx])
-    total_images += 1
-    #print("Prediction = ", one_hot_prediction)
-    #print("Sum of prediction = ", np.sum(y_predict))
-    #print("Ground truth = ", y_test[i])
-
-accuracy = correct_predictions/total_images
-
-print("Accuracy = ", accuracy*100, " %")
+print("Timeused = ", timeused)
+accuracy = test_model_mnist(my_solver, X_test, Y_test, Ntest)
+print("Accuracy = ", accuracy)
