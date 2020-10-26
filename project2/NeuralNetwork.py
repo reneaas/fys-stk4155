@@ -4,7 +4,7 @@ np.random.seed(1001)
 
 class FFNN():
 
-    def __init__(self, layers, nodes, X_data, y_data, N_outputs, epochs=10, batch_size=100, eta = 0.3, problem_type="classification", hidden_activation="sigmoid"):
+    def __init__(self, layers, nodes, X_data, y_data, N_outputs, epochs=10, batch_size=100, eta = 0.3, problem_type="classification", hidden_activation="sigmoid", Lambda = 0):
         self.layers = layers
         self.nodes = nodes
         self.X_data = X_data
@@ -14,6 +14,7 @@ class FFNN():
         self.epochs = epochs
         self.batch_size = batch_size
         self.eta = eta
+        self.Lambda = Lambda
 
         #self.error_input = np.zeros(self.nodes)
         self.error_hidden = np.zeros([self.layers,self.nodes])
@@ -37,11 +38,14 @@ class FFNN():
         self.weights_hidden = np.random.normal(size=[self.layers, self.nodes, self.nodes])
         self.weights_output = np.random.random(size=[self.N_outputs,self.nodes])
 
-        #print(np.shape(self.weights))
+
+        self.compute_error_output = lambda activation, y: self.error_output_function(activation, y)
 
         if problem_type == "classification":
-            self.compute_error_output = lambda activation, y: self.error_output_classification(activation, y)
             self.compute_output = lambda z: self.softmax(z)
+
+        if problem_type == "regression":
+            self.compute_output = lambda z: z
 
         if hidden_activation == "sigmoid":
             self.compute_hidden_act = lambda z: self.sigmoid(z)
@@ -83,24 +87,24 @@ class FFNN():
 
         #update bias
         self.grad_bias_output += self.error_output
-        self.grad_weights_output += np.outer(self.error_output, self.activations[-1])
+        self.grad_weights_output += np.outer(self.error_output, self.activations[-1]) + self.Lambda * self.weights_output
 
         s = self.activations[-1]* (1 - self.activations[-1])
         self.error_hidden[-1] = (self.weights_output.T @ self.error_output)*s
         self.grad_bias_hidden[-1] += self.error_hidden[-1]
-        self.grad_weights_hidden[-1] += np.outer(self.error_hidden[-1], self.activations[-2])
+        self.grad_weights_hidden[-1] += np.outer(self.error_hidden[-1], self.activations[-2]) + self.Lambda * self.weights_hidden[-1]
 
 
         for l in range(self.layers-2, 0, -1):
             s = self.activations[l] * (1 - self.activations[l])
             self.error_hidden[l] = (self.weights_hidden[l+1].T @ self.error_hidden[l+1])*s
             self.grad_bias_hidden[l] += self.error_hidden[l]
-            self.grad_weights_hidden[l] += np.outer(self.error_hidden[l], self.activations[l-1])
+            self.grad_weights_hidden[l] += np.outer(self.error_hidden[l], self.activations[l-1])+ self.Lambda * self.weights_hidden[l]
 
         s = self.activations[0] * (1 - self.activations[0])
         self.error_hidden[0] = (self.weights_hidden[1].T @ self.error_hidden[1])*s
         self.grad_bias_hidden[0] += self.error_hidden[0]
-        self.grad_weights_input += np.outer(self.error_hidden[0], x)
+        self.grad_weights_input += np.outer(self.error_hidden[0], x) + self.Lambda * self.weights_input
 
 
     def update_parameters(self):
@@ -112,14 +116,18 @@ class FFNN():
         self.grad_weights_output *= scale
 
         self.weights_input -= self.grad_weights_input
+        temp_weights_input = np.copy(self.grad_weights_input)
 
         for l in range(self.layers):
             self.bias[l] -= self.grad_bias_hidden[l]
             self.weights_hidden[l] -= self.grad_weights_hidden[l]
 
+        temp_weights_hidden = np.copy(self.grad_weights_hidden)
+
 
         self.bias_output -= self.grad_bias_output
         self.weights_output -= self.grad_weights_output
+        temp_weights_output = np.copy(self.grad_weights_output)
 
         self.grad_bias_hidden[:,:] = 0.
         self.grad_bias_output[:] = 0.
@@ -132,8 +140,8 @@ class FFNN():
         self.feed_forward(x)
         return self.output
 
-
-    def softmax(self, z):
+    @staticmethod
+    def softmax(z):
         Z = np.sum(np.exp(z))
         return np.exp(z)/Z
 
@@ -148,13 +156,5 @@ class FFNN():
         return z
 
     @staticmethod
-    def error_output_classification(activation, y):
+    def error_output_function(activation, y):
         return activation - y
-
-    @staticmethod
-    def error_output_classification_l2(activation, y):
-        return activation - y
-
-    @staticmethod
-    def error_output_regression(activation, y):
-        return None

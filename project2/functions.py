@@ -1,4 +1,5 @@
 import numpy as np
+import tensorflow as tf
 
 def scale_data(X, y, Npoints):
     if y == None:
