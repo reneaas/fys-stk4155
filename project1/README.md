@@ -1,21 +1,24 @@
-## Code documentation
+# Regression solvers: Ordinary least-squares, Ridge and LASSO.
 
+The [report](https://github.com/reneaas/fys-stk4155/blob/master/project1/report/Linear_Regression.pdf) summarizing all the necessary background knowledge for the implementations.
+
+## Code documentation
 The important codes for this project is found [here](https://github.com/reneaas/fys-stk4155/tree/master/project1/codes).
 ### Structure of the codes
 
 We've developed a set of classes with the following structure:
 
 1. A superclass called [Regression](https://github.com/reneaas/fys-stk4155/blob/master/project1/codes/regression.py).
-    - This class contains class methods that are used by all algorithms.
-2. A derived class called [OLS](https://github.com/reneaas/fys-stk4155/blob/master/project1/codes/ols.py)
-    - This derived class implements the *ordinary least squares* method.
-    - It inherits all methods declared in *regression.py*.
-3. Another derived class called [Ridge](https://github.com/reneaas/fys-stk4155/blob/master/project1/codes/ridge.py)
+    - Both *Regression* and its derived classes are all found in this *regression.py* to simplify import, structure and usage of the solvers.
+2. A derived class called *OLS*
+    - This derived class implements the ordinary least-squares method.
+    - It's found in the file *regression.py*.
+3. Another derived class called *Ridge*
     - Implements Ridge regression.
-    - Inherits all methods declared in *regression.py*
-4. A derived class called [Lasso](https://github.com/reneaas/fys-stk4155/blob/master/project1/codes/lasso.py)
-    - Implements Lasso regression using the Scikit-Learn module.
-    - Inherts all methods declared in *regression.py*
+    - It's found in the file *regression.py*
+4. A derived class called *Lasso*
+    - Implements Lasso regression using this [scikit-learn module](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Lasso.html)
+    - It's found in the file *regression.py*
 
 ### Producing data
 
@@ -27,7 +30,7 @@ python3 generate_data.py N sigma
   - *N* is the number of points
   - *sigma* is the desired standard deviation.
 
-2. Extracting the image used in the [report](https://github.com/reneaas/fys-stk4155/blob/master/project1/report/Project_1___Linear_Regression.pdf) from the terrain data is done using the script *terrain.py*. Simply run the following in a Linux/Unix command line:
+2. Extracting the image used in the [report](https://github.com/reneaas/fys-stk4155/blob/master/project1/report/Linear_Regression.pdf) from the terrain data is done using the script *terrain.py*. Simply run the following in a Linux/Unix command line:
 
 ```terminal
 python3 terrain.py
@@ -46,7 +49,7 @@ Given a datafile with tuples (x, y, f(x, y)) on each line, the usage of each cla
 
 1. OLS
   ```Python
-  from ols import OLS
+  from regression import OLS  #Import OLS solver
   my_solver = OLS() #Initiates the solver.
   my_solver.read_data(filename) #Reads data and scales it according to Z-score
   my_solver.create_design_matrix(deg) #Creates design matrix for a polynomial of degree deg
@@ -57,7 +60,7 @@ Given a datafile with tuples (x, y, f(x, y)) on each line, the usage of each cla
 
 2. Ridge
 ```Python
-from ridge import Ridge
+from regression import Ridge  #Import Ridge solver
 my_solver = Ridge(Lambda = value) #Initiates the solver with a given value for the regularization parameter.
 my_solver.read_data(filename) #Reads data and scales it according to Z-score
 my_solver.create_design_matrix(deg) #Creates design matrix for a polynomial of degree deg
@@ -73,7 +76,7 @@ R2, MSE = my_solver.predict_test() #Computes R2-score and MSE on the test data.
   - Note that *train* and *predict_test* will not work if Lambda is not specified.
 3. Lasso
 ```Python
-from lasso import Lasso
+from regression import Lasso #Import Lasso solver
 my_solver = Lasso(Lambda = value) #Initiates the solver with a given value for the regularization parameter.
 my_solver.read_data(filename) #Reads data and scales it according to Z-score
 my_solver.create_design_matrix(deg) #Creates design matrix for a polynomial of degree deg
@@ -88,6 +91,7 @@ R2, MSE = my_solver.predict_test() #Computes R2-score and MSE on the test data.
     ```
   - Note that *train* and *predict_test* will not work if Lambda is not specified.
 
+### Utilizing built-in resampling techniques
 
 #### Bootstrap analysis
 If the sample size of the dataset is limited, bootstrap analysis can be perfomed using *any* of the solvers, initiated as shown above, by the following code segment
@@ -105,19 +109,19 @@ To perform k-fold cross-validation on the whole dataset, the initialization of t
 ```Python
 R2, MSE = my_solver.k_fold_cross_validation(k)
 ```
-  - *k* is the number of folds to perform crossvalidation for.
-  - It returns the average R2-score and MSE on thetest data.
-  - The k-fold cross-validation is performed on the full data set.
+  - *k* is the number of folds to perform cross-validation on.
+  - It returns the average R2-score and MSE computed on validation data.
 
 ### Test program
 
-As as simple test program, we've implemented [test_program.py](https://github.com/reneaas/fys-stk4155/blob/master/project1/codes/test_program.py) which show-cases all of the above using a generated dataset on the Franke function. Simply run the follow command in any Linux/Unix command line
+As as simple test program, we've implemented [test_program.py](https://github.com/reneaas/fys-stk4155/blob/master/project1/codes/test_program.py) which show-cases all of the above using a dataset generated with Franke's function. Simply run the follow command in any Linux/Unix command line
 
 ```terminal
 python3 test_program.py
 ```
 
-which should give the output similar to
+
+which should give output similar to
 
 ```terminal
 OLS; R2 score =  0.8841606202925218
