@@ -7,7 +7,6 @@ def scale_data(X, y, Npoints):
             x_mean = np.mean(X[i])
             x_std = np.std(X[i])
             X[i] = (X[i]-x_mean)/x_std
-
     else:
         for i in range(Npoints):
             x_mean = np.mean(X[i])
@@ -16,7 +15,6 @@ def scale_data(X, y, Npoints):
             y_mean = np.mean(y[i])
             y_std = np.mean(y[i])
             y[i] = (y[i]-y_mean)/y_std
-
 
     return X, y
 
@@ -29,7 +27,6 @@ def mnist_data(Ntrain, Ntest):
     N_points_train, n, m = np.shape(testX)
     shuffled_indices = np.random.permutation(N_points_train)
     testX, testY = testX[shuffled_indices], testY[shuffled_indices]
-
 
     #Prepare training data
     trainX = trainX/255.0
