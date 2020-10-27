@@ -9,7 +9,7 @@ Ntrain = 10000
 Ntest = 1000
 X_train, Y_train, X_test, Y_test = mnist_data(Ntrain, Ntest)
 
-my_solver = FFNN(layers = 5, nodes = 100, X_data = X_train, y_data = Y_train, N_outputs = 10, hidden_activation = "sigmoid", epochs = 30, Lambda=0, gamma=0.9)
+my_solver = FFNN(layers = 5, nodes = 100, X_data = X_train, y_data = Y_train, N_outputs = 10, hidden_activation = "ReLU", epochs = 10, Lambda=0.0001, gamma=0.1)
 
 start = time()
 my_solver.train()
