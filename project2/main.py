@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 from time import time
 from functions import scale_data, mnist_data, test_model_mnist, design_matrix
 
-Ntrain = 1000
-Ntest = 100
+Ntrain = 10000
+Ntest = 1000
 def train_and_test_mnist(Ntrain, Ntest, layers, nodes, N_outputs, hidden_activation, epochs, Lambda, gamma):
     X_train, Y_train, X_test, Y_test = mnist_data(Ntrain, Ntest)
     my_solver = FFNN(layers = layers, nodes = nodes, X_data = X_train, y_data = Y_train, N_outputs = N_outputs, hidden_activation = hidden_activation, epochs = epochs, Lambda=Lambda, gamma=gamma)
