@@ -3,12 +3,13 @@ import tensorflow as tf
 np.random.seed(1001)
 
 def scale_data(X, y, Npoints):
-    if y == None:
+    if not isinstance(y, np.ndarray):
         for i in range(Npoints):
             x_mean = np.mean(X[i])
             x_std = np.std(X[i])
             X[i] = (X[i]-x_mean)/x_std
     else:
+
         for i in range(Npoints):
             x_mean = np.mean(X[i])
             x_std = np.std(X[i])
@@ -67,7 +68,7 @@ def test_model_mnist(my_solver, X_test, Y_test, Ntests):
     accuracy = correct_predictions/total_images
     return accuracy
 
-def design_matrix(X_data, Y_data, f_data, degree):
+def design_matrix(X_data, Y_data, z_data, degree):
 
     n = len(X_data)
     shuffled_idx = np.random.permutation(n)
@@ -85,5 +86,68 @@ def design_matrix(X_data, Y_data, f_data, degree):
             col_idx += 1
 
     design_matrix = design_matrix[shuffled_idx]
-    f_data = f_data[shuffled_idx]
-    return design_matrix, f_data
+    z_data = z_data[shuffled_idx]
+
+    return design_matrix, z_data
+
+
+
+def read_data(filename):
+    """
+    Reads data from a file where each line is of the form "x y z(x,y)".
+
+    Input parameters:
+    filename - filename of the file containing the dataset.
+    """
+
+    x = []
+    y = []
+    z_data = []
+
+
+    with open(filename, "r") as infile:
+        lines = infile.readlines()
+        n = len(lines)
+        for line in lines:
+            words = line.split()
+            x.append(float(words[0]))
+            y.append(float(words[1]))
+            z_data.append(float(words[2]))
+
+    # Scaling data
+    x = np.array(x)
+    y = np.array(y)
+    z_data = np.array(z_data)
+
+    x_mean = np.mean(x)
+    y_mean = np.mean(y)
+    x_std = np.std(x)
+    y_std = np.std(y)
+    z_data_mean = np.mean(z_data)
+    z_data_std = np.std(z_data)
+
+    x = (x - x_mean)/x_std
+    y = (y - y_mean)/y_std
+    z_data = (z_data - z_data_mean)/z_data_std
+
+    return x, y, z_data
+
+
+def split_data(design_matrix, z_data, n, fraction_train = 0.8):
+    """
+    Splits the data into a training set and a test set
+    Training/test is by default 80/20 ratio.
+
+    Input parameters:
+
+    fraction_train - fraction of the dataset used for training.
+    """
+    #Split data into training and test set.
+    n_train = int(fraction_train*n)
+    n_test = n - n_train
+    X_train = design_matrix[:n_train,:]
+    X_test = design_matrix[n_train:,:]
+    z_train = z_data[:n_train]
+    z_test = z_data[n_train:]
+
+    return X_train, X_test, z_train, z_test

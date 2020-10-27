@@ -35,9 +35,11 @@ class FFNN():
 
         self.output = np.zeros(self.N_outputs)
 
-        self.weights_input = np.random.random(size=[self.nodes,self.features])
-        self.weights_hidden = np.random.normal(size=[self.layers, self.nodes, self.nodes])
-        self.weights_output = np.random.random(size=[self.N_outputs,self.nodes])
+        mean = 0; std = 1
+
+        self.weights_input = np.random.normal(mean, std, size=[self.nodes,self.features])
+        self.weights_hidden = np.random.normal(mean, std, size=[self.layers, self.nodes, self.nodes])
+        self.weights_output = np.random.normal(mean, std, size=[self.N_outputs,self.nodes])
 
         self.tmp_weights_input = np.zeros([self.nodes,self.features])
         self.tmp_weights_hidden = np.zeros([self.layers, self.nodes, self.nodes])
@@ -54,10 +56,17 @@ class FFNN():
 
 
         if hidden_activation == "sigmoid":
-            self.compute_hidden_act = lambda z: self.sigmoid(z)
+            self.compute_hidden_act = lambda z: z
 
         if hidden_activation == "ReLU":
             self.compute_hidden_act = lambda z: self.ReLU(z)
+
+        if hidden_activation == "LeackyReLU":
+            self.compute_hidden_act = lambda z: self.LeackyReLU(z)
+
+        if hidden_activation == "ELU":
+            self.compute_hidden_act = lambda z: self.ELU(z)
+
 
 
     def train(self):
@@ -161,6 +170,23 @@ class FFNN():
         idx = np.where(z <= 0)
         z[idx] = 0
         return z
+
+    @staticmethod
+    def LeakyReLU(z):
+        idx_below_zero = np.where(z <= 0)
+        idx_above_zero = np.where(z >= 0)
+        z[idx_below_zero] = 0.1*z
+        z[idx_above_zero] = z
+        return z
+
+    @staticmethod
+    def ELU(z):
+        idx_below_zero = np.where(z <= 0)
+        idx_above_zero = np.where(z >= 0)
+        z[idx_below_zero] = np.exp(z)-1
+        z[idx_above_zero] = z
+        return z
+
 
     @staticmethod
     def compute_error_output(activation, y):

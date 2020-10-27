@@ -2,7 +2,8 @@ from NeuralNetwork import FFNN
 import numpy as np
 import matplotlib.pyplot as plt
 from time import time
-from functions import scale_data, mnist_data, test_model_mnist, design_matrix
+from functions import scale_data, mnist_data, test_model_mnist, design_matrix, read_data, split_data
+
 
 Ntrain = 1000
 Ntest = 100
@@ -19,7 +20,7 @@ def train_and_test_mnist(Ntrain, Ntest, layers, nodes, N_outputs, hidden_activat
     return accuracy
 
 
-#train_and_test_mnist(Ntrain=Ntrain, Ntest=Ntest, layers = 5, nodes = 100, N_outputs = 10, hidden_activation="sigmoid", epochs=10, Lambda = 0.0001, gamma = 0.9)
+train_and_test_mnist(Ntrain=Ntrain, Ntest=Ntest, layers = 2, nodes = 45, N_outputs = 10, hidden_activation="sigmoid", epochs=10, Lambda = 0.00001, gamma = 0.9)
 
 def heat_map_mnist(start_nodes, end_nodes, start_layers, end_layers):
     nodes = np.linspace(start_nodes, end_nodes, end_nodes-start_nodes+1)
@@ -43,6 +44,35 @@ def heat_map_mnist(start_nodes, end_nodes, start_layers, end_layers):
     plt.show()
 
 
+#heat_map_mnist(start_nodes = 10, end_nodes = 50, start_layers = 2, end_layers = 10)
 
 
-heat_map_mnist(start_nodes = 40, end_nodes = 50, start_layers = 2, end_layers = 6)
+def test_franke_func(layers, nodes, epochs, batch_size, eta, Lambda, gamma, degree):
+    N = 1000
+    sigma = 0.1
+    filename = "datasets/frankefunction_dataset_N_{0}_sigma_{1}.txt".format(N,sigma)
+
+    X_data, Y_data, z_data = read_data(filename)
+    my_design_matrix, z_data = design_matrix(X_data, Y_data, z_data, degree)
+
+    X_train, X_test, z_train, z_test = split_data(my_design_matrix, z_data, N, fraction_train = 0.8)
+    n_train = len(X_train)
+
+    problem_type = "regression"
+    hidden_activation = "sigmoid"
+    my_solver = FFNN(layers=layers, nodes=nodes, X_data=X_train, y_data=z_train, N_outputs=1, epochs=epochs, batch_size=batch_size, eta = eta, problem_type=problem_type, hidden_activation=hidden_activation, Lambda=Lambda, gamma=gamma)
+
+    my_solver.train()
+    test_result = np.zeros(N-n_train)
+
+    for i in range(N-n_train):
+        test_result[i] = my_solver.predict(X_test[i])
+
+
+    MSE = np.mean((test_result - z_test)**2)
+
+    print("MSE = ", MSE)
+    return MSE
+
+
+#MSE = test_franke_func(layers=2, nodes = 1000, epochs = 10, batch_size = 10, eta = 0.1, Lambda = 0.01, gamma = 0., degree = 1)
