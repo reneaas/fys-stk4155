@@ -19,7 +19,7 @@ def train_and_test_mnist(Ntrain, Ntest, layers, nodes, N_outputs, hidden_activat
     return accuracy
 
 
-train_and_test_mnist(Ntrain=Ntrain, Ntest=Ntest, layers = 5, nodes = 100, N_outputs = 10, hidden_activation="sigmoid", epochs=10, Lambda = 0.0001, gamma = 0.9)
+#train_and_test_mnist(Ntrain=Ntrain, Ntest=Ntest, layers = 5, nodes = 100, N_outputs = 10, hidden_activation="sigmoid", epochs=10, Lambda = 0.0001, gamma = 0.9)
 
 def heat_map_mnist(start_nodes, end_nodes, start_layers, end_layers):
     nodes = np.linspace(start_nodes, end_nodes, end_nodes-start_nodes+1)
@@ -31,7 +31,7 @@ def heat_map_mnist(start_nodes, end_nodes, start_layers, end_layers):
         for j in range(m):
             N_nodes = nodes[i]
             N_layers = layers[j]
-            accuracy[i,j] = train_and_test_mnist(Ntrain=Ntrain, Ntest=Ntest, layers = N_layers, nodes = N_nodes, N_outputs = 10, hidden_activation="sigmoid", epochs=10, Lambda = 0.0001, gamma = 0.9)
+            accuracy[i,j] = train_and_test_mnist(Ntrain=Ntrain, Ntest=Ntest, layers = int(N_layers), nodes = int(N_nodes), N_outputs = 10, hidden_activation="sigmoid", epochs=10, Lambda = 0.0001, gamma = 0.9)
             print("Nodes   Layers   Accuracy ")
             print(N_nodes, N_layers, accuracy[i,j])
 
@@ -39,10 +39,10 @@ def heat_map_mnist(start_nodes, end_nodes, start_layers, end_layers):
 
 
     nodes, layers = np.meshgrid(nodes, layers)
-    plt.contourf(nodes, layers, accuracy)
+    plt.contourf(nodes, layers, accuracy.T)
     plt.show()
 
 
 
 
-#heat_map_mnist(start_nodes = 10, end_nodes = 50, start_layers = 2, end_layers = 10)
+heat_map_mnist(start_nodes = 40, end_nodes = 50, start_layers = 2, end_layers = 6)

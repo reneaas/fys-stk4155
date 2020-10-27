@@ -1,5 +1,6 @@
 import numpy as np
 import tensorflow as tf
+np.random.seed(1001)
 
 def scale_data(X, y, Npoints):
     if y == None:
