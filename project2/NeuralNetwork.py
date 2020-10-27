@@ -35,9 +35,11 @@ class FFNN():
 
         self.output = np.zeros(self.N_outputs)
 
-        self.weights_input = np.random.normal(size=[self.nodes,self.features])
-        self.weights_hidden = np.random.normal(size=[self.layers, self.nodes, self.nodes])
-        self.weights_output = np.random.normal(size=[self.N_outputs,self.nodes])
+        mean = 0; std = 1
+
+        self.weights_input = np.random.normal(mean, std, size=[self.nodes,self.features])
+        self.weights_hidden = np.random.normal(mean, std, size=[self.layers, self.nodes, self.nodes])
+        self.weights_output = np.random.normal(mean, std, size=[self.N_outputs,self.nodes])
 
         self.tmp_weights_input = np.zeros([self.nodes,self.features])
         self.tmp_weights_hidden = np.zeros([self.layers, self.nodes, self.nodes])
