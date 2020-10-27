@@ -35,7 +35,7 @@ class FFNN():
 
         self.output = np.zeros(self.N_outputs)
 
-        mean = 0; std = 0.1
+        mean = 0; std = 1
 
         self.weights_input = np.random.normal(mean, std, size=[self.nodes,self.features])
         self.weights_hidden = np.random.normal(mean, std, size=[self.layers, self.nodes, self.nodes])
