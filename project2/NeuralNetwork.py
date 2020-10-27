@@ -127,9 +127,6 @@ class FFNN():
             self.bias[l] -= (self.grad_bias_hidden[l] + self.gamma*self.tmp_bias[l])
             self.weights_hidden[l] -= (self.grad_weights_hidden[l] + self.gamma*self.tmp_weights_hidden[l])
 
-        temp_weights_hidden = np.copy(self.grad_weights_hidden)
-
-
         self.bias_output -= (self.grad_bias_output + self.gamma*self.tmp_bias_output)
         self.weights_output -= (self.grad_weights_output + self.gamma*self.tmp_weights_output)
 
