@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 from time import time
 from functions import scale_data, mnist_data, test_model_mnist, design_matrix
 
-Ntrain = 60000
-Ntest = 10000
+Ntrain = 10000
+Ntest = 1000
 def train_and_test_mnist(N_train, N_test, classes, eta, gamma, Lambda, epochs):
     X_train, Y_train, X_test, Y_test = mnist_data(Ntrain, Ntest)
     my_solver = LogReg(classes= classes, X_data = X_train, y_data = Y_train, eta = eta, gamma = gamma, Lambda = Lambda, epochs = epochs)
@@ -35,7 +35,7 @@ def train_and_test_mnist(N_train, N_test, classes, eta, gamma, Lambda, epochs):
     for i in range(10):
         l2_plot = plt.subplot(2, 5, i + 1)
         l2_plot.imshow(weights[i].reshape(28, 28), interpolation='nearest',
-                       cmap=plt.cm.Greys, vmin=-scale, vmax=scale)
+                       cmap=plt.cm.Greys)
         l2_plot.set_xticks(())
         l2_plot.set_yticks(())
         l2_plot.set_xlabel('Class %i' % i)

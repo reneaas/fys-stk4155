@@ -5,8 +5,8 @@ from time import time
 from functions import scale_data, mnist_data, test_model_mnist, design_matrix, read_data, split_data
 
 
-Ntrain = 1000
-Ntest = 100
+Ntrain = 60000
+Ntest = 10000
 def train_and_test_mnist(Ntrain, Ntest, layers, nodes, N_outputs, hidden_activation, epochs, Lambda, gamma):
     X_train, Y_train, X_test, Y_test = mnist_data(Ntrain, Ntest)
     my_solver = FFNN(layers = layers, nodes = nodes, X_data = X_train, y_data = Y_train, N_outputs = N_outputs, hidden_activation = hidden_activation, epochs = epochs, Lambda=Lambda, gamma=gamma)
@@ -20,7 +20,7 @@ def train_and_test_mnist(Ntrain, Ntest, layers, nodes, N_outputs, hidden_activat
     return accuracy
 
 
-train_and_test_mnist(Ntrain=Ntrain, Ntest=Ntest, layers = 2, nodes = 45, N_outputs = 10, hidden_activation="sigmoid", epochs=10, Lambda = 0.00001, gamma = 0.9)
+#train_and_test_mnist(Ntrain=Ntrain, Ntest=Ntest, layers = 5, nodes = 100, N_outputs = 10, hidden_activation="sigmoid", epochs=10, Lambda = 0.0001, gamma = 0.9)
 
 def heat_map_mnist(start_nodes, end_nodes, start_layers, end_layers):
     nodes = np.linspace(start_nodes, end_nodes, end_nodes-start_nodes+1)
@@ -47,7 +47,7 @@ def heat_map_mnist(start_nodes, end_nodes, start_layers, end_layers):
 #heat_map_mnist(start_nodes = 10, end_nodes = 50, start_layers = 2, end_layers = 10)
 
 
-def test_franke_func(layers, nodes, epochs, batch_size, eta, Lambda, gamma, degree):
+def regression_franke_func(layers, nodes, epochs, batch_size, eta, Lambda, gamma, degree):
     N = 1000
     sigma = 0.1
     filename = "datasets/frankefunction_dataset_N_{0}_sigma_{1}.txt".format(N,sigma)
@@ -64,15 +64,16 @@ def test_franke_func(layers, nodes, epochs, batch_size, eta, Lambda, gamma, degr
 
     my_solver.train()
     test_result = np.zeros(N-n_train)
-
     for i in range(N-n_train):
         test_result[i] = my_solver.predict(X_test[i])
 
-
     MSE = np.mean((test_result - z_test)**2)
-
     print("MSE = ", MSE)
     return MSE
 
+def test_franke_func():
+    degs = np.array([i for i in range(1,15)])
+    for i in range(len(degs)):
+        MSE = regression_franke_func(layers=2, nodes = 10, epochs = 10, batch_size = 10, eta = 0.1, Lambda = 1e-4, gamma = 0.9, degree = degs[i])
 
-#MSE = test_franke_func(layers=2, nodes = 1000, epochs = 10, batch_size = 10, eta = 0.1, Lambda = 0.01, gamma = 0., degree = 1)
+test_franke_func()
