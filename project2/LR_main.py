@@ -25,7 +25,7 @@ def train_and_test_mnist(N_train, N_test, classes, eta, gamma, Lambda, epochs, b
     for i in range(10):
         l2_plot = plt.subplot(2, 5, i + 1)
         l2_plot.imshow(weights[i].reshape(28, 28), interpolation='nearest',
-                       cmap=plt.cm.Greys, vmin=-scale, vmax=scale)
+                       cmap=plt.cm.Greys)
         l2_plot.set_xticks(())
         l2_plot.set_yticks(())
         l2_plot.set_xlabel('Class %i' % i)
