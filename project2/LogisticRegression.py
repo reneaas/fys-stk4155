@@ -3,7 +3,7 @@ from progress.bar import Bar
 np.random.seed(1001)
 
 class LogReg():
-    def __init__(self, classes, X_data, y_data, eta, gamma, Lambda, epochs):
+    def __init__(self, classes, X_data, y_data, eta, gamma, Lambda, epochs, batch_size):
 
         self.M = classes
         self.eta = eta
@@ -15,10 +15,10 @@ class LogReg():
 
         self.Lambda = Lambda
         self.gamma = gamma
-        self.batch_size = 100
+        self.batch_size = batch_size
 
         self.grad_weights = np.zeros([self.M,self.features])
-        self.weights = np.random.normal(size=[self.M,self.features])
+        self.weights = np.random.normal(size=[self.M,self.features])*0.001
 
         self.bias = np.random.uniform(size=self.M)
         self.grad_bias = np.zeros(self.M)
@@ -69,11 +69,20 @@ class LogReg():
         self.grad_bias[:] = 0.
 
 
-
+    """
+    @staticmethod
+    def softmax(z):
+        Z = 1/(1+np.exp(-z))
+        if Z < 0.5:
+            return 1
+        else:
+            return 0
+    """
     @staticmethod
     def softmax(z):
         Z = np.sum(np.exp(-z))
         return np.exp(-z)/Z
+
 
     def compute_grad_weights(self, y, x):
         return np.outer(y-self.output, x)

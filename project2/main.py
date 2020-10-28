@@ -5,7 +5,7 @@ from time import time
 from functions import scale_data, mnist_data, test_model_mnist, design_matrix, read_data, split_data
 
 
-"""
+
 Ntrain = 1000
 Ntest = 100
 def train_and_test_mnist(Ntrain, Ntest, layers, nodes, N_outputs, hidden_activation, epochs, Lambda, gamma):
@@ -22,7 +22,7 @@ def train_and_test_mnist(Ntrain, Ntest, layers, nodes, N_outputs, hidden_activat
 
 
 train_and_test_mnist(Ntrain=Ntrain, Ntest=Ntest, layers = 2, nodes = 45, N_outputs = 10, hidden_activation="ReLU", epochs=10, Lambda = 0.01, gamma = 0.9)
-
+"""
 def heat_map_mnist(start_nodes, end_nodes, start_layers, end_layers):
     nodes = np.linspace(start_nodes, end_nodes, end_nodes-start_nodes+1)
     layers = np.linspace(start_layers, end_layers, end_layers-start_layers+1)
@@ -47,7 +47,7 @@ def heat_map_mnist(start_nodes, end_nodes, start_layers, end_layers):
 
 #heat_map_mnist(start_nodes = 10, end_nodes = 50, start_layers = 2, end_layers = 10)
 """
-
+"""
 N = 1000
 sigma = 0.1
 degree = 7
@@ -74,3 +74,4 @@ for i in range(N-n_train):
 MSE = np.mean((test_result - z_test)**2)
 
 print(MSE)
+"""
