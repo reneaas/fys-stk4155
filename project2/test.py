@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from time import time
 import unittest
 from progress.bar import Bar
-from main.py import sigmoid
+from main import sigmoid
 
 class Test_NN(unittest.TestCase):
 
