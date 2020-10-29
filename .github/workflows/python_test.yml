@@ -1,19 +1,23 @@
+
 name: python_test
+
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-         python-version: [3.7]
-     steps:
-     - uses: actions/checkout@v2
-     - name: Set up Python 3.7
-       uses: actions/setup-python@v2
+        python-version: [3.7]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v2
       with:
         python-version: 3.7
     - name: Display Python version
