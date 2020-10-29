@@ -11,7 +11,7 @@ from sklearn.utils import check_random_state
 
 # Turn down for faster convergence
 t0 = time.time()
-train_size = 50000
+train_size = 60000
 test_size = 10000
 
 ### load MNIST data from https://www.openml.org/d/554
