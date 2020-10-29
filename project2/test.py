@@ -7,7 +7,9 @@ from progress.bar import Bar
 
 class Test_NN(unittest.TestCase):
 
-    def test_function(self, x,y):
+    def test_function(self):
+        x = 3
+        y = 2
         hidden_layers = 1
         nodes = 2
         features = 2
