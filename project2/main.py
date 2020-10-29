@@ -78,7 +78,7 @@ def test_franke_func():
     for i in range(len(degs)):
         MSE = regression_franke_func(hidden_layers=2, nodes = 5, epochs = 10, batch_size = 10, eta = 0.1, Lambda = 0., gamma = 0.9, degree = degs[i])
 
-test_franke_func()
+#test_franke_func()
 
 def sigmoid(x):
     return 1./(1+np.exp(-x))
@@ -157,9 +157,9 @@ def test_function(x,y):
     activations_hidden = sigmoid(w_hidden@activations_input + b_hidden)
     activations_output = w_output@activations_hidden + b_output
 
-    #print("Output activations = ", activations_output)
+    print("Output activations = ", activations_output)
     my_solver.feed_forward(X)
-    #print("NN output activations = ", my_solver.activations_output)
+    print("NN output activations = ", my_solver.activations_output)
 
 
     error_output = activations_output - y_data
@@ -171,4 +171,4 @@ def test_function(x,y):
     print("NN error_output = ", my_solver.error_output)
 
 
-#test_function(3,2)
+test_function(3,2)
