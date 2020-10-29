@@ -1,6 +1,4 @@
-sphinx
 matplotlib
 numpy
-numba
 progress.bar
-time
+
