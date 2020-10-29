@@ -55,7 +55,7 @@ def mnist_data(Ntrain, Ntest):
     return X_train, Y_train, X_test, Y_test
 
 
-def test_model_mnist(my_solver, X_test, Y_test, Ntests):
+def results_model_mnist(my_solver, X_test, Y_test, Ntests):
     total_images = 0
     correct_predictions = 0
     for i in range(Ntests):
@@ -68,7 +68,7 @@ def test_model_mnist(my_solver, X_test, Y_test, Ntests):
     accuracy = correct_predictions/total_images
     return accuracy
 
-def test_model_mnist_single(my_solver, X_test, Y_test, Ntests):
+def results_model_mnist_single(my_solver, X_test, Y_test, Ntests):
     total_images = 0
     correct_predictions = 0
     for i in range(Ntests):

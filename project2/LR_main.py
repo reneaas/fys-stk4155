@@ -2,7 +2,7 @@ from LogisticRegression import LogReg
 import numpy as np
 import matplotlib.pyplot as plt
 from time import time
-from functions import scale_data, mnist_data, test_model_mnist, design_matrix
+from functions import scale_data, mnist_data, results_model_mnist, design_matrix
 
 Ntrain = 60000
 Ntest = 10000
@@ -14,7 +14,7 @@ def train_and_test_mnist(N_train, N_test, classes, eta, gamma, Lambda, epochs, b
     end = time()
     timeused = end - start
     print("Timeused = ", timeused)
-    accuracy = test_model_mnist(my_solver, X_test, Y_test, N_test)
+    accuracy = results_model_mnist(my_solver, X_test, Y_test, N_test)
     print("Accuracy = ", accuracy)
 
 
