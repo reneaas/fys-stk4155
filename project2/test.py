@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from time import time
 from functions import scale_data, mnist_data, test_model_mnist, design_matrix, read_data, split_data
 import unittest
+from progress.bar import Bar
 
 class Test_NN(unittest.TestCase):
 
