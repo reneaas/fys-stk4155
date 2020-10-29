@@ -9,7 +9,7 @@ from main import sigmoid
 class Test_NN(unittest.TestCase):
 
     def test_function(self):
-        x = 3
+        x = 4
         y = 2
         hidden_layers = 1
         nodes = 2
