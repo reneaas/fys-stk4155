@@ -105,7 +105,7 @@ class Test_NN(unittest.TestCase):
         print("NN error_output = ", my_solver.error_output)
 
         msg_eq = "Error output =! NN error output \n e = %f , NN_e = %f" % (error_output, my_solver.error_output)
-        success_eq = (np.abs(error_output-my_solver.error_input_output) < tol)
+        success_eq = (np.abs(error_output-my_solver.error_output) < tol)
         assert success_eq, msg_eq
 
 
