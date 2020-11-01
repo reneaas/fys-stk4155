@@ -2,7 +2,7 @@ import numpy as np
 from progress.bar import Bar
 np.random.seed(1001)
 
-class FFNN2:
+class FFNN:
     def __init__(self, layers, problem_type, hidden_activation):
         self.n_layers = len(layers)
         self.layers = layers
