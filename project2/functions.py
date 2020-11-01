@@ -26,8 +26,8 @@ def mnist_data(Ntrain, Ntest):
     N_points_train, n, m = np.shape(trainX)
     shuffled_indices = np.random.permutation(N_points_train)
     trainX, trainY = trainX[shuffled_indices], trainY[shuffled_indices]
-    N_points_train, n, m = np.shape(testX)
-    shuffled_indices = np.random.permutation(N_points_train)
+    N_points_test, n, m = np.shape(testX)
+    shuffled_indices = np.random.permutation(N_points_test)
     testX, testY = testX[shuffled_indices], testY[shuffled_indices]
 
     #Prepare training data
@@ -66,6 +66,7 @@ def test_model_mnist(my_solver, X_test, Y_test, Ntests):
         total_images += 1
 
     accuracy = correct_predictions/total_images
+    print("Accuracy = ", accuracy)
     return accuracy
 
 def design_matrix(X_data, Y_data, z_data, degree):
