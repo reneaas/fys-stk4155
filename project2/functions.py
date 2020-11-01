@@ -66,6 +66,7 @@ def results_model_mnist(my_solver, X_test, Y_test, Ntests):
         total_images += 1
 
     accuracy = correct_predictions/total_images
+    print("Accuracy = ", accuracy)
     return accuracy
 
 def results_model_mnist_single(my_solver, X_test, Y_test, Ntests):
