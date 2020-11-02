@@ -40,6 +40,7 @@ void test_mnist(){
     int batch_size = 10;
     double eta = 0.1;
     double lambda = 1e-5;
+    double gamma = 0.7;
     int features = 28*28;
 
     int N_train = 60000;
@@ -50,7 +51,7 @@ void test_mnist(){
     char* filename_Y = "./data_files/mnist_training_Y.txt";
     read_mnist(filename_X, filename_Y, X_train, y_train, N_train, features, n_classes);
 
-    FFNN my_network(hidden_layers, nodes, N_outputs, epochs, batch_size, eta, features, problem_type, hidden_act, lambda);
+    FFNN my_network(hidden_layers, nodes, N_outputs, epochs, batch_size, eta, features, problem_type, hidden_act);
     my_network.init_data(X_train, y_train, N_train);
     clock_t start = clock();
     my_network.fit();

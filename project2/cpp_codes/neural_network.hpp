@@ -59,7 +59,7 @@ public:
 
     //void test_func();
 
-    ~FFNN();
+    //~FFNN();
     void create_model_arch();
     void init_parameters(); //Sets up initial weights and biases.
     void init_data(double *X_data, double *y_data, int num_points);
