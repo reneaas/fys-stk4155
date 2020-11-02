@@ -2,31 +2,21 @@ from LogisticRegression import LogReg
 import numpy as np
 import matplotlib.pyplot as plt
 from time import time
-from functions import scale_data, mnist_data, test_model_mnist, design_matrix
+from functions import scale_data, mnist_data, results_model_mnist, design_matrix
 
-Ntrain = 10000
-Ntest = 1000
-def train_and_test_mnist(N_train, N_test, classes, eta, gamma, Lambda, epochs):
-    X_train, Y_train, X_test, Y_test = mnist_data(Ntrain, Ntest)
-    my_solver = LogReg(classes= classes, X_data = X_train, y_data = Y_train, eta = eta, gamma = gamma, Lambda = Lambda, epochs = epochs)
+Ntrain = 60000
+Ntest = 10000
+def train_and_test_mnist(N_train, N_test, classes, eta, gamma, Lambda, epochs, batch_size):
+    X_train, Y_train, X_test, Y_test = mnist_data(N_train, N_test)
+    my_solver = LogReg(classes= classes, X_data = X_train, y_data = Y_train, eta = eta, gamma = gamma, Lambda = Lambda, epochs = epochs, batch_size=batch_size)
     start = time()
     my_solver.train()
     end = time()
     timeused = end - start
     print("Timeused = ", timeused)
-    accuracy = test_model_mnist(my_solver, X_test, Y_test, Ntest)
+    accuracy = results_model_mnist(my_solver, X_test, Y_test, N_test)
     print("Accuracy = ", accuracy)
 
-    w_mat_0 = np.zeros([28,28])
-    w_mat_0.flat[:] = my_solver.weights[1,:]
-
-    """
-    x = np.linspace(1,28,28)
-    y = np.linspace(1,28,28)
-    x,y = np.meshgrid(x,y)
-    plt.contourf(x,y,w_mat_0)
-    plt.show
-    """
 
     # plot weights vs the pixel position
     weights = my_solver.weights.copy()
@@ -39,9 +29,9 @@ def train_and_test_mnist(N_train, N_test, classes, eta, gamma, Lambda, epochs):
         l2_plot.set_xticks(())
         l2_plot.set_yticks(())
         l2_plot.set_xlabel('Class %i' % i)
-    plt.suptitle('classification weights vector $w_j$ for digit class $j$')
+    plt.suptitle('classification weights vector $w_j$ for digit class $j$\n eta = %f , gamma = %f , ephocs = %i, batch_size = %i, lambda = %f, accuracy = %f %%' %(eta, gamma, epochs, batch_size, Lambda, accuracy*100))
 
     plt.show()
 
-
-train_and_test_mnist(N_train=Ntrain, N_test=Ntest, classes = 10, eta = 0.1, gamma = 0.9, epochs=10, Lambda = 0.00001)
+#LA STÅ FUCKERS, HAR TWEAKA
+train_and_test_mnist(N_train=Ntrain, N_test=Ntest, classes = 10, eta = 0.01, gamma = 0.22, epochs=10, Lambda = 0.00001, batch_size = 100)

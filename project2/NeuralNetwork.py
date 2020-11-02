@@ -2,221 +2,122 @@ import numpy as np
 from progress.bar import Bar
 np.random.seed(1001)
 
-class FFNN():
-
-    def __init__(self, hidden_layers, nodes, X_data, y_data, N_outputs, epochs=10, batch_size=1, eta = 0.1, problem_type="classification", hidden_activation="sigmoid", Lambda=0, gamma=0):
-        self.layers = hidden_layers
-        self.nodes = nodes
-        self.X_data = X_data
-        self.y_data = y_data
-        self.N_points, self.features = np.shape(X_data)
-        self.N_outputs = N_outputs
-        self.epochs = epochs
-        self.batch_size = batch_size
-        self.eta = eta                    # learning rate
-        self.Lambda = Lambda              # regularization parameter
-        self.gamma = gamma                # momentum parameter
-
-        mean = 0; std = 0.0001
-
-
-
-        self.activations_input = np.zeros(self.nodes)
-        self.activations_hidden = np.zeros([self.layers,self.nodes])
-        self.activations_output = np.zeros(self.N_outputs)
-
-        self.weights_input = np.random.normal(mean, std, size=[self.nodes,self.features])
-        self.weights_hidden = np.random.normal(mean, std, size=[self.layers, self.nodes, self.nodes])
-        self.weights_output = np.random.normal(mean, std, size=[self.N_outputs,self.nodes])
-
-
-        self.bias_input = np.random.normal(mean, std, size=self.nodes)
-        self.bias_hidden = np.random.normal(mean, std, size=[self.layers, self.nodes])
-        self.bias_output = np.random.normal(mean, std, size=self.N_outputs)
-
-        self.grad_weights_input = np.zeros([self.nodes, self.features])
-        self.grad_weights_hidden = np.zeros([self.layers, self.nodes, self.nodes])
-        self.grad_weights_output = np.zeros([self.N_outputs,self.nodes])
-
-        self.grad_bias_input = np.zeros(self.nodes)
-        self.grad_bias_hidden = np.zeros([self.layers, self.nodes])
-        self.grad_bias_output = np.zeros(self.N_outputs)
-
-        self.error_input = np.zeros(self.nodes)
-        self.error_hidden = np.zeros([self.layers,self.nodes])
-        self.error_output = np.zeros(self.N_outputs)
-
-
-
-        self.tmp_weights_input = np.zeros([self.nodes,self.features])
-        self.tmp_weights_hidden = np.zeros([self.layers, self.nodes, self.nodes])
-        self.tmp_weights_output = np.zeros([self.N_outputs,self.nodes])
-        self.tmp_bias_input = np.zeros(self.nodes)
-        self.tmp_bias_hidden = np.zeros([self.layers, self.nodes])
-        self.tmp_bias_output = np.zeros(self.N_outputs)
+class FFNN:
+    def __init__(self, layers, problem_type, hidden_activation):
+        self.n_layers = len(layers)
+        self.layers = layers
+        self.biases = [np.random.normal(0,1,size=y)  for y in layers[1:]]
+        self.weights = [np.random.normal(0,1,size=(y,x))/np.sqrt(x) for x, y in zip(layers[:-1], layers[1:])]
 
         if problem_type == "classification":
-            self.compute_output = lambda z: self.softmax(z)
-
-        if problem_type == "regression":
-            self.compute_output = lambda z: z
-
+            self.compute_act = lambda z: self.softmax(z)
 
         if hidden_activation == "sigmoid":
-            self.compute_act = lambda z: self.sigmoid(z)
+            self.compute_hidden_act = lambda z: self.sigmoid(z)
 
-        if hidden_activation == "ReLU":
-            self.compute_act = lambda z: self.ReLU(z)
-            self.weights_input *= 1e-3
-            self.weights_hidden *= 1e-3
-            self.weights_output *= 1e-3
+        if hidden_activation == "relu":
+            self.compute_hidden_act = lambda z: self.ReLU(z)
 
-        if hidden_activation == "LeakyReLU":
-            self.compute_act = lambda z: self.LeakyReLU(z)
-            self.weights_input *= 1e-3
-            self.weights_hidden *= 1e-3
-            self.weights_output *= 1e-3
-
-        if hidden_activation == "ELU":
-            self.compute_act = lambda z: self.ELU(z)
-            self.weights_input *= 1e-3
-            self.weights_hidden *= 1e-3
-            self.weights_output *= 1e-3
+        if hidden_activation == "leakyrelu":
+            self.compute_hidden_act = lambda z: self.LeakyReLU(z)
 
 
+    def predict(self, a):
+        for b, w in zip(self.biases[:-1], self.weights[:-1]):
+            a = self.compute_hidden_act(w @ a + b)
+        a = self.compute_act(self.weights[-1] @ a + self.biases[-1])
+        return a
 
-    def train(self):
-        batches = self.N_points//self.batch_size
-        total_indices = np.arange(self.N_points)
+    def fit(self, X_train, y_train, batch_sz, eta, lamb, epochs, gamma):
+        Npoints, features = np.shape(X_train)
+        batches = Npoints//batch_sz
+        data_indices = np.arange(Npoints)
+        bar = Bar("Epoch ", max = epochs)
 
-        bar = Bar("Epoch ", max = self.epochs)
-        for epoch in range(self.epochs):
+        tmp_grad_b = [np.zeros(b.shape) for b in self.biases]
+        tmp_grad_w = [np.zeros(w.shape) for w in self.weights]
+        for epoch in range(epochs):
             bar.next()
-            for b in range(batches):
-                indices = np.random.choice(total_indices, size=self.batch_size, replace=True)
-                self.X  = self.X_data[indices]
-                self.y = self.y_data[indices]
-                for i in range(self.batch_size):
-                    self.feed_forward(self.X[i])
+            for batch in range(batches):
+                indices = np.random.choice(data_indices, size=batch_sz, replace=True)
+                x = X_train[indices]
+                y = y_train[indices]
 
-                    self.backpropagate(self.X[i], self.y[i])
-                self.update_parameters()
+                self.grad_b = [np.zeros(b.shape) for b in self.biases]
+                self.grad_w = [np.zeros(w.shape) for w in self.weights]
+                for i in range(batch_sz):
+                    grad_b, grad_w = self.backpropagate(x[i], y[i])
+                    self.grad_b = [b + db for b, db in zip(self.grad_b, grad_b)]
+                    self.grad_w = [w + dw for w, dw in zip(self.grad_w, grad_w)]
 
-
+                tmp_grad_b = [db + gamma*tmp_db for db, tmp_db in zip(self.grad_b, tmp_grad_b)]
+                tmp_grad_w = [dw + gamma*tmp_dw for dw, tmp_dw in zip(self.grad_w, tmp_grad_w)]
+                self.biases = [b - (eta/batch_sz)*db for b, db in zip(self.biases, tmp_grad_b)]
+                self.weights = [w*(1-eta*lamb/Npoints) - (eta/batch_sz)*dw for w, dw in zip(self.weights, tmp_grad_w)]
         bar.finish()
 
 
-    def feed_forward(self, x):
-        #Compute activations in input layer
-        z = (self.weights_input @ x) + self.bias_input
-        self.activations_input = self.compute_act(z)
-
-        #Compute activations in first hidden layer
-        z = self.weights_hidden[0] @ self.activations_input + self.bias_hidden[0]
-        self.activations_hidden[0] = self.compute_act(z)
-        #print("NN activation_hidden = ", self.activations_hidden)
-        #Compute activations in remaining hidden layers
-        for l in range(1, self.layers):
-            z = self.weights_hidden[l] @ self.activations_hidden[l-1] + self.bias_hidden[l]
-            self.activations_hidden[l] = self.compute_act(z)
-        z = self.weights_output @ self.activations_hidden[-1] + self.bias_output
-        self.activations_output = self.compute_output(z)
 
     def backpropagate(self, x, y):
-        #Compute error at top layer
-        self.error_output = self.compute_error_output(self.activations_output, y)
+        weights = self.weights
+        biases = self.biases
+        n_layers = self.n_layers
 
-        #update bias and weights
-        self.grad_bias_output += self.error_output
-        self.grad_weights_output += np.outer(self.error_output, self.activations_hidden[-1]) + self.Lambda*self.weights_output
+        grad_b = [np.zeros(b.shape) for b in biases]
+        grad_w = [np.zeros(w.shape) for w in weights]
+        a = x
+        activations = [x]
+        Z = []
+        Z_append = Z.append
+        a_append = activations.append
+        #Feed forward
+        for b, w in zip(biases[:-1], weights[:-1]):
+            z = w @ a + b
+            a = self.compute_hidden_act(z)
+            Z_append(z)
+            a_append(a)
+        z = weights[-1] @ a + biases[-1]
+        a = self.compute_act(z)
+        a_append(a)
+        Z_append(z)
 
-        s = self.activations_hidden[-1]*(1 - self.activations_hidden[-1])
-        self.error_hidden[-1] = (self.weights_output.T @ self.error_output)*s
-        self.grad_bias_hidden[-1] += self.error_hidden[-1]
-
-        if self.layers >= 2:
-            self.grad_weights_hidden[-1] += np.outer(self.error_hidden[-1], self.activations_hidden[-2]) + self.Lambda*self.weights_hidden[-1]
-            for l in range(self.layers-2, 0, -1):
-                s = self.activations_hidden[l] * (1 - self.activations_hidden[l])
-                self.error_hidden[l] = (self.weights_hidden[l+1].T @ self.error_hidden[l+1])*s
-                self.grad_bias_hidden[l] += self.error_hidden[l]
-                self.grad_weights_hidden[l] += np.outer(self.error_hidden[l], self.activations_hidden[l-1]) + self.Lambda*self.weights_hidden[l]
-
-
-            s = self.activations_hidden[0] * (1. - self.activations_hidden[0])
-            self.error_hidden[0] = (self.weights_hidden[1].T @ self.error_hidden[1])*s
-            self.grad_bias_hidden[0] += self.error_hidden[0]
-            self.grad_weights_hidden[0] += np.outer(self.error_hidden[0], self.activations_input) + self.Lambda*self.weights_hidden[0]
-
-        s = self.activations_input * (1. - self.activations_input)
-        self.error_input = (self.weights_hidden[0].T @ self.error_hidden[0])*s
-        self.grad_bias_input += self.error_input
-        self.grad_weights_input += np.outer(self.error_input, x)
+        #Backward pass
+        delta = self.cost_derivative(activations[-1], y)
+        grad_b[-1] = delta
+        grad_w[-1] = np.outer(delta, activations[-2])
 
 
-    def update_parameters(self):
-        scale = self.eta/self.batch_size
-        self.grad_bias_hidden *= scale
-        self.grad_bias_output *= scale
-        self.grad_weights_input *= scale
-        self.grad_weights_hidden *= scale
-        self.grad_weights_output *= scale
+        for l in range(2, n_layers):
+            z = Z[-l]
+            s = self.sigmoid(z)
+            delta = (weights[-l+1].T @ delta)*s*(1-s)
+            grad_b[-l] = delta
+            grad_w[-l] = np.outer(delta, activations[-l-1])
 
-        self.tmp_weights_input = (self.grad_weights_input + self.gamma*self.tmp_weights_input)
-        self.weights_input -= self.tmp_weights_input
+        return grad_b, grad_w
 
-        for l in range(self.layers):
-            self.tmp_bias_hidden[l] = (self.grad_bias_hidden[l] + self.gamma*self.tmp_bias_hidden[l])
-            self.bias_hidden[l] -= self.tmp_bias_hidden[l]
 
-            self.tmp_weights_hidden[l] = (self.grad_weights_hidden[l] + self.gamma*self.tmp_weights_hidden[l])
-            self.weights_hidden[l] -= self.tmp_weights_hidden[l]
-
-        self.tmp_bias_output = (self.grad_bias_output + self.gamma*self.tmp_bias_output)
-        self.bias_output -= self.tmp_bias_output
-
-        self.tmp_weights_output = (self.grad_weights_output + self.gamma*self.tmp_weights_output)
-        self.weights_output -= self.tmp_weights_output
-
-        self.grad_bias_hidden[:,:] = 0.
-        self.grad_bias_output[:] = 0.
-        self.grad_weights_input[:,:] = 0.
-        self.grad_weights_hidden[:,:,:] = 0.
-        self.grad_weights_output[:,:] = 0.
-
-    def predict(self, x):
-        self.feed_forward(x)
-        return self.activations_output
-
-    @staticmethod
-    def softmax(z):
-        Z = np.sum(np.exp(z))
-        return np.exp(z)/Z
+    def cost_derivative(self, activations, y):
+        return activations-y
 
     @staticmethod
     def sigmoid(z):
-        return 1./(1+np.exp(-z))
+        return 1./(1.0+np.exp(-z))
+
+    @staticmethod
+    def softmax(z):
+        a = np.exp(z)
+        Z = np.sum(a)
+        return a/Z
 
     @staticmethod
     def ReLU(z):
-        idx = np.where(z < 0)
-        z[idx] = 0
-        return z
+        return z*(z > 0)
 
     @staticmethod
     def LeakyReLU(z):
-        idx_below_zero = np.where(z <= 0)
-        z[idx_below_zero] *= 0.1
-        return z
+        return 0.1*z*(z <= 0) + z*(z > 0)
 
-    @staticmethod
-    def ELU(z):
-        idx_below_zero = np.where(z <= 0)
-        idx_above_zero = np.where(z >= 0)
-        z[idx_below_zero] = np.exp(z[idx_below_zero])-1
-        return z
-
-
-    @staticmethod
-    def compute_error_output(activation, y):
-        return activation - y
+    def softmax_derivate(self, z):
+        s = self.softmax(z)
+        return s*(1-s)
