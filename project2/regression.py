@@ -264,6 +264,18 @@ class Regression:
         return R2_score, MSE
 
     def SDG(self, epochs, batch_size, eta, gamma=0):
+        """
+        Perform stochastic gradient descent (SGD), with and without momemtum.
+
+        Input parameters:
+        epochs - number of epochs
+        batch_size - size of each mini batch
+        eta - learning rate
+        gamma - momemtum term. Default is zero, meaning that we only perform classical SGD.
+
+        Output:
+        cost_function - An array containing the value of the cost function for each epoch
+        """
         try:
             Lambda = self.Lambda
         except AttributeError:
