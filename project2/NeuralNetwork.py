@@ -14,12 +14,15 @@ class FFNN:
 
         if hidden_activation == "sigmoid":
             self.compute_hidden_act = lambda z: self.sigmoid(z)
+            self.hidden_act_derivative = lambda z: self.sigmoid_derivative(z)
 
         if hidden_activation == "relu":
-            self.compute_hidden_act = lambda z: self.ReLU(z)
+            self.compute_hidden_act = lambda z: self.relu(z)
+            self.hidden_act_derivative = lambda z: self.relu_derivative(z)
 
-        if hidden_activation == "leakyrelu":
-            self.compute_hidden_act = lambda z: self.LeakyReLU(z)
+        if hidden_activation == "leaky_relu":
+            self.compute_hidden_act = lambda z: self.leaky_relu(z)
+            self.hidden_act_derivative = lambda z: self.leaky_relu_derivative(z)
 
 
     def predict(self, a):
@@ -89,8 +92,8 @@ class FFNN:
 
         for l in range(2, n_layers):
             z = Z[-l]
-            s = self.sigmoid(z)
-            delta = (weights[-l+1].T @ delta)*s*(1-s)
+            s = self.hidden_act_derivative(z)
+            delta = (weights[-l+1].T @ delta)*s #Denne linja er bare gyldig for sigmoid derivert.
             grad_b[-l] = delta
             grad_w[-l] = np.outer(delta, activations[-l-1])
 
@@ -105,18 +108,31 @@ class FFNN:
         return 1./(1.0+np.exp(-z))
 
     @staticmethod
+    def sigmoid_derivative(z):
+        s = 1./(1.0 + np.exp(-z))
+        return s*(1-s)
+
+    @staticmethod
     def softmax(z):
         a = np.exp(z)
         Z = np.sum(a)
         return a/Z
 
     @staticmethod
-    def ReLU(z):
+    def relu(z):
         return z*(z > 0)
 
     @staticmethod
-    def LeakyReLU(z):
+    def relu_derivative(z):
+        return 1.*(z > 0)
+
+    @staticmethod
+    def leaky_relu(z):
         return 0.1*z*(z <= 0) + z*(z > 0)
+
+    @staticmethod
+    def leaky_relu_derivative(z):
+        return 0.1*(z <= 0) + 1.*(z > 0)
 
     def softmax_derivate(self, z):
         s = self.softmax(z)
