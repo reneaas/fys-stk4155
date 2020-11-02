@@ -6,8 +6,8 @@ from functions import scale_data, mnist_data, predict_model_mnist, design_matrix
 
 np.random.seed(1)
 
-Ntrain = 6000
-Ntest = 1000
+Ntrain = 60000
+Ntest = 10000
 
 def train_and_test_mnist(Ntrain, Ntest, hidden_layers, features, outputs, eta, epochs, nodes, batch_sz, lamb, gamma):
     X_train, Y_train, X_test, Y_test = mnist_data(Ntrain, Ntest)
@@ -24,7 +24,7 @@ def train_and_test_mnist(Ntrain, Ntest, hidden_layers, features, outputs, eta, e
     accuracy = predict_model_mnist(my_solver, X_test, Y_test, Ntest)
 
 #print("New network")
-train_and_test_mnist(Ntrain=Ntrain, Ntest=Ntest, hidden_layers = 1, features=28*28, outputs=10, eta=0.5, epochs=10, nodes=30, batch_sz=10, lamb=0., gamma = 0.)
+train_and_test_mnist(Ntrain=Ntrain, Ntest=Ntest, hidden_layers = 1, features=28*28, outputs=10, eta=0.5, epochs=30, nodes=30, batch_sz=10, lamb=0., gamma = 0.)
 
 
 def grid_search_mnist_learningrate__lambda():

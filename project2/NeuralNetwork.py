@@ -90,7 +90,7 @@ class FFNN:
         for l in range(2, n_layers):
             z = Z[-l]
             s = self.sigmoid(z)
-            delta = (weights[-l+1].T @ delta)*s*(1-s)
+            delta = (weights[-l+1].T @ delta)*s*(1-s) #Denne linja er bare gyldig for sigmoid derivert.
             grad_b[-l] = delta
             grad_w[-l] = np.outer(delta, activations[-l-1])
 
