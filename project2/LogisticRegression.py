@@ -80,12 +80,12 @@ class LogReg():
     """
     @staticmethod
     def softmax(z):
-        Z = np.sum(np.exp(-z))
-        return np.exp(-z)/Z
+        Z = np.sum(np.exp(z))
+        return np.exp(z)/Z
 
 
     def compute_grad_weights(self, y, x):
-        return np.outer(y-self.output, x)
+        return np.outer(self.output-y, x)
 
     def compute_grad_bias(self, y):
-        return y-self.output
+        return self.output - y
