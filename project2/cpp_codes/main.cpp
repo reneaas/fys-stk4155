@@ -4,12 +4,10 @@
 
 void read_mnist(char* filename_X, char* filename_Y, double *X_train, double *y_train, int N_train, int features, int n_classes);
 void test_mnist();
-void test_algo();
 
 int main(int argc, char const *argv[]) {
 
     test_mnist();
-    //test_algo();
 
     return 0;
 }
@@ -32,15 +30,15 @@ void read_mnist(char* filename_X, char* filename_Y, double *X, double *y, int N,
 
 void test_mnist(){
     string problem_type = "classification";
-    string hidden_act = "sigmoid";
+    string hidden_act = "relu";
     int hidden_layers = 1;
     int nodes = 30;
     int N_outputs = 10;
-    int epochs = 10;
+    int epochs = 30;
     int batch_size = 10;
     double eta = 0.1;
-    double lambda = 1e-5;
-    double gamma = 0.7;
+    double lambda = 1e-3;
+    double gamma = 0.5;
     int features = 28*28;
 
     int N_train = 60000;
@@ -51,7 +49,11 @@ void test_mnist(){
     char* filename_Y = "./data_files/mnist_training_Y.txt";
     read_mnist(filename_X, filename_Y, X_train, y_train, N_train, features, n_classes);
 
-    FFNN my_network(hidden_layers, nodes, N_outputs, epochs, batch_size, eta, features, problem_type, hidden_act);
+    FFNN my_network(hidden_layers, nodes, N_outputs, epochs, batch_size, eta, features, problem_type); //Default to sigmoid for hidden activations
+    //FFNN my_network(hidden_layers, nodes, N_outputs, epochs, batch_size, eta, features, problem_type, hidden_act); //No regularization or momentum
+    //FFNN my_network(hidden_layers, nodes, N_outputs, epochs, batch_size, eta, features, problem_type, hidden_act, lambda); //L2 regularization, no momentum
+    //FFNN my_network(hidden_layers, nodes, N_outputs, epochs, batch_size, eta, features, problem_type, hidden_act, lambda, gamma); //L2 reg + momentum
+
     my_network.init_data(X_train, y_train, N_train);
     clock_t start = clock();
     my_network.fit();
@@ -69,23 +71,3 @@ void test_mnist(){
     read_mnist(filename_X, filename_Y, X_test, y_test, N_test, features, n_classes);
     my_network.evaluate(X_test, y_test, N_test);
 }
-
-/*
-void test_algo(){
-    int features = 2;
-
-    //Create data point
-    double *x = new double[features];
-    x[0] = 1.;
-    x[1] = 2.;
-
-    int classes = 1;
-    double *y = new double[classes];
-    y[0] = 1.; //Response variable
-
-    int test = 1;
-    FFNN my_network(test);
-    my_network.init_data(x, y, 1);
-    my_network.test_func();
-}
-*/

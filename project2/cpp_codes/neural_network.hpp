@@ -19,6 +19,9 @@ private:
     double *dw_, *db_, *error_;
     double *y_;
 
+    //Momentum variables
+    double *vb_, *vw_, gamma_;
+
     int nodes_, layers_, features_, num_outputs_, epochs_, batch_size_, num_points_;
     double eta_, lambda_;
     int *num_rows_, *num_cols_, *r_w_, *r_b_, *r_a_;
@@ -28,6 +31,7 @@ private:
     void backward_pass();
     void update();
     void update_l2();
+    void update_momentum_l2();
 
     //Pointer to member functions.
     void (FFNN::*top_layer_act)();
@@ -55,11 +59,12 @@ public:
     FFNN(int hidden_layers, int nodes, int num_outputs, int epochs, int batch_size, double eta, int features, string problem_type);
     FFNN(int hidden_layers, int nodes, int num_outputs, int epochs, int batch_size, double eta, int features, string problem_type, string hidden_act);
     FFNN(int hidden_layers, int nodes, int num_outputs, int epochs, int batch_size, double eta, int features, string problem_type, string hidden_activation, double lambda);
+    FFNN(int hidden_layers, int nodes, int num_outputs, int epochs, int batch_size, double eta, int features, string problem_type, string hidden_activation, double lambda, double gamma);
     //FFNN(int test);
 
     //void test_func();
 
-    //~FFNN();
+    ~FFNN();
     void create_model_arch();
     void init_parameters(); //Sets up initial weights and biases.
     void init_data(double *X_data, double *y_data, int num_points);

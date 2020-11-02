@@ -24,7 +24,7 @@ def train_and_test_mnist(Ntrain, Ntest, hidden_layers, features, outputs, eta, e
     accuracy = predict_model_mnist(my_solver, X_test, Y_test, Ntest)
 
 #print("New network")
-train_and_test_mnist(Ntrain=Ntrain, Ntest=Ntest, hidden_layers = 1, features=28*28, outputs=10, eta=0.1, epochs=30, nodes=30, batch_sz=10, lamb=1e-5, gamma = 0.3)
+train_and_test_mnist(Ntrain=Ntrain, Ntest=Ntest, hidden_layers = 1, features=28*28, outputs=10, eta=0.1, epochs=30, nodes=30, batch_sz=10, lamb=0., gamma = 0.)
 
 
 def grid_search_mnist_learningrate__lambda():

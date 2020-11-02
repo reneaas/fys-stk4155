@@ -24,6 +24,9 @@ FFNN::FFNN(int hidden_layers, int nodes, int num_outputs, int epochs, int batch_
 
     create_model_arch();
     init_parameters();
+
+
+    gamma_ = 0; //Must be set to zero to avoid an attempt to free a few pointers layer on.
 }
 
 FFNN::FFNN(int hidden_layers, int nodes, int num_outputs, int epochs, int batch_size, double eta, int features, string problem_type, string hidden_activation){
@@ -56,12 +59,15 @@ FFNN::FFNN(int hidden_layers, int nodes, int num_outputs, int epochs, int batch_
     nodes_ = nodes;
     epochs_ = epochs;
     batch_size_ = batch_size;
-    eta_ = eta*(1./batch_size_);
+    eta_ = eta;
     features_ = features;
     num_outputs_ = num_outputs;
 
     create_model_arch();
     init_parameters();
+
+
+    gamma_ = 0; //Must be set to zero to avoid an attempt to free a few pointers layer on.
 }
 
 FFNN::FFNN(int hidden_layers, int nodes, int num_outputs, int epochs, int batch_size, double eta, int features, string problem_type, string hidden_activation, double lambda)
@@ -94,7 +100,7 @@ FFNN::FFNN(int hidden_layers, int nodes, int num_outputs, int epochs, int batch_
     nodes_ = nodes;
     epochs_ = epochs;
     batch_size_ = batch_size;
-    eta_ = eta*(1./batch_size_);
+    eta_ = eta;
     features_ = features;
     num_outputs_ = num_outputs;
     lambda_ = lambda;
@@ -105,6 +111,52 @@ FFNN::FFNN(int hidden_layers, int nodes, int num_outputs, int epochs, int batch_
     if (lambda_ > 0){
         update_parameters = &FFNN::update_l2;
     }
+
+    gamma_ = 0; //Must be set to zero to avoid an attempt to free a few pointers layer on.
+}
+
+FFNN::FFNN(int hidden_layers, int nodes, int num_outputs, int epochs, int batch_size, double eta, int features, string problem_type, string hidden_activation, double lambda, double gamma)
+{
+    if (problem_type == "classification"){
+        top_layer_act = &FFNN::predict_softmax;
+    }
+    if (problem_type == "regression"){
+        top_layer_act = &FFNN::predict_linear;
+    }
+
+    if (hidden_activation == "sigmoid"){
+        hidden_act = &FFNN::sigmoid;
+        hidden_act_derivative = &FFNN::sigmoid_derivative;
+    }
+
+    if (hidden_activation == "relu"){
+        hidden_act = &FFNN::relu;
+        hidden_act_derivative = &FFNN::relu_derivative;
+    }
+
+    if (hidden_activation == "leaky_relu"){
+        hidden_act = &FFNN::leaky_relu;
+        hidden_act_derivative = &FFNN::leaky_relu_derivative;
+    }
+
+
+    //Specify parameters of the model
+    layers_ = hidden_layers+2;
+    nodes_ = nodes;
+    epochs_ = epochs;
+    batch_size_ = batch_size;
+    eta_ = eta;
+    features_ = features;
+    num_outputs_ = num_outputs;
+    lambda_ = lambda;
+    gamma_ = gamma;
+
+    create_model_arch();
+    init_parameters();
+
+    update_parameters = &FFNN::update_momentum_l2;
+    vb_ = new double[r_b_[layers_-1]]();
+    vw_ = new double[r_w_[layers_-1]]();
 }
 
 
@@ -161,7 +213,7 @@ void FFNN::init_parameters()
         for (int j = 0; j < rows; j++){
             biases_[stride_b + j] = distribution(generator);
             for (int k = 0; k < cols; k++){
-                weights_[stride_w + j*cols + k] = distribution(generator)/cols;
+                weights_[stride_w + j*cols + k] = distribution(generator)*sqrt_cols_inv;
             }
         }
     }
@@ -205,6 +257,14 @@ void FFNN::fit()
         }
     }
 
+
+    //Clear up memory after the model is fitted.
+    if (gamma_ > 0){
+        delete[] vb_;
+        delete[] vw_;
+    }
+    delete[] dw_;
+    delete[] db_;
     delete[] X_data_;
     delete[] y_data_;
 }
@@ -267,12 +327,12 @@ void FFNN::backward_pass(){
     double s;
     int stride_bp;
     for (l = layers_-2; l > 0; l--){
-        rows = num_rows_[l-1];
-        cols = num_cols_[l];
-        stride_w = r_w_[l];
-        stride_b = r_b_[l];
-        stride_bp = r_b_[l-1];
-        stride_a = r_a_[l];
+        rows = num_rows_[l-1]; //Number of rows of layer l-1
+        cols = num_cols_[l]; //Number of columns of layer l
+        stride_w = r_w_[l]; //Number of elems to skip in the weights array.
+        stride_b = r_b_[l]; //Number of elems to skip in the bias array
+        stride_bp = r_b_[l-1]; //Number of elems to skip in the bias array to update error at layer l-1
+        stride_a = r_a_[l]; //Number of elems to skip in the activations array.
 
         //Backpropagate the error from layers l+1 to layer l.
         for (j = 0; j < rows; j++){
@@ -288,7 +348,6 @@ void FFNN::backward_pass(){
             //cout << tmp*s << endl;
             error_[stride_bp + j] = tmp*s;
         }
-
 
         //Update gradients
         rows = num_rows_[l-1];
@@ -353,12 +412,36 @@ void FFNN::update_l2()
     }
 }
 
+void FFNN::update_momentum_l2()
+{
+    int l, j, k;
+    int rows, cols, stride_w, stride_b;
+    double step = eta_/batch_size_;
+
+    for (l = 0; l < layers_-1; l++){
+        rows = num_rows_[l];
+        cols = num_cols_[l];
+        stride_w = r_w_[l];
+        stride_b = r_b_[l];
+
+        for (j = 0; j < rows; j++){
+            vb_[stride_b + j] = gamma_*vb_[stride_b + j] + step*db_[stride_b + j];
+            biases_[stride_b + j] -= vb_[stride_b + j];
+            db_[stride_b + j] = 0.;
+            for (k = 0; k < cols; k++){
+                vw_[stride_w + j*cols + k] = gamma_*vw_[stride_w + j*cols + k] + step*(lambda_*weights_[stride_w + j*cols + k] + dw_[stride_w + j*cols + k]);
+                weights_[stride_w + j*cols + k] -= vw_[stride_w + j*cols + k];
+                dw_[stride_w + j*cols + k] = 0.;
+            }
+        }
+    }
+}
+
 void FFNN::evaluate(double *X_test, double *y_test, int num_tests)
 {
     double correct_predictions = 0.;
     double wrong_predictions = 0.;
-    int stride_a = r_a_[layers_ - 1];
-    int max_idx;
+    int stride_a = r_a_[layers_-1];
 
     for (int i = 0; i < num_tests; i++){
         for (int j = 0; j < features_; j++){
@@ -373,6 +456,7 @@ void FFNN::evaluate(double *X_test, double *y_test, int num_tests)
 
 
         double max_elem = 0.;
+        int max_idx;
 
         for (int j = 0; j < num_outputs_; j++){
             if (activations_[stride_a + j] > max_elem){
@@ -486,7 +570,7 @@ double FFNN::leaky_relu_derivative(double z)
     return 0.1*(z <= 0) + (z > 0);
 }
 
-/*
+
 FFNN::~FFNN()
 {
     delete[] weights_;
@@ -498,93 +582,5 @@ FFNN::~FFNN()
     delete[] r_w_;
     delete[] r_b_;
     delete[] r_a_;
-    delete[] dw_;
-    delete[] db_;
     delete[] error_;
 }
-*/
-
-/*
-FFNN::FFNN(int test){
-    hidden_act = &FFNN::sigmoid; //Default
-    hidden_act_derivative = &FFNN::sigmoid_derivative;
-    top_layer_act = &FFNN::predict_linear; //Linear top layer activation
-    //Specify parameters of the model
-    layers_ = 3;
-    nodes_ = 2;
-    epochs_ = 1;
-    batch_size_ = 1;;
-    eta_ = 0.1;
-    features_ = 2;
-    num_outputs_ = 1;
-    create_model_arch();
-    for (int l = 0; l < layers_ - 1; l++){
-        int rows = num_rows_[l];
-        int cols = num_cols_[l];
-        int stride_w = r_w_[l];
-        int stride_b = r_b_[l];
-        for (int j = 0; j < rows; j++){
-            biases_[stride_b + j] = j+1;
-            for (int k = 0; k < cols; k++){
-                weights_[stride_w + j*cols + k] = j+k+1;
-            }
-        }
-    }
-    for (int l = 0; l < layers_ - 1; l++){
-        cout << "layer = " << l << endl;
-        int rows = num_rows_[l];
-        int cols = num_cols_[l];
-        int stride_w = r_w_[l];
-        int stride_b = r_b_[l];
-        cout << "weights = " << endl;
-        for (int j = 0; j < rows; j++){
-            for (int k = 0; k < cols; k++){
-                cout << weights_[stride_w + j*cols + k] << " ";
-            }
-            cout << " " << endl;
-        }
-        cout << "bias = " << endl;
-        for (int j = 0; j < rows; j++){
-            cout << biases_[stride_b + j] << " ";
-        }
-        cout << " " << endl;
-    }
-}
-
-
-
-
-void FFNN::test_func()
-{
-    for (int j = 0; j < features_; j++){
-        activations_[j] = X_data_[j];
-    }
-    feed_forward();
-    cout << "Activations: " << endl;
-    for (int l = 1; l < layers_; l++){
-        cout << "layer = " << l << endl;
-        int rows = num_rows_[l-1];
-        int cols = num_cols_[l-1];
-        int stride_a = r_a_[l];
-        for (int j = 0; j < rows; j++){
-            cout << activations_[stride_a + j] << " ";
-        }
-        cout << " " << endl;
-    }
-    y_[0] = y_data_[0]; //response variable
-    dw_ = new double[r_w_[layers_-1]]();
-    db_ = new double[r_b_[layers_-1]]();
-    backward_pass();
-    cout << "Errors: " << endl;
-    for (int l = layers_ - 1; l > 0; l--){
-        cout << "layer = " << l << endl;
-        int rows = num_rows_[l-1];
-        int cols = num_cols_[l-1];
-        int stride_bp = r_b_[l-1];
-        for (int j = 0; j < rows; j++){
-            cout << error_[stride_bp + j] << " ";
-        }
-        cout << " " << endl;
-    }
-}
-*/
