@@ -1,5 +1,6 @@
 import numpy as np
 import tensorflow as tf
+import matplotlib.pyplot as plt
 np.random.seed(1001)
 
 def scale_data(X, y, Npoints):
@@ -54,6 +55,46 @@ def mnist_data(Ntrain, Ntest):
 
     return X_train, Y_train, X_test, Y_test
 
+def mnist_data_valid(Ntrain, Ntest, Nvalid):
+    mnist = tf.keras.datasets.mnist
+    (trainX, trainY), (testX, testY) = mnist.load_data()
+    N_points_train, n, m = np.shape(trainX)
+    shuffled_indices = np.random.permutation(N_points_train)
+    trainX, trainY = trainX[shuffled_indices], trainY[shuffled_indices]
+    N_points_test, n, m = np.shape(testX)
+    shuffled_indices = np.random.permutation(N_points_test)
+    testX, testY = testX[shuffled_indices], testY[shuffled_indices]
+
+    #Prepare training data
+    trainX = trainX/255.0
+    X_train = np.zeros((Ntrain, n*m))
+    y_values = np.arange(0,10)
+    Y_train = np.zeros((Ntrain, 10))
+    for i in range(Ntrain):
+        X_train[i] = trainX[i].flat[:]
+        Y_train[i] = trainY[i] == y_values
+
+    scale_data(X = X_train, y = None, Npoints = Ntrain)
+
+    X_valid = X_train[:Nvalid]
+    Y_valid = Y_train[:Nvalid]
+
+    X_train = X_train[Nvalid:]
+    Y_train = Y_train[Nvalid:]
+
+
+    #Prepare test data
+    testX = testX/255.0
+    X_test = np.zeros((Ntest, n*m))
+    Y_test = np.zeros((Ntest, 10))
+
+    for i in range(Ntest):
+        X_test[i] = testX[i].flat[:]
+        Y_test[i] = testY[i] == y_values
+
+    scale_data(X = X_test, y = None, Npoints = Ntest)
+
+    return X_train, Y_train, X_test, Y_test, X_valid, Y_valid
 
 def predict_model_mnist(my_solver, X_test, Y_test, Ntests):
     total_images = 0
@@ -68,19 +109,6 @@ def predict_model_mnist(my_solver, X_test, Y_test, Ntests):
     accuracy = correct_predictions/total_images
     print("Accuracy = ", accuracy)
     return accuracy
-
-def results_model_mnist_single(my_solver, X_test, Y_test, Ntests):
-    total_images = 0
-    correct_predictions = 0
-    for i in range(Ntests):
-        y_predict = my_solver.predict(X_test[i])
-        print("Prediction = ", y_predict)
-        print("Real value =", Y_test[i])
-        correct_predictions += (y_predict == Y_test[i])
-        total_images += 1
-    accuracy = correct_predictions/total_images
-    return accuracy
-
 
 def design_matrix(X_data, Y_data, z_data, degree):
 
@@ -165,3 +193,16 @@ def split_data(design_matrix, z_data, n, fraction_train = 0.8):
     z_test = z_data[n_train:]
 
     return X_train, X_test, z_train, z_test
+
+def plot_mnist_weights(weights, eta, gamma, epochs, batch_size, Lambda, accuracy):
+    plt.figure(figsize=(10, 5))
+    scale = np.abs(weights).max()
+    for i in range(10):
+        l2_plot = plt.subplot(2, 5, i + 1)
+        l2_plot.imshow(weights[i].reshape(28, 28), interpolation='nearest',cmap=plt.cm.Greys)
+        l2_plot.set_xticks(())
+        l2_plot.set_yticks(())
+        l2_plot.set_xlabel('Class %i' % i)
+    plt.suptitle('classification weights vector $w_j$ for digit class $j$\n eta = %f , gamma = %f , epochs = %i, batch_size = %i, lambda = %f, accuracy = %f %%' %(eta, gamma, epochs, batch_size, Lambda, accuracy*100))
+
+    plt.show()

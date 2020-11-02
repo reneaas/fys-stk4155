@@ -69,15 +69,6 @@ class LogReg():
         self.grad_bias[:] = 0.
 
 
-    """
-    @staticmethod
-    def softmax(z):
-        Z = 1/(1+np.exp(-z))
-        if Z < 0.5:
-            return 1
-        else:
-            return 0
-    """
     @staticmethod
     def softmax(z):
         Z = np.sum(np.exp(z))
