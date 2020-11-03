@@ -53,7 +53,6 @@ class LogReg():
         return self.output
 
 
-
     def update_parameters(self):
         scale = self.eta/self.batch_size
         self.grad_weights *= scale

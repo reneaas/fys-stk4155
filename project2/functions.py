@@ -203,6 +203,6 @@ def plot_mnist_weights(weights, eta, gamma, epochs, batch_size, Lambda, accuracy
         l2_plot.set_xticks(())
         l2_plot.set_yticks(())
         l2_plot.set_xlabel('Class %i' % i)
-    plt.suptitle('classification weights vector $w_j$ for digit class $j$\n eta = %f , gamma = %f , epochs = %i, batch_size = %i, lambda = %f, accuracy = %f %%' %(eta, gamma, epochs, batch_size, Lambda, accuracy*100))
+    plt.suptitle('classification weights vector $w_j$ for digit class $j$')
 
     plt.show()

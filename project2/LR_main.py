@@ -27,7 +27,7 @@ def train_and_test_mnist(N_train, N_test, X_train, Y_train, X_test, Y_test, clas
 
 
 #LA STÅ FUCKERS, HAR TWEAKA
-train_and_test_mnist(N_train=Ntrain, N_test=Ntest, X_train = Xtrain, Y_train = Ytrain, X_test = Xtest, Y_test = Ytest, classes = 10, eta = 0.04, gamma = 0.17, epochs=10, Lambda = 0.00001, batch_size = 100)
+train_and_test_mnist(N_train=Ntrain, N_test=Ntest, X_train = Xtrain, Y_train = Ytrain, X_test = Xtest, Y_test = Ytest, classes = 10, eta = 10**(-3/2), gamma = 0.1, epochs=10, Lambda = 10**(-8), batch_size = 200)
 
 
 """
@@ -49,12 +49,12 @@ Eta = np.array(Eta)
 Gamma = np.array(Gamma)
 Accuracy = np.array(Accuracy)
 
-path = "./results/"
+path = "./results/LogisticRegression/"
 if not os.path.exists(path):
     os.makedirs(path)
-filename_eta = "LogReg_Eta.npy"
-filename_gamma = "LogReg_Gamma.npy"
-filename_accuracy = "LogReg_Accuracy.npy"
+filename_eta = path + "LogReg_Eta.npy"
+filename_gamma = path + "LogReg_Gamma.npy"
+filename_accuracy = path + "LogReg_Accuracy.npy"
 
 np.save(filename_eta, Eta)
 np.save(filename_gamma, Gamma)
@@ -62,7 +62,7 @@ np.save(filename_accuracy, Accuracy)
 
 """
 """
-Eta = [10**(-i) for i in range(1,6)]
+Eta = [10**(-i/2) for i in range(1,11)]
 Gamma = [0.1*i for i in range(0,10)]
 Accuracy = []
 Lambda = 0.00001
@@ -89,5 +89,32 @@ filename_accuracy = path +"LogReg_Accuracy_broad.npy"
 
 np.save(filename_eta, Eta)
 np.save(filename_gamma, Gamma)
+np.save(filename_accuracy, Accuracy)
+"""
+"""
+eta = 10**(-3/2)
+gamma = 0.1
+Lambda = [10**(i) for i in range(-9,0)]
+print(Lambda)
+Accuracy = []
+epochs = 10
+classes = 10
+batch_size = 100
+for lamda in Lambda:
+    my_solver = LogReg(classes= classes, X_data = Xtrain, y_data = Ytrain, eta = eta, gamma = gamma, Lambda = lamda, epochs = epochs, batch_size=batch_size)
+    my_solver.train()
+    accuracy = predict_model_mnist(my_solver, Xvalid, Yvalid, Nvalid)
+    Accuracy.append(accuracy)
+
+Lambda = np.array(Lambda)
+Accuracy = np.array(Accuracy)
+
+path = "./results/LogisticRegression/"
+if not os.path.exists(path):
+    os.makedirs(path)
+filename_lambda = path + "LogReg_lambda.npy"
+filename_accuracy = path +"LogReg_Accuracy_for_Lambda.npy"
+
+np.save(filename_lambda, Lambda)
 np.save(filename_accuracy, Accuracy)
 """
