@@ -59,7 +59,7 @@ def plot_data(x,y,data):
     # put text on matrix elements
     for i, x_val in enumerate(np.arange(len(x))):
         for j, y_val in enumerate(np.arange(len(y))):
-            c = "${0:.1f}\\%$".format( 100*data[j,i])
+            c = "${0:.2f}\\%$".format( 100*data[j,i])
             if 100*data[j,i] < 50:
                 ax.text(x_val, y_val, c, va='center', ha='center', color="w")
             else:
