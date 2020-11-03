@@ -437,7 +437,7 @@ void FFNN::update_momentum_l2()
     }
 }
 
-void FFNN::evaluate(double *X_test, double *y_test, int num_tests)
+double FFNN::evaluate(double *X_test, double *y_test, int num_tests)
 {
     double correct_predictions = 0.;
     double wrong_predictions = 0.;
@@ -481,6 +481,8 @@ void FFNN::evaluate(double *X_test, double *y_test, int num_tests)
 
     delete[] X_test;
     delete[] y_test;
+
+    return accuracy;
 }
 
 /*

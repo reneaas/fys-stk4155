@@ -69,7 +69,7 @@ public:
     void init_parameters(); //Sets up initial weights and biases.
     void init_data(double *X_data, double *y_data, int num_points);
     void fit();
-    void evaluate(double *X_test, double *y_test, int num_test);
+    double evaluate(double *X_test, double *y_test, int num_test);
 };
 
 
