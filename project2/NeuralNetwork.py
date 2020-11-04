@@ -12,6 +12,9 @@ class FFNN:
         if problem_type == "classification":
             self.compute_act = lambda z: self.softmax(z)
 
+        if problem_type == "regression":
+            self.compute_act = lambda z: z
+
         if hidden_activation == "sigmoid":
             self.compute_hidden_act = lambda z: self.sigmoid(z)
             self.hidden_act_derivative = lambda z: self.sigmoid_derivative(z)

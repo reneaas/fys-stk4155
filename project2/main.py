@@ -2,9 +2,9 @@ from NeuralNetwork import FFNN
 import numpy as np
 import matplotlib.pyplot as plt
 from time import time
-from functions import scale_data, mnist_data, predict_model_mnist, design_matrix, read_data, split_data
+from functions import scale_data, mnist_data, predict_model_mnist, design_matrix, read_data, split_data, split_data_valid
 
-np.random.seed(1)
+np.random.seed(1001)
 
 Ntrain = 60000
 Ntest = 10000
@@ -24,7 +24,7 @@ def train_and_test_mnist(Ntrain, Ntest, hidden_layers, features, outputs, eta, e
     accuracy = predict_model_mnist(my_solver, X_test, Y_test, Ntest)
 
 #print("New network")
-train_and_test_mnist(Ntrain=Ntrain, Ntest=Ntest, hidden_layers = 1, features=28*28, outputs=10, eta=0.1, epochs=30, nodes=30, batch_sz=10, lamb=0., gamma = 0.)
+#train_and_test_mnist(Ntrain=Ntrain, Ntest=Ntest, hidden_layers = 1, features=28*28, outputs=10, eta=0.1, epochs=30, nodes=30, batch_sz=10, lamb=0., gamma = 0.)
 
 
 def grid_search_mnist_learningrate__lambda():
@@ -47,36 +47,37 @@ def grid_search_mnist_learningrate__lambda():
 
 #grid_search_mnist_learningrate__lambda()
 
-def regression_franke_func(hidden_layers, nodes, epochs, batch_size, eta, Lambda, gamma, degree):
-    N = 1000
+def sigmoid(x):
+    return 1./(1+np.exp(-x))
+
+
+def regression_franke_func_FFNN(hidden_layers, nodes, epochs, batch_size, eta, Lambda, gamma, degree):
+    N = 10000
     sigma = 0.1
     filename = "datasets/frankefunction_dataset_N_{0}_sigma_{1}.txt".format(N,sigma)
+    features = int((degree+1)*(degree+2)/2)
+    layers = [features] + [nodes]*hidden_layers + [1]
 
     X_data, Y_data, z_data = read_data(filename)
     my_design_matrix, z_data = design_matrix(X_data, Y_data, z_data, degree)
 
-    X_train, X_test, z_train, z_test = split_data(my_design_matrix, z_data, N, fraction_train = 0.8)
+    X_train, X_test, X_valid, z_train, z_test, z_valid = split_data_valid(my_design_matrix, z_data, N,  fraction_train = 0.85, fraction_test = 0.1)
     n_train = len(X_train)
 
     problem_type = "regression"
     hidden_activation = "sigmoid"
-    my_solver = FFNN(hidden_layers=hidden_layers, nodes=nodes, X_data=X_train, y_data=z_train, N_outputs=1, epochs=epochs, batch_size=batch_size, eta = eta, problem_type=problem_type, hidden_activation=hidden_activation, Lambda=Lambda, gamma=gamma)
+    my_solver = FFNN(layers=layers,problem_type=problem_type, hidden_activation=hidden_activation)
 
-    my_solver.train()
-    test_result = np.zeros(N-n_train)
-    for i in range(N-n_train):
-        test_result[i] = my_solver.predict(X_test[i])
+    my_solver.fit(X_train, z_train, batch_size, eta, Lambda, epochs, gamma)
+    validation_result = np.zeros(len(X_valid))
+    for i in range(len(X_valid)):
+        validation_result[i] = my_solver.predict(X_valid[i])
 
-    #MSE = np.mean((test_result - z_test)**2)
-    R2 = 1 - np.sum((z_test - test_result) ** 2) / np.sum((z_test - np.mean(z_test)) ** 2)
+    MSE = np.mean((validation_result - z_valid)**2)
+    R2 = 1 - np.sum((z_valid - validation_result) ** 2) / np.sum((z_test - np.mean(z_test)) ** 2)
     print("R2 = ", R2)
-    return R2
-
-def results_franke_func():
-    degs = np.array([i for i in range(1,20)])
-    for i in range(len(degs)):
-        MSE = regression_franke_func(hidden_layers=1, nodes = 10, epochs = 100, batch_size = 10, eta = 0.1, Lambda = 1e-5, gamma = 0.7, degree = degs[i])
+    print("MSE =", MSE)
 
 
-def sigmoid(x):
-    return 1./(1+np.exp(-x))
+
+regression_franke_func_FFNN(hidden_layers = 1, nodes = 10, epochs = 100, batch_size = 10, eta = 0.1, Lambda = 1e-5, gamma = 0.7, degree = 6)
