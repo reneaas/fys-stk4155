@@ -263,7 +263,7 @@ class Regression:
         MSE = self.compute_MSE(self.f_test, self.f_model)
         return R2_score, MSE
 
-    def SDG(self, epochs, batch_size, eta, gamma=0):
+    def SGD(self, epochs, batch_size, eta, gamma=0):
         """
         Perform stochastic gradient descent (SGD), with and without momemtum.
 
@@ -305,7 +305,7 @@ class Regression:
             cost_function[1+epoch] = np.linalg.norm(self.f_train - self.X_train@self.w)**2
         bar.finish()
 
-        
+
 
 
 class OLS(Regression):
