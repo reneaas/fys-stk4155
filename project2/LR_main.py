@@ -2,36 +2,119 @@ from LogisticRegression import LogReg
 import numpy as np
 import matplotlib.pyplot as plt
 from time import time
-from functions import scale_data, mnist_data, results_model_mnist, design_matrix
+from functions import scale_data, mnist_data_valid, predict_model_mnist, design_matrix, plot_mnist_weights
+import os
 
-Ntrain = 60000
+Ntrain = 55000
 Ntest = 10000
-def train_and_test_mnist(N_train, N_test, classes, eta, gamma, Lambda, epochs, batch_size):
-    X_train, Y_train, X_test, Y_test = mnist_data(N_train, N_test)
+Nvalid = 5000
+Xtrain, Ytrain, Xtest, Ytest, Xvalid, Yvalid = mnist_data_valid(Ntrain, Ntest, Nvalid)
+
+
+def train_and_test_mnist(N_train, N_test, X_train, Y_train, X_test, Y_test, classes, eta, gamma, Lambda, epochs, batch_size):
     my_solver = LogReg(classes= classes, X_data = X_train, y_data = Y_train, eta = eta, gamma = gamma, Lambda = Lambda, epochs = epochs, batch_size=batch_size)
     start = time()
     my_solver.train()
     end = time()
     timeused = end - start
     print("Timeused = ", timeused)
-    accuracy = results_model_mnist(my_solver, X_test, Y_test, N_test)
-    print("Accuracy = ", accuracy)
+    accuracy = predict_model_mnist(my_solver, X_test, Y_test, N_test)
 
 
     # plot weights vs the pixel position
     weights = my_solver.weights.copy()
-    plt.figure(figsize=(10, 5))
-    scale = np.abs(weights).max()
-    for i in range(10):
-        l2_plot = plt.subplot(2, 5, i + 1)
-        l2_plot.imshow(weights[i].reshape(28, 28), interpolation='nearest',
-                       cmap=plt.cm.Greys)
-        l2_plot.set_xticks(())
-        l2_plot.set_yticks(())
-        l2_plot.set_xlabel('Class %i' % i)
-    plt.suptitle('classification weights vector $w_j$ for digit class $j$\n eta = %f , gamma = %f , ephocs = %i, batch_size = %i, lambda = %f, accuracy = %f %%' %(eta, gamma, epochs, batch_size, Lambda, accuracy*100))
+    plot_mnist_weights(weights, eta, gamma, epochs, batch_size, Lambda, accuracy)
 
-    plt.show()
 
 #LA STÅ FUCKERS, HAR TWEAKA
-train_and_test_mnist(N_train=Ntrain, N_test=Ntest, classes = 10, eta = 0.01, gamma = 0.22, epochs=10, Lambda = 0.00001, batch_size = 100)
+train_and_test_mnist(N_train=Ntrain, N_test=Ntest, X_train = Xtrain, Y_train = Ytrain, X_test = Xtest, Y_test = Ytest, classes = 10, eta = 10**(-3/2), gamma = 0.1, epochs=10, Lambda = 10**(-8), batch_size = 200)
+
+
+"""
+Eta = [0.01*i for i in range(1,11)]
+Gamma = [(0.15 + 0.01*i) for i in range(0,11)]
+Accuracy = []
+Lambda = 0.00001
+epochs = 10
+classes = 10
+batch_size = 100
+for eta in Eta:
+    for gamma in Gamma:
+        my_solver = LogReg(classes= classes, X_data = Xtrain, y_data = Ytrain, eta = eta, gamma = gamma, Lambda = Lambda, epochs = epochs, batch_size=batch_size)
+        my_solver.train()
+        accuracy = predict_model_mnist(my_solver, Xvalid, Yvalid, Nvalid)
+        Accuracy.append(accuracy)
+
+Eta = np.array(Eta)
+Gamma = np.array(Gamma)
+Accuracy = np.array(Accuracy)
+
+path = "./results/LogisticRegression/"
+if not os.path.exists(path):
+    os.makedirs(path)
+filename_eta = path + "LogReg_Eta.npy"
+filename_gamma = path + "LogReg_Gamma.npy"
+filename_accuracy = path + "LogReg_Accuracy.npy"
+
+np.save(filename_eta, Eta)
+np.save(filename_gamma, Gamma)
+np.save(filename_accuracy, Accuracy)
+
+"""
+"""
+Eta = [10**(-i/2) for i in range(1,11)]
+Gamma = [0.1*i for i in range(0,10)]
+Accuracy = []
+Lambda = 0.00001
+epochs = 10
+classes = 10
+batch_size = 100
+for eta in Eta:
+    for gamma in Gamma:
+        my_solver = LogReg(classes= classes, X_data = Xtrain, y_data = Ytrain, eta = eta, gamma = gamma, Lambda = Lambda, epochs = epochs, batch_size=batch_size)
+        my_solver.train()
+        accuracy = predict_model_mnist(my_solver, Xvalid, Yvalid, Nvalid)
+        Accuracy.append(accuracy)
+
+Eta = np.array(Eta)
+Gamma = np.array(Gamma)
+Accuracy = np.array(Accuracy)
+
+path = "./results/LogisticRegression/"
+if not os.path.exists(path):
+    os.makedirs(path)
+filename_eta = path + "LogReg_Eta_broad.npy"
+filename_gamma = path + "LogReg_Gamma_broad.npy"
+filename_accuracy = path +"LogReg_Accuracy_broad.npy"
+
+np.save(filename_eta, Eta)
+np.save(filename_gamma, Gamma)
+np.save(filename_accuracy, Accuracy)
+"""
+"""
+eta = 10**(-3/2)
+gamma = 0.1
+Lambda = [10**(i) for i in range(-9,0)]
+print(Lambda)
+Accuracy = []
+epochs = 10
+classes = 10
+batch_size = 100
+for lamda in Lambda:
+    my_solver = LogReg(classes= classes, X_data = Xtrain, y_data = Ytrain, eta = eta, gamma = gamma, Lambda = lamda, epochs = epochs, batch_size=batch_size)
+    my_solver.train()
+    accuracy = predict_model_mnist(my_solver, Xvalid, Yvalid, Nvalid)
+    Accuracy.append(accuracy)
+
+Lambda = np.array(Lambda)
+Accuracy = np.array(Accuracy)
+
+path = "./results/LogisticRegression/"
+if not os.path.exists(path):
+    os.makedirs(path)
+filename_lambda = path + "LogReg_lambda.npy"
+filename_accuracy = path +"LogReg_Accuracy_for_Lambda.npy"
+
+np.save(filename_lambda, Lambda)
+np.save(filename_accuracy, Accuracy)
+"""

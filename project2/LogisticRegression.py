@@ -53,7 +53,6 @@ class LogReg():
         return self.output
 
 
-
     def update_parameters(self):
         scale = self.eta/self.batch_size
         self.grad_weights *= scale
@@ -69,23 +68,14 @@ class LogReg():
         self.grad_bias[:] = 0.
 
 
-    """
     @staticmethod
     def softmax(z):
-        Z = 1/(1+np.exp(-z))
-        if Z < 0.5:
-            return 1
-        else:
-            return 0
-    """
-    @staticmethod
-    def softmax(z):
-        Z = np.sum(np.exp(-z))
-        return np.exp(-z)/Z
+        Z = np.sum(np.exp(z))
+        return np.exp(z)/Z
 
 
     def compute_grad_weights(self, y, x):
-        return np.outer(y-self.output, x)
+        return np.outer(self.output-y, x)
 
     def compute_grad_bias(self, y):
-        return y-self.output
+        return self.output - y
