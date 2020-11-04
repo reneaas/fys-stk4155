@@ -282,7 +282,7 @@ class Regression:
             Lambda = 0
 
 
-        self.w = np.random.normal(size=[self.p])/np.sqrt(self.p)
+        self.w = np.random.normal(size=[self.p])/self.p
         batches = self.n_train//batch_size
         total_indices = np.arange(self.n_train)
 
@@ -305,7 +305,7 @@ class Regression:
             cost_function[1+epoch] = np.linalg.norm(self.f_train - self.X_train@self.w)**2
         bar.finish()
 
-        return cost_function
+        
 
 
 class OLS(Regression):
