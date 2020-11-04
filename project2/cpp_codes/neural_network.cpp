@@ -4,9 +4,11 @@ FFNN::FFNN(int hidden_layers, int nodes, int num_outputs, int epochs, int batch_
 {
     if (problem_type == "classification"){
         top_layer_act = &FFNN::predict_softmax;
+        compute_metrics = &FFNN::compute_accuracy;
     }
     if (problem_type == "regression"){
         top_layer_act = &FFNN::predict_linear;
+        compute_metrics = &FFNN::compute_r2;
     }
 
     hidden_act = &FFNN::sigmoid; //Default
@@ -32,9 +34,11 @@ FFNN::FFNN(int hidden_layers, int nodes, int num_outputs, int epochs, int batch_
 FFNN::FFNN(int hidden_layers, int nodes, int num_outputs, int epochs, int batch_size, double eta, int features, string problem_type, string hidden_activation){
     if (problem_type == "classification"){
         top_layer_act = &FFNN::predict_softmax;
+        compute_metrics = &FFNN::compute_accuracy;
     }
     if (problem_type == "regression"){
         top_layer_act = &FFNN::predict_linear;
+        compute_metrics = &FFNN::compute_r2;
     }
 
     if (hidden_activation == "sigmoid"){
@@ -74,9 +78,11 @@ FFNN::FFNN(int hidden_layers, int nodes, int num_outputs, int epochs, int batch_
 {
     if (problem_type == "classification"){
         top_layer_act = &FFNN::predict_softmax;
+        compute_metrics = &FFNN::compute_accuracy;
     }
     if (problem_type == "regression"){
         top_layer_act = &FFNN::predict_linear;
+        compute_metrics = &FFNN::compute_r2;
     }
 
     if (hidden_activation == "sigmoid"){
@@ -119,9 +125,11 @@ FFNN::FFNN(int hidden_layers, int nodes, int num_outputs, int epochs, int batch_
 {
     if (problem_type == "classification"){
         top_layer_act = &FFNN::predict_softmax;
+        compute_metrics = &FFNN::compute_accuracy;
     }
     if (problem_type == "regression"){
         top_layer_act = &FFNN::predict_linear;
+        compute_metrics = &FFNN::compute_r2;
     }
 
     if (hidden_activation == "sigmoid"){
@@ -335,17 +343,14 @@ void FFNN::backward_pass(){
         stride_a = r_a_[l]; //Number of elems to skip in the activations array.
 
         //Backpropagate the error from layers l+1 to layer l.
-        for (j = 0; j < rows; j++){
-            //s = activations_[stride_a+j];
-            //s = s*(1-s);
 
+        for (j = 0; j < rows; j++){
             s = z_[stride_a + j];
             s = (this->*hidden_act_derivative)(s);
             tmp = 0.;
             for (k = 0; k < cols; k++){
                 tmp +=  weights_[stride_w + k*cols + j]*error_[stride_b + k];
             }
-            //cout << tmp*s << endl;
             error_[stride_bp + j] = tmp*s;
         }
 
@@ -364,7 +369,6 @@ void FFNN::backward_pass(){
         }
     }
 }
-
 
 void FFNN::update()
 {
@@ -437,19 +441,28 @@ void FFNN::update_momentum_l2()
     }
 }
 
-double FFNN::evaluate(double *X_test, double *y_test, int num_tests)
+double FFNN::evaluate(double *X_test, double *y_test, int num_test)
+{
+    X_test_ = X_test;
+    y_test_ = y_test;
+    num_test_ = num_test;
+    double metrics = (this->*compute_metrics)();
+    return metrics;
+}
+
+double FFNN::compute_accuracy()
 {
     double correct_predictions = 0.;
     double wrong_predictions = 0.;
     int stride_a = r_a_[layers_-1];
 
-    for (int i = 0; i < num_tests; i++){
+    for (int i = 0; i < num_test_; i++){
         for (int j = 0; j < features_; j++){
-            activations_[j] = X_test[i*features_ + j];
+            activations_[j] = X_test_[i*features_ + j];
         }
 
         for (int j = 0; j < num_outputs_; j++){
-            y_[j] = y_test[i*num_outputs_ + j];
+            y_[j] = y_test_[i*num_outputs_ + j];
         }
 
         feed_forward();
@@ -474,15 +487,45 @@ double FFNN::evaluate(double *X_test, double *y_test, int num_tests)
 
     }
 
-    double accuracy = correct_predictions*(1./num_tests);
-    cout << "Correct predictions = " << correct_predictions << " of " << num_tests << endl;
-    cout << "Wrong predictions = " << wrong_predictions << " of " << num_tests << endl;
+    double accuracy = correct_predictions*(1./num_test_);
+    cout << "Correct predictions = " << correct_predictions << " of " << num_test_ << endl;
+    cout << "Wrong predictions = " << wrong_predictions << " of " << num_test_ << endl;
     cout << "Accuracy = " << accuracy << endl;
 
-    delete[] X_test;
-    delete[] y_test;
+    //delete[] X_test_;
+    //delete[] y_test_;
 
     return accuracy;
+}
+
+double FFNN::compute_r2()
+{
+    double y_mean = 0.;
+    double rss = 0.;
+    int stride_a = r_a_[layers_-1];
+    double a;
+    for (int i = 0; i < num_test_; i++){
+        for (int j = 0; j < features_; j++){
+            activations_[j] = X_test_[i*features_ + j];
+        }
+        y_mean += y_test_[i];
+        y_[i] = y_test_[i];
+        feed_forward();
+
+        a = activations_[stride_a];
+        rss += (y_[i] - a)*(y_[i] - a);
+
+    }
+
+    y_mean *= (1./num_test_);
+
+    double var = 0.;
+    for (int i = 0; i < num_test_; i++){
+        var += (y_[i] - y_mean)*(y_[i] - y_mean);
+    }
+    double r2 = 1 - rss/var;
+    cout << "R2 score = " << r2 << endl;
+    return r2;
 }
 
 /*
@@ -492,15 +535,16 @@ Top layer activation functions
 void FFNN::predict_linear()
 {
     //Compute activations at top layer:
-    int l = layers_-1;
-    int rows = num_rows_[l-1];
-    int cols = num_cols_[l-1];
-    int stride_w = r_w_[l-1];
-    int stride_b = r_b_[l-1];
-    int stride_ap = r_a_[l-1];
-    int stride_a = r_a_[l];
+    int l = layers_-2;
+    int rows = num_rows_[l];
+    int cols = num_cols_[l];
+    int stride_w = r_w_[l];
+    int stride_b = r_b_[l];
+    int stride_ap = r_a_[l];
+    int stride_a = r_a_[l+1];
     double z;
 
+    cout << stride_w << endl;
     for (int j = 0; j < rows; j++){
         z = biases_[stride_b + j];
         for (int k = 0; k < cols; k++){
@@ -513,13 +557,13 @@ void FFNN::predict_linear()
 void FFNN::predict_softmax()
 {
     //Compute activations at top layer:
-    int l = layers_-1;
-    int rows = num_rows_[l-1];
-    int cols = num_cols_[l-1];
-    int stride_w = r_w_[l-1];
-    int stride_b = r_b_[l-1];
-    int stride_ap = r_a_[l-1];
-    int stride_a = r_a_[l];
+    int l = layers_-2;
+    int rows = num_rows_[l];
+    int cols = num_cols_[l];
+    int stride_w = r_w_[l];
+    int stride_b = r_b_[l];
+    int stride_ap = r_a_[l];
+    int stride_a = r_a_[l+1];
     double z;
 
     double Z = 0.;
@@ -575,14 +619,14 @@ double FFNN::leaky_relu_derivative(double z)
 
 FFNN::~FFNN()
 {
-    delete[] weights_;
-    delete[] biases_;
-    delete[] activations_;
-    delete[] y_;
-    delete[] num_rows_;
-    delete[] num_cols_;
-    delete[] r_w_;
-    delete[] r_b_;
-    delete[] r_a_;
-    delete[] error_;
+    //delete[] weights_;
+    //delete[] biases_;
+    //delete[] activations_;
+    //delete[] y_;
+    //delete[] num_rows_;
+    //delete[] num_cols_;
+    //delete[] r_w_;
+    //delete[] r_b_;
+    //delete[] r_a_;
+    //delete[] error_;
 }

@@ -5,6 +5,7 @@
 #include <cmath>
 #include <random>
 #include <cstdio>
+#include <omp.h>
 
 using namespace std;
 
@@ -14,6 +15,7 @@ private:
 
     //To store dataset
     double *X_data_, *y_data_;
+    double *X_test_, *y_test_;
     //Parameters of the network
     double *weights_, *biases_, *activations_, *z_;
     double *dw_, *db_, *error_;
@@ -22,7 +24,7 @@ private:
     //Momentum variables
     double *vb_, *vw_, gamma_;
 
-    int nodes_, layers_, features_, num_outputs_, epochs_, batch_size_, num_points_;
+    int nodes_, layers_, features_, num_outputs_, epochs_, batch_size_, num_points_, num_test_;
     double eta_, lambda_;
     int *num_rows_, *num_cols_, *r_w_, *r_b_, *r_a_;
 
@@ -38,6 +40,7 @@ private:
     double (FFNN::*hidden_act)(double z);
     double (FFNN::*hidden_act_derivative)(double z);
     void (FFNN::*update_parameters)();
+    double (FFNN::*compute_metrics)();
 
     //Top layer activation functions
     void predict_linear();
@@ -52,6 +55,10 @@ private:
 
     double leaky_relu(double z);
     double leaky_relu_derivative(double z);
+
+    //Various metrics
+    double compute_accuracy();
+    double compute_r2();
 
 
 public:
@@ -69,7 +76,9 @@ public:
     void init_parameters(); //Sets up initial weights and biases.
     void init_data(double *X_data, double *y_data, int num_points);
     void fit();
+
     double evaluate(double *X_test, double *y_test, int num_test);
+
 };
 
 
