@@ -1,85 +1,146 @@
+#include "layer.hpp"
 #include "neural_network.hpp"
 #include <time.h>
-#include <cstdio>
-#include <fstream>
 
-void read_mnist(char* filename_X, char* filename_Y, double *X_train, double *y_train, int N_train, int features, int n_classes);
-void test_mnist(int hidden_layers, int nodes, int num_outputs, int epochs, int batch_size, double eta, double lambda, double gamma, int features, int num_points, string outfilename);
-void write_to_file(double x, double y, double z, string outfilename);
+void read_mnist(mat *X_train, mat *y_train, mat *X_test, mat *y_test, int num_train, int num_test);
+
 
 int main(int argc, char const *argv[]) {
-    int hidden_layers = atoi(argv[1]);
-    int nodes = atoi(argv[2]);
-    int num_outputs = atoi(argv[3]);
-    int epochs = atoi(argv[4]);
-    int batch_size = atoi(argv[5]);
-    double eta = atof(argv[6]);
-    double lambda = atof(argv[7]);
-    double gamma = atof(argv[8]);
-    int features = atoi(argv[9]);
-    int num_points = atoi(argv[10]);
-    string outfilename = argv[11];
-    test_mnist(hidden_layers, nodes, num_outputs, epochs, batch_size, eta, lambda, gamma, features, num_points, outfilename);
+
+    /*
+    int features = 2;
+    int num_outputs = 2;
+    int nodes = 3;
+    int num_train = 1;
+
+    int hidden_layers = 1;
+
+
+    mat X_train = mat(features, num_train);
+    mat y_train = mat(num_outputs, num_train);
+
+    X_train(0, 0) = 1.;
+    X_train(1, 0) = -2.;
+
+    y_train(0, 0) = 0.;
+    y_train(1, 0) = 1.;
+
+
+
+
+    //mat X_train = randu<mat>(features, num_train);
+    //mat y_train = randu<mat>(num_outputs, num_train);
+
+    //X_train.print("X train = ");
+    //y_train.print("y train = ");
+
+    FFNN my_network(hidden_layers, features, nodes, num_outputs);
+    my_network.init_data(X_train, y_train, num_train);
+    my_network.test_init();
+
+    int epochs = 1;
+    int batch_sz = 1;
+    double eta = 0.1;
+    my_network.fit(epochs, batch_sz, eta);
+    */
+
+
+    /*
+    vec v = linspace(-1, 1, 10);
+    //uvec idx = find(u <= 0);
+    vec u = clamp(v, 0, v.max());
+    v.print("v = ");
+    u.print("u = ");
+    */
+
+
+
+
+
+
+    int features = 28*28;
+    int num_outputs = 10;
+
+    int num_train = 60000;
+    //mat X_train = mat(features, num_train);
+    //mat y_train = mat(num_outputs, num_train);
+    mat X_train = mat(num_train, features);
+    mat y_train = mat(num_train, num_outputs);
+
+    int num_test = 10000;
+    //mat X_test = mat(features, num_test);
+    //mat y_test = mat(num_outputs, num_test);
+    mat X_test = mat(num_test, features);
+    mat y_test = mat(num_test, num_outputs);
+
+    read_mnist(&X_train, &y_train, &X_test, &y_test, num_train, num_test);
+
+    int hidden_layers = 1;
+    int nodes = 30;
+    int epochs = 30;
+    int batch_sz = 10;
+    double eta = 0.5;
+
+    FFNN my_network(hidden_layers, features, nodes, num_outputs);
+    my_network.init_data(X_train, y_train, num_train);
+
+    clock_t start = clock();
+    my_network.fit(epochs, batch_sz, eta);
+    clock_t end = clock();
+    double timeused = (double) (end-start)/CLOCKS_PER_SEC;
+    cout << "timeused = " << timeused << endl;
+
+
+    my_network.evaluate(X_test, y_test, num_test);
+    
+
+
+
+
+
 
     return 0;
 }
 
-void read_mnist(char* filename_X, char* filename_Y, double *X, double *y, int N, int features, int n_classes){
-    FILE *fp_X = fopen(filename_X, "r");
-    FILE *fp_Y = fopen(filename_Y, "r");
-    for (int i = 0; i < N; i++){
+
+void read_mnist(mat *X_train, mat *y_train, mat *X_test, mat *y_test, int num_train, int num_test){
+    int features = 28*28;
+    int num_outputs = 10;
+
+    char* infilename_X = "./data_files/mnist_training_X.txt";
+    char* infilename_y = "./data_files/mnist_training_Y.txt";
+    FILE *fp_X = fopen(infilename_X, "r");
+    FILE *fp_y = fopen(infilename_y, "r");
+    for (int i = 0; i < num_train; i++){
         for (int j = 0; j < features; j++){
-            fscanf(fp_X, "%lf", &X[i*features + j]);
+            fscanf(fp_X, "%lf", &(*X_train)(i, j));
         }
-        for (int k = 0; k < n_classes; k++){
-            fscanf(fp_Y, "%lf", &y[i*n_classes + k]);
+        for (int j = 0; j < num_outputs; j++){
+            fscanf(fp_y, "%lf", &(*y_train)(i, j));
         }
     }
     fclose(fp_X);
-    fclose(fp_Y);
-}
+    fclose(fp_y);
 
+    (*X_train) = (*X_train).t();
+    (*y_train) = (*y_train).t();
 
-void test_mnist(int hidden_layers, int nodes, int num_outputs, int epochs, int batch_size, double eta, double lambda, double gamma, int features, int num_points, string outfilename)
-{
-    string problem_type = "classification";
-    string hidden_act = "sigmoid";
-    double *X_train = new double[num_points*features];
-    double *y_train = new double[num_points*num_outputs];
-    char* filename_X = "./data_files/mnist_training_X.txt";
-    char* filename_Y = "./data_files/mnist_training_Y.txt";
-    read_mnist(filename_X, filename_Y, X_train, y_train, num_points, features, num_outputs);
+    infilename_X = "./data_files/mnist_test_X.txt";
+    infilename_y = "./data_files/mnist_test_Y.txt";
+    fp_X = fopen(infilename_X, "r");
+    fp_y = fopen(infilename_y, "r");
+    for (int i = 0; i < num_test; i++){
+        for (int j = 0; j < features; j++){
+            fscanf(fp_X, "%lf", &(*X_test)(i, j));
+        }
+        for (int j = 0; j < num_outputs; j++){
+            fscanf(fp_y, "%lf", &(*y_test)(i, j));
+        }
+    }
+    fclose(fp_X);
+    fclose(fp_y);
 
-    FFNN my_network(hidden_layers, nodes, num_outputs, epochs, batch_size, eta, features, problem_type); //Default to sigmoid for hidden activations
-    //FFNN my_network(hidden_layers, nodes, N_outputs, epochs, batch_size, eta, features, problem_type, hidden_act); //No regularization or momentum
-    //FFNN my_network(hidden_layers, nodes, N_outputs, epochs, batch_size, eta, features, problem_type, hidden_act, lambda); //L2 regularization, no momentum
-    //FFNN my_network(hidden_layers, nodes, N_outputs, epochs, batch_size, eta, features, problem_type, hidden_act, lambda, gamma); //L2 reg + momentum
+    (*X_test) = (*X_test).t();
+    (*y_test) = (*y_test).t();
 
-    my_network.init_data(X_train, y_train, num_points);
-    clock_t start = clock();
-    my_network.fit();
-    clock_t end = clock();
-    double timeused = (double)(end-start)/CLOCKS_PER_SEC;
-    cout << "CPU time = " << timeused << " seconds " << endl;
-
-
-
-    int N_test = 10000;
-    double *X_test = new double[N_test*features];
-    double *y_test = new double[N_test*num_outputs];
-    filename_X = "./data_files/mnist_test_X.txt";
-    filename_Y = "./data_files/mnist_test_Y.txt";
-    read_mnist(filename_X, filename_Y, X_test, y_test, N_test, features, num_outputs);
-    double accuracy = my_network.evaluate(X_test, y_test, N_test);
-
-    write_to_file((double) eta, (double) num_points, accuracy, outfilename);
-}
-
-
-void write_to_file(double x, double y, double z, string outfilename)
-{
-    ofstream ofile;
-    ofile.open(outfilename);
-    ofile << x << " " << y << " " << z << endl;
-    ofile.close();
 }
