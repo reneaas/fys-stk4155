@@ -24,6 +24,39 @@ class FFNN:
             self.compute_hidden_act = lambda z: self.leaky_relu(z)
             self.hidden_act_derivative = lambda z: self.leaky_relu_derivative(z)
 
+    def test_method(self):
+        self.biases[0][0] = 0.5
+        self.biases[0][1] = 0.4
+        self.biases[0][2] = 1
+
+        self.biases[1][0] = 0.1
+        self.biases[1][1] = 0.2
+
+        self.weights[0][0][0] = 0.5
+        self.weights[0][0][1] = 1
+        self.weights[0][1][0] = 0.2
+        self.weights[0][1][1] = 2
+        self.weights[0][2][0] = 0.4
+        self.weights[0][2][1] = 0.1
+
+
+        self.weights[1][0][0] = 0.6
+        self.weights[1][0][1] = 0.2
+        self.weights[1][0][2] = 0.1
+        self.weights[1][1][0] = 0.4
+        self.weights[1][1][1] = -0.1
+        self.weights[1][1][2] = 0.2
+
+
+        x = np.array([1, -2])
+        y = np.array([0, 1])
+
+        self.backpropagate(x, y)
+
+
+
+
+
 
     def predict(self, a):
         for b, w in zip(self.biases[:-1], self.weights[:-1]):
@@ -93,9 +126,17 @@ class FFNN:
         for l in range(2, n_layers):
             z = Z[-l]
             s = self.hidden_act_derivative(z)
-            delta = (weights[-l+1].T @ delta)*s #Denne linja er bare gyldig for sigmoid derivert.
+            delta = (weights[-l+1].T @ delta)*s
+            #print("delta", delta)
             grad_b[-l] = delta
             grad_w[-l] = np.outer(delta, activations[-l-1])
+
+        #print("Z = ", Z)
+        #print("activations = ", activations)
+        #print("delta = ", grad_b)
+        #print("grad_w = ", grad_w)
+
+
 
         return grad_b, grad_w
 

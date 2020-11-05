@@ -1,10 +1,7 @@
-all: compile link run
+all: compile run
 
 compile:
-	g++-10 -c $(wildcard *.cpp) -Ofast -march=native -Wall
-
-link:
-	g++-10 -o main.out $(wildcard *.o)
+	g++-10 -o main.out $(wildcard *.cpp) -larmadillo -O3 -march=native
 
 run:
 	./main.out
