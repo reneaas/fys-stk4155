@@ -25,7 +25,11 @@ def f(x,y):
 noise = np.random.normal(0,sigma,size=N)
 
 data = FrankeFunction(x,y) + noise
-#data = f(x,y)
+
+data = (data - np.mean(data))/np.std(data)
+x = (x - np.mean(x))/np.std(x)
+y = (y - np.mean(y))/np.std(y)
+
 
 names = ["frankefunction", "dataset", "N", str(N), "sigma", str(sigma)  ]
 outfilename = "_".join(names) + ".txt"
