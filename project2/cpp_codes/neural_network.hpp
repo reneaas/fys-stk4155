@@ -18,16 +18,19 @@ private:
     double eta_;
     mat X_train_, y_train_;
     mat X_test_, y_test_;
+    int num_test_;
+    double lamb_;
 
     void feed_forward(vec x);
     void backward_pass(vec x, vec y);
     void add_gradients(int l);
-    void update_parameters();
 
     //Pointers to member functions
     vec (FFNN::*hidden_act)(vec z);
     vec (FFNN::*top_layer_act)(vec a);
     vec (FFNN::*hidden_act_derivative)(vec z);
+    double (FFNN::*compute_metric)();
+    void (FFNN::*update_parameters)();
 
 
     //Various hidden layer activation functions
@@ -39,12 +42,26 @@ private:
 
     //Top layer activation functions
     vec softmax(vec a);
+    vec linear(vec z);
+
+    //Various metrics
+    double compute_accuracy();
+    double compute_r2();
+
+
+    //Various update rules
+    void update();
+    void update_l2();
 
 
 
 
 public:
-    FFNN(int hidden_layers, int features, int nodes, int outputs);
+    //Constructors
+    FFNN(int hidden_layers, int features, int nodes, int outputs, string model_type);
+    FFNN(int hidden_layers, int features, int nodes, int outputs, string model_type, double lamb);
+
+    //Member functions
     void init_data(mat X_train, mat y_train, int num_points);
     void fit(int epochs, int batch_sz, double eta);
     void evaluate(mat X_test, mat y_test, int num_test);
