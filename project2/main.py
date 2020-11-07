@@ -56,6 +56,7 @@ def regression_franke_func_FFNN(hidden_layers, nodes, epochs, batch_size, eta, L
     sigma = 0.1
     filename = "datasets/frankefunction_dataset_N_{0}_sigma_{1}.txt".format(N,sigma)
     features = int((degree+1)*(degree+2)/2)
+    print(features)
     layers = [features] + [nodes]*hidden_layers + [1]
 
     X_data, Y_data, z_data = read_data(filename)
