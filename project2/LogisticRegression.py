@@ -78,7 +78,6 @@ class LogReg():
 
 
     def SGD(self):
-        scale = self.eta
         self.grad_weights *= self.eta
         self.grad_bias *= self.eta
 
