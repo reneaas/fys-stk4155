@@ -20,10 +20,15 @@ public:
     mat dw_;
     vec db_;
 
+    //Momentum parameters
+    mat w_mom_;
+    vec b_mom_;
+
     int rows_, cols_;
 
+    //Constructions
     Layer(int rows, int cols);
-    void compute_act(vec a);
+    Layer(int rows, int cols, string optimizer);
 };
 
 #endif

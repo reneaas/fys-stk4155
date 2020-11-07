@@ -75,6 +75,49 @@ FFNN::FFNN(int hidden_layers, int features, int nodes, int num_outputs, string m
     layers_.push_back(Layer(num_outputs_, nodes_));
 }
 
+FFNN::FFNN(int hidden_layers, int features, int nodes, int num_outputs, string model_type, double lamb, double gamma)
+{
+    features_ = features;
+    nodes_ = nodes;
+    num_outputs_ = num_outputs;
+    hidden_layers_ = hidden_layers;
+    num_layers_ = hidden_layers_ + 1;
+
+    if (model_type == "classification"){
+        top_layer_act = &FFNN::softmax; //top layer activation
+        compute_metric = &FFNN::compute_accuracy;
+    }
+
+    if (model_type == "regression"){
+        top_layer_act = &FFNN::linear;
+        compute_metric = &FFNN::compute_r2;
+    }
+
+    //assign hidden activation function
+    hidden_act = &FFNN::sigmoid;
+    hidden_act_derivative = &FFNN::sigmoid_derivative;
+
+    gamma_ = gamma;
+    lamb_ = lamb;
+
+
+    update_parameters = &FFNN::update_l2_momentum;
+    string optimizer = "sgd_momentum";
+
+    //Add first hidden layer
+    layers_.push_back(Layer(nodes_, features_, optimizer));
+
+    //Add hidden layers
+    for (int l = 1; l < hidden_layers_; l++){
+        layers_.push_back(Layer(nodes_, nodes_, optimizer));
+    }
+
+    //Add top layer
+    layers_.push_back(Layer(num_outputs_, nodes_, optimizer));
+}
+
+
+
 void FFNN::init_data(mat X_train, mat y_train, int num_points)
 {
     num_points_ = num_points;
@@ -134,6 +177,19 @@ void FFNN::update_l2()
     for (int l = 0; l < num_layers_; l++){
         layers_[l].weights_ -= step*(lamb_*layers_[l].weights_ + layers_[l].dw_);
         layers_[l].bias_ -= step*layers_[l].db_;
+        layers_[l].dw_.fill(0.);
+        layers_[l].db_.fill(0.);
+    }
+}
+
+void FFNN::update_l2_momentum()
+{
+    double step = eta_*(1./batch_sz_);
+    for (int l = 0; l < num_layers_; l++){
+        layers_[l].w_mom_ = gamma_*layers_[l].w_mom_ +  step*(lamb_*layers_[l].weights_ + layers_[l].dw_);
+        layers_[l].weights_ -= layers_[l].w_mom_;
+        layers_[l].b_mom_ = gamma_*layers_[l].b_mom_ + step*layers_[l].db_;
+        layers_[l].bias_ -= layers_[l].b_mom_;
         layers_[l].dw_.fill(0.);
         layers_[l].db_.fill(0.);
     }
@@ -284,7 +340,7 @@ vec FFNN::relu(vec z)
 
 vec FFNN::relu_derivative(vec z)
 {
-    //return z.transform( [](double val) {return (val > 0)};);
+    return z.transform( [](double val){return (val > 0);});
 }
 
 

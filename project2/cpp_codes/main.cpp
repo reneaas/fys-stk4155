@@ -76,7 +76,7 @@ void test_franke(){
     mat X_val, y_val;
     mat X_test, y_test;
 
-    int deg = 8;
+    int deg = 10;
     int num_points = 20000;
     int num_train = 0.9*0.95*num_points;
     int num_val = 0.9*0.05*num_points;
@@ -88,18 +88,19 @@ void test_franke(){
     int hidden_layers = 1;
     int features = (int) (deg+1)*(deg+2)/2;
     int num_outputs = 1;
-    int nodes = 30;
+    int nodes = 50;
     string model_type = "regression";
 
-    int epochs = 30;
+    int epochs = 50;
     int batch_sz = 10;
-    double eta = 0.3;
+    double eta = 0.1;
 
     double lamb = 1e-5;
+    double gamma = 0.5;
 
 
     //FFNN my_network(hidden_layers, features, nodes, num_outputs, model_type);
-    FFNN my_network(hidden_layers, features, nodes, num_outputs, model_type, lamb);
+    FFNN my_network(hidden_layers, features, nodes, num_outputs, model_type, lamb, gamma);
 
     my_network.init_data(X_train, y_train, num_train);
 

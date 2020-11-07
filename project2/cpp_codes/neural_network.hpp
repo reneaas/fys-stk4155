@@ -19,7 +19,7 @@ private:
     mat X_train_, y_train_;
     mat X_test_, y_test_;
     int num_test_;
-    double lamb_;
+    double lamb_, gamma_;
 
     void feed_forward(vec x);
     void backward_pass(vec x, vec y);
@@ -52,6 +52,7 @@ private:
     //Various update rules
     void update();
     void update_l2();
+    void update_l2_momentum();
 
 
 
@@ -60,6 +61,7 @@ public:
     //Constructors
     FFNN(int hidden_layers, int features, int nodes, int outputs, string model_type);
     FFNN(int hidden_layers, int features, int nodes, int outputs, string model_type, double lamb);
+    FFNN(int hidden_layers, int features, int nodes, int outputs, string model_type, double lamb, double gamma);
 
     //Member functions
     void init_data(mat X_train, mat y_train, int num_points);
