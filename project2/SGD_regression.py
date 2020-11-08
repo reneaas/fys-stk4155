@@ -147,7 +147,6 @@ class SGD_Regression():
 
         return cost_function
 
-        # Må sette inn predict shit på validering og så predict på test
 
     def predict_validate(self):
         f_validate = self.X_validate @ self.w
