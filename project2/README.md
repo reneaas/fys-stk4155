@@ -34,4 +34,4 @@ python3 generate_data.py N sigma
 
 ### Code usage
 
-The python script *SGD_testrun.py* shows how the to use the class SGD_Regression for the two SGD methods. For a more thorough walkthrough on the different class methods, see the doc string documentation in *SGD_regression.py*.
+The python script *SGD_testrun.py* shows how to use the class SGD_Regression for the two SGD methods. For a more thorough description of the different class methods, see the doc string documentation in *SGD_regression.py*.
