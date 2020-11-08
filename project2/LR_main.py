@@ -11,8 +11,8 @@ Nvalid = 5000
 Xtrain, Ytrain, Xtest, Ytest, Xvalid, Yvalid = mnist_data_valid(Ntrain, Ntest, Nvalid)
 
 
-def train_and_test_mnist(N_train, N_test, X_train, Y_train, X_test, Y_test, classes, eta, gamma, Lambda, epochs, batch_size):
-    my_solver = LogReg(classes= classes, X_data = X_train, y_data = Y_train, eta = eta, gamma = gamma, Lambda = Lambda, epochs = epochs, batch_size=batch_size)
+def train_and_test_mnist(N_train, N_test, X_train, Y_train, X_test, Y_test, classes, eta, gamma, Lambda, epochs, batch_size, optimizer):
+    my_solver = LogReg(classes= classes, X_data = X_train, y_data = Y_train, eta = eta, gamma = gamma, Lambda = Lambda, epochs = epochs, batch_size=batch_size, optimizer = optimizer)
     start = time()
     my_solver.train()
     end = time()
@@ -27,7 +27,7 @@ def train_and_test_mnist(N_train, N_test, X_train, Y_train, X_test, Y_test, clas
 
 
 #LA STÅ FUCKERS, HAR TWEAKA
-train_and_test_mnist(N_train=Ntrain, N_test=Ntest, X_train = Xtrain, Y_train = Ytrain, X_test = Xtest, Y_test = Ytest, classes = 10, eta = 10**(-3/2), gamma = 0.1, epochs=10, Lambda = 10**(-8), batch_size = 200)
+train_and_test_mnist(N_train=Ntrain, N_test=Ntest, X_train = Xtrain, Y_train = Ytrain, X_test = Xtest, Y_test = Ytest, classes = 10, eta = 10**(-3), gamma = 0.1, epochs=5, Lambda = 10**(-8), batch_size = 500, optimizer = "ADAM")
 
 
 """

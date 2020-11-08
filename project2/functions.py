@@ -3,20 +3,19 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 np.random.seed(1001)
 
-def scale_data(X, y, Npoints):
-    if not isinstance(y, np.ndarray):
+def scale_data(X, Npoints, y=None):
+    if y == None:
         for i in range(Npoints):
             x_mean = np.mean(X[i])
             x_std = np.std(X[i])
             X[i] = (X[i]-x_mean)/x_std
     else:
-
         for i in range(Npoints):
             x_mean = np.mean(X[i])
             x_std = np.std(X[i])
             X[i] = (X[i]-x_mean)/x_std
             y_mean = np.mean(y[i])
-            y_std = np.mean(y[i])
+            y_std = np.std(y[i])
             y[i] = (y[i]-y_mean)/y_std
 
     return X, y
@@ -167,7 +166,7 @@ def read_data(filename):
     y_std = np.std(y)
     z_data_mean = np.mean(z_data)
     z_data_std = np.std(z_data)
-
+    
     x = (x - x_mean)/x_std
     y = (y - y_mean)/y_std
     z_data = (z_data - z_data_mean)/z_data_std
@@ -193,6 +192,26 @@ def split_data(design_matrix, z_data, n, fraction_train = 0.8):
     z_test = z_data[n_train:]
 
     return X_train, X_test, z_train, z_test
+
+def split_data_valid(design_matrix, z_data, n, fraction_train = 0.85, fraction_test = 0.1):
+    """
+    Splits the data into a training set, test set and validation set
+    Training/test/valid is by default 85/10/5 ratio.
+    """
+    #Split data into training and test set.
+    n_train = int(fraction_train*n)
+    n_test = int(fraction_test*n)
+    n_valid = int((1-fraction_train-fraction_test)*n)
+
+    X_train = design_matrix[:n_train,:]
+    X_test = design_matrix[n_train:n_test+n_train,:]
+    X_valid = design_matrix[n_test+n_train:,:]
+
+    z_train = z_data[:n_train]
+    z_test = z_data[n_train:n_test+n_train]
+    z_valid = z_data[n_test+n_train:]
+
+    return X_train, X_test, X_valid, z_train, z_test, z_valid
 
 def plot_mnist_weights(weights, eta, gamma, epochs, batch_size, Lambda, accuracy):
     plt.figure(figsize=(10, 5))
