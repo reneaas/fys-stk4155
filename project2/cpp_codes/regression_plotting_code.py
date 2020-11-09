@@ -48,7 +48,7 @@ y = [int(i) for i in y]
 
 sb.set(font_scale=1.25)
 heat_map = sb.heatmap(r2_val.T, annot=True, cbar=True, cbar_kws={"label": "$R^2$", "orientation" : "vertical"})
-heat_map.set_xlabel("hidden layers")
+heat_map.set_xlabel("hidden neurons")
 heat_map.set_ylabel("polynomial degree")
 heat_map.set_xticklabels(x)
 heat_map.set_yticklabels(y)
