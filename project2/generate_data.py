@@ -1,7 +1,7 @@
 import numpy as np
 import sys
 import os
-np.random.seed(1001)
+#np.random.seed(1001)
 
 N = int(sys.argv[1])
 sigma = float(sys.argv[2])
