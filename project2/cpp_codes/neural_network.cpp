@@ -10,6 +10,7 @@ FFNN::FFNN(int hidden_layers, int features, int nodes, int num_outputs, string m
     num_layers_ = hidden_layers_ + 1;
 
 
+    update_parameters = &FFNN::update;
     if (model_type == "classification"){
         top_layer_act = &FFNN::softmax; //top layer activation
         compute_metric = &FFNN::compute_accuracy;
@@ -75,7 +76,7 @@ FFNN::FFNN(int hidden_layers, int features, int nodes, int num_outputs, string m
     layers_.push_back(Layer(num_outputs_, nodes_));
 }
 
-FFNN::FFNN(int hidden_layers, int features, int nodes, int num_outputs, string model_type, double lamb, double gamma)
+FFNN::FFNN(int hidden_layers, int features, int nodes, int num_outputs, string model_type, double lamb, double gamma, string hidden_activation)
 {
     features_ = features;
     nodes_ = nodes;
@@ -83,19 +84,29 @@ FFNN::FFNN(int hidden_layers, int features, int nodes, int num_outputs, string m
     hidden_layers_ = hidden_layers;
     num_layers_ = hidden_layers_ + 1;
 
+    //Set top layer activation function and which metric to use.
     if (model_type == "classification"){
         top_layer_act = &FFNN::softmax; //top layer activation
         compute_metric = &FFNN::compute_accuracy;
     }
-
-    if (model_type == "regression"){
+    else if (model_type == "regression"){
         top_layer_act = &FFNN::linear;
         compute_metric = &FFNN::compute_r2;
     }
 
-    //assign hidden activation function
-    hidden_act = &FFNN::sigmoid;
-    hidden_act_derivative = &FFNN::sigmoid_derivative;
+    //Set hidden activation function
+    if (hidden_activation == "sigmoid"){
+        hidden_act = &FFNN::sigmoid;
+        hidden_act_derivative = &FFNN::sigmoid_derivative;
+    }
+    else if (hidden_activation == "relu"){
+        hidden_act = &FFNN::relu;
+        hidden_act_derivative = &FFNN::relu_derivative;
+    }
+    else if (hidden_activation == "leaky_relu"){
+        hidden_act = &FFNN::leaky_relu;
+        hidden_act_derivative = &FFNN::leaky_relu_derivative;
+    }
 
     gamma_ = gamma;
     lamb_ = lamb;
@@ -139,11 +150,11 @@ void FFNN::fit(int epochs, int batch_sz, double eta)
     x = vec(features_);
     y = vec(num_outputs_);
     for (int epoch = 0; epoch < epochs; epoch++){
-        cout << "epoch = " << epoch << " of " << epochs << endl;
+        cout << " epoch = " << epoch << " of " << epochs << "\r";
 
         for (int batch = 0; batch < batches; batch++){
 
-            for (int b = 0; b < batch_sz; b++){
+            for (int b = 0; b < batch_sz_; b++){
                 idx = distribution(generator);
                 for (int j = 0; j < features_; j++){
                     x(j) = X_train_(j, idx);
@@ -157,6 +168,7 @@ void FFNN::fit(int epochs, int batch_sz, double eta)
             (this->*update_parameters)();
         }
     }
+    cout << " " << endl;
 }
 
 void FFNN::update()
@@ -235,12 +247,13 @@ void FFNN::backward_pass(vec x, vec y)
 
 }
 
-void FFNN::evaluate(mat X_test, mat y_test, int num_test){
+double FFNN::evaluate(mat X_test, mat y_test, int num_test){
     X_test_ = X_test;
     y_test_ = y_test;
     num_test_ = num_test;
 
     double metric = (this->*compute_metric)();
+    return metric;
 }
 
 double FFNN::compute_accuracy(){
@@ -313,6 +326,29 @@ double FFNN::compute_r2()
 
 }
 
+double FFNN::compute_mse()
+{
+    vec x = vec(features_);
+    vec y = vec(num_outputs_);
+
+    double mse = 0.;
+    double diff;
+    int l = num_layers_-1;
+    for (int i = 0; i < num_test_; i++){
+        for (int j = 0; j < features_; j++){
+            x(j) = X_test_(j, i);
+        }
+        y(0) = y_test_(0, i);
+        feed_forward(x);
+
+        diff = y(0) - layers_[l].activation_(0);
+        mse += diff*diff;
+    }
+    mse *= (1./num_test_);
+    cout << "MSE = " << mse << endl;
+    return mse;
+}
+
 
 void FFNN::add_gradients(int l)
 {
@@ -335,12 +371,26 @@ vec FFNN::sigmoid_derivative(vec z)
 
 vec FFNN::relu(vec z)
 {
-    return clamp(z, 0, z.max());
+    vec s = z;
+    return s.transform( [](double val){return val*(val > 0);});
 }
 
 vec FFNN::relu_derivative(vec z)
 {
-    return z.transform( [](double val){return (val > 0);});
+    vec s = z;
+    return s.transform( [](double val){return (val > 0);});
+}
+
+vec FFNN::leaky_relu(vec z)
+{
+    vec s = z;
+    return s.transform( [](double val){return 0.01*val*(val <= 0) + val*(val > 0);});
+}
+
+vec FFNN::leaky_relu_derivative(vec z)
+{
+    vec s = z;
+    return s.transform( [](double val){return 0.01*(val <= 0) + (val > 0);});
 }
 
 

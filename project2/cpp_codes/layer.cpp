@@ -33,4 +33,5 @@ Layer::Layer(int rows, int cols, string optimizer)
         w_mom_ = mat(rows_, cols_).fill(0.);
         b_mom_ = vec(rows_).fill(0.);
     }
+
 }

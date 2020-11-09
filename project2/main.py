@@ -14,7 +14,7 @@ def train_and_test_mnist(Ntrain, Ntest, hidden_layers, features, outputs, eta, e
     layers = [features] + [nodes]*hidden_layers + [outputs]
     #print(layers)
     print(layers)
-    my_solver = FFNN(layers, problem_type="classification", hidden_activation="sigmoid")
+    my_solver = FFNN(layers, problem_type="classification", hidden_activation="relu")
     #my_solver.fit_with_predict(X_train, Y_train, X_test, Y_test, batch_sz = batch_sz, eta=eta, lamb=lamb, epochs = epochs, gamma = gamma)
     start = time()
     my_solver.fit(X_train, Y_train, batch_sz = batch_sz, eta=eta, lamb=lamb, epochs = epochs, gamma = gamma)
@@ -81,4 +81,4 @@ def regression_franke_func_FFNN(hidden_layers, nodes, epochs, batch_size, eta, L
 
 
 
-regression_franke_func_FFNN(hidden_layers = 1, nodes = 10, epochs = 100, batch_size = 10, eta = 0.1, Lambda = 1e-5, gamma = 0.7, degree = 6)
+#regression_franke_func_FFNN(hidden_layers = 1, nodes = 10, epochs = 100, batch_size = 10, eta = 0.1, Lambda = 1e-5, gamma = 0.7, degree = 6)

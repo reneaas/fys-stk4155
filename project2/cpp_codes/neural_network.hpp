@@ -21,6 +21,8 @@ private:
     int num_test_;
     double lamb_, gamma_;
 
+
+    //These methods make up the backpropagation algorithm
     void feed_forward(vec x);
     void backward_pass(vec x, vec y);
     void add_gradients(int l);
@@ -40,6 +42,9 @@ private:
     vec relu(vec z);
     vec relu_derivative(vec z);
 
+    vec leaky_relu(vec z);
+    vec leaky_relu_derivative(vec z);
+
     //Top layer activation functions
     vec softmax(vec a);
     vec linear(vec z);
@@ -47,6 +52,7 @@ private:
     //Various metrics
     double compute_accuracy();
     double compute_r2();
+    double compute_mse();
 
 
     //Various update rules
@@ -55,18 +61,16 @@ private:
     void update_l2_momentum();
 
 
-
-
 public:
     //Constructors
     FFNN(int hidden_layers, int features, int nodes, int outputs, string model_type);
     FFNN(int hidden_layers, int features, int nodes, int outputs, string model_type, double lamb);
-    FFNN(int hidden_layers, int features, int nodes, int outputs, string model_type, double lamb, double gamma);
+    FFNN(int hidden_layers, int features, int nodes, int outputs, string model_type, double lamb, double gamma, string hidden_activation);
 
     //Member functions
-    void init_data(mat X_train, mat y_train, int num_points);
-    void fit(int epochs, int batch_sz, double eta);
-    void evaluate(mat X_test, mat y_test, int num_test);
+    void init_data(mat X_train, mat y_train, int num_points); //Initializes training data.
+    void fit(int epochs, int batch_sz, double eta); //Fits the model
+    double evaluate(mat X_test, mat y_test, int num_test); //Evaluates the model according to the appropriate performance metric.
 };
 
 #endif
