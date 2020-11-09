@@ -36,19 +36,13 @@ class LogReg():
         if optimizer == "ADAM":
             self.beta1 = 0.9
             self.beta2 = 0.99
-            self.epsilon = 10**(-2)
+            self.epsilon = 10**(-8)
 
             self.momentum_weights = np.zeros([self.M,self.features])
             self.momentum_bias = np.zeros(self.M)
 
             self.second_momentum_weights = np.zeros([self.M,self.features])
             self.second_momentum_bias = np.zeros(self.M)
-
-            self.scaled_momentum_weights = np.zeros([self.M,self.features])
-            self.scaled_momentum_bias = np.zeros(self.M)
-
-            self.scaled_second_momentum_weights = np.zeros([self.M,self.features])
-            self.scaled_second_momentum_bias = np.zeros(self.M)
 
             self.optimizer = lambda: self.ADAM()
 
@@ -110,14 +104,11 @@ class LogReg():
         self.second_momentum_weights = self.beta2*self.second_momentum_weights + (1-self.beta2)*(self.grad_weights*self.grad_weights)
         self.second_momentum_bias = self.beta2*self.second_momentum_bias + (1-self.beta2)*(self.grad_bias*self.grad_bias)
 
-        self.scaled_momentum_weights = self.momentum_weights/(1-self.beta1**(self.b+1))
-        self.scaled_momentum_bias = self.momentum_bias/(1-self.beta1**(self.b+1))
+        alpha_b = self.eta * np.sqrt(1-self.beta2**(self.b+1)) / (1-self.beta1**(self.b+1))
+        epsilon_b = self.epsilon * np.sqrt(1-self.beta2**(self.b+1))
 
-        self.scaled_second_momentum_weights = self.second_momentum_weights/(1-self.beta2**(self.b+1))
-        self.scaled_second_momentum_bias = self.second_momentum_bias/(1-self.beta2**(self.b+1))
-
-        self.weights -= self.scaled_momentum_weights/(np.sqrt(self.scaled_second_momentum_weights) + self.epsilon)
-        self.bias -= self.scaled_momentum_bias/(np.sqrt(self.scaled_second_momentum_bias) + self.epsilon)
+        self.weights -= self.momentum_weights*alpha_b/(np.sqrt(self.second_momentum_weights) + epsilon_b)
+        self.bias -= self.momentum_bias*alpha_b/(np.sqrt(self.second_momentum_bias) + epsilon_b)
 
         self.grad_weights[:,:] = 0.
         self.grad_bias[:] = 0.
