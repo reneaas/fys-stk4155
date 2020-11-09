@@ -15,7 +15,7 @@ def single_run():
     epochs = 100
     batch_sz = 100
     eta = 0.1
-    hidden_act = "sigmoid"
+    hidden_act = "relu"
     deg = 5
 
     outfilename = "test.txt"
@@ -47,20 +47,19 @@ def grid_search():
     r2_test = np.zeros([x_len, y_len])
 
     hidden_layers = 1
-    nodes = 50
+    nodes = 30
     lamb = 0.
     gamma = 0.
-    epochs = 1000
+    epochs = 100
     batch_sz = 100
     eta = 0.1
-    hidden_act = "sigmoid"
+    hidden_act = "relu"
     deg = 5
 
 
     for i in range(x_len):
         for j in range(y_len):
-            hidden_layers = layers[i]
-            deg = degrees[j]
+
             #nodes = num_nodes[i]
             #deg = degrees[j]
             print("layers = {}, deg = {}".format(hidden_layers, deg))
