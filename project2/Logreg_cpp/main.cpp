@@ -49,8 +49,8 @@ int main(int argc, char const *argv[]) {
     //Optimizer = SGD:
     /*
     SGD(classes, X_train, y_train, eta, Lambda, epochs, batch_sz, num_train, features, X_val, y_val, num_val);
-
     SGD_hyperparams(classes, X_train, y_train, num_train, features, X_test, y_test, num_test, X_val, y_val, num_val);
+
     */
 
 
@@ -61,7 +61,9 @@ int main(int argc, char const *argv[]) {
     SGD_momentum(gamma, classes, X_train, y_train, eta, Lambda, epochs, batch_sz, num_train, features, X_val, y_val, num_val);
 
     SGD_mom_hyperparams(classes, X_train, y_train, num_train, features, X_test, y_test, num_test, X_val, y_val, num_val);
+    SGD_mom_hyperparams(classes, X_train, y_train, num_train, features, X_test, y_test, num_test, X_val, y_val, num_val);
     */
+
 
 
     //Optimizer = ADAM;
@@ -70,8 +72,11 @@ int main(int argc, char const *argv[]) {
     double beta2 = 0.90;
     double epsilon = 1e-8;
     ADAM(beta1, beta2, epsilon, classes, X_train, y_train, eta, Lambda, epochs, batch_sz, num_train, features, X_test, y_test, num_test);
-    */
     ADAM_hyperparams(classes, X_train, y_train, num_train, features, X_test, y_test, num_test, X_val, y_val, num_val);
+    ADAM_hyperparams(classes, X_train, y_train, num_train, features, X_test, y_test, num_test, X_val, y_val, num_val);
+    */
+
+
 
 
 
@@ -114,29 +119,28 @@ void ADAM(double beta1, double beta2, double epsilon, int classes, mat X_train, 
 
 void SGD_hyperparams(int classes, mat X_train, mat y_train, int num_train, int features, mat X_test, mat y_test, int num_test, mat X_val, mat y_val, int num_val){
 
-    double Lambda = 1e-8;
+    double Lambda = 0.;
     double accuracy_t, accuracy_v;
 
 
-    int epochs_list[3] = {10, 20, 30};
-    int batch_list[3] = {100, 200, 300};
-    double eta_list[3] = {0.1, 0.01, 0.001};
+    int epochs_list[6] = {1, 10, 20, 50, 100, 1000};
+    int batch_list[5] = {10, 100, 200, 300, 500};
+    double etaa = 0.1;
 
     ofstream ofile;
-    ofile.open("SGD_LogReg.txt");
-    ofile << "Acc_val " << "Acc_test " << "epochs " << "batch_sz " << "eta"<<endl;
+    ofile.open("SGD_LogReg_final.txt");
+    ofile << "Acc_val " << "Acc_test " << "epochs " << "batch_sz " << endl;
     for (int ep : epochs_list){
         for(int b : batch_list){
-            for (double et : eta_list){
-                LogReg my_model(classes, X_train, y_train, et, Lambda, ep, b, num_train, features);
-                my_model.fit();
-                accuracy_v = my_model.compute_accuracy(X_val, y_val, num_val);
-                accuracy_t = my_model.compute_accuracy(X_test, y_test, num_test);
+            LogReg my_model(classes, X_train, y_train, etaa, Lambda, ep, b, num_train, features);
+            my_model.fit();
+            accuracy_v = my_model.compute_accuracy(X_val, y_val, num_val);
+            accuracy_t = my_model.compute_accuracy(X_test, y_test, num_test);
 
-                ofile << accuracy_v << " " << accuracy_t << " " << ep << " " << b << " " << et << endl;
+            ofile << accuracy_v << " " << accuracy_t << " " << ep << " " << b <<endl;
 
 
-            }
+
         }
     }
     ofile.close();
@@ -144,31 +148,27 @@ void SGD_hyperparams(int classes, mat X_train, mat y_train, int num_train, int f
 
 void SGD_mom_hyperparams(int classes, mat X_train, mat y_train, int num_train, int features, mat X_test, mat y_test, int num_test, mat X_val, mat y_val, int num_val){
 
-    double Lambda = 1e-8;
     double accuracy_t, accuracy_v;
 
-    int epochs_list[3] = {10, 20, 30};
-    int batch_list[3] = {100, 200, 300};
-    double eta_list[3] = {0.1, 0.01, 0.001};
-    double gamma_list[3] = {0.5, 0.1, 0.01};
+    int epochss = 100;
+    int batch_szz = 500;
+    double etaa = 0.1;
+    double gamma_list[9] = {1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 0.1, 1.0};
+    double Lambda_list[9] = {1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 0.1, 1.0};
 
     ofstream ofile;
-    ofile.open("SGD_mom_LogReg.txt");
-    ofile << "Acc_val " << "Acc_test " << "epochs " << "batch_sz " << "eta "<< "gamma" << endl;
-    for (int ep : epochs_list){
-        for(int b : batch_list){
-            for (double et : eta_list){
-                for (double g: gamma_list){
-                    LogReg my_model(g, classes, X_train, y_train, et, Lambda, ep, b, num_train, features);
-                    my_model.fit();
-                    accuracy_v = my_model.compute_accuracy(X_val, y_val, num_val);
-                    accuracy_t = my_model.compute_accuracy(X_test, y_test, num_test);
+    ofile.open("SGD_mom_LogReg_final.txt");
+    ofile << "Acc_val " << "Acc_test " << "gamma "<< "lambda" << endl;
+    for (double g : gamma_list){
+        for (double lam: Lambda_list){
+            LogReg my_model(g, classes, X_train, y_train, etaa, lam, epochss, batch_szz, num_train, features);
+            my_model.fit();
+            accuracy_v = my_model.compute_accuracy(X_val, y_val, num_val);
+            accuracy_t = my_model.compute_accuracy(X_test, y_test, num_test);
 
-                    ofile << accuracy_v << " " << accuracy_t << " " << ep << " " << b << " " << et << " " << g << endl;
+            ofile << accuracy_v << " " << accuracy_t << " " << g << " " << lam << endl;
 
 
-                }
-            }
         }
     }
     ofile.close();
@@ -176,37 +176,32 @@ void SGD_mom_hyperparams(int classes, mat X_train, mat y_train, int num_train, i
 
 void ADAM_hyperparams(int classes, mat X_train, mat y_train, int num_train, int features, mat X_test, mat y_test, int num_test, mat X_val, mat y_val, int num_val){
 
-    double Lambda = 1e-8;
+    double Lambda = 1e-4;
     double accuracy_t, accuracy_v;
     double epsilon = 1e-8;
 
 
-    int epochs_list[3] = {10, 20, 30};
-    int batch_list[3] = {100, 200, 300};
-    double eta_list[3] = {0.1, 0.01, 0.001};
-    double beta1_list[3] = {0.90, 0.95, 0.99};
-    double beta2_list[3] = {0.90, 0.95, 0.99};
+    int epochss = 100;
+    int batch_szz = 500;
+    double etaa = 0.1;
+    double beta1_list[6] = {0.80, 0.85, 0.90, 0.95, 0.99, 0.999};
+    double beta2_list[6] = {0.80, 0.85, 0.90, 0.95, 0.99, 0.999};
 
     ofstream ofile;
-    ofile.open("ADAM_LogReg.txt");
-    ofile << "Acc_val " << "Acc_test " << "epochs " << "batch_sz " << "eta "<< "beta1 " << "beta2" << endl;
-    for (int ep : epochs_list){
-        for(int b : batch_list){
-            for (double et : eta_list){
-                for (double beta1 : beta1_list){
-                    for (double beta2 : beta2_list){
+    ofile.open("ADAM_LogReg_final.txt");
+    ofile << "Acc_val " << "Acc_test " << "beta1 " << "beta2" << endl;
+    for (double beta1 : beta1_list){
+        for (double beta2 : beta2_list){
 
-                        LogReg my_model(beta1, beta2, epsilon, classes, X_train, y_train, et, Lambda, ep, b, num_train, features);
-                        my_model.fit();
-                        accuracy_v = my_model.compute_accuracy(X_val, y_val, num_val);
-                        accuracy_t = my_model.compute_accuracy(X_test, y_test, num_test);
+            LogReg my_model(beta1, beta2, epsilon, classes, X_train, y_train, etaa, Lambda, epochss, batch_szz, num_train, features);
+            my_model.fit();
+            accuracy_v = my_model.compute_accuracy(X_val, y_val, num_val);
+            accuracy_t = my_model.compute_accuracy(X_test, y_test, num_test);
 
-                        ofile << accuracy_v << " " << accuracy_t << " " << ep << " " << b << " " << et << " " << beta1 << " " << beta2 << endl;
+            ofile << accuracy_v << " " << accuracy_t << " " << beta1 << " " << beta2 << endl;
 
-                    }
-                }
-            }
         }
     }
+
     ofile.close();
 }
