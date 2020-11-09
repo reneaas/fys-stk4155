@@ -6,9 +6,14 @@
 using namespace std;
 using namespace arma;
 
+
+/*
+ The Layer class is used by the FFNN class to store properties of each layer.
+*/
 class Layer {
 public:
-    /* data */
+
+    int rows_, cols_; //Number of rows and columns in the weights_ matrix.
 
     vec bias_;
     vec error_;
@@ -20,10 +25,14 @@ public:
     mat dw_;
     vec db_;
 
-    int rows_, cols_;
+    //Used with sgd_momentum
+    mat w_mom_;
+    vec b_mom_;
 
+
+    //Constructions
     Layer(int rows, int cols);
-    void compute_act(vec a);
+    Layer(int rows, int cols, string optimizer);
 };
 
 #endif

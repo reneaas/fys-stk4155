@@ -89,7 +89,8 @@ vec LogReg::softmax(vec a)
 
 vec LogReg::compute_dw(vec x, vec y)
 {
-    return kron((output_ - y),x)
+    return (output_-y)*x.t();
+    //return kron((output_ - y),x)
 }
 
 vec LogReg::compute_db(vec y)
