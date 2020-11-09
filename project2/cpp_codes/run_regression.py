@@ -29,13 +29,13 @@ def single_run():
 
 
 def grid_search():
-    layers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    learning_rates = [0.1, 0.01, 0.001, 0.0001, 1e-5]
     degrees = [d for d in range(1, 10)]
     #layers = [1,2]
     #degrees = [1, 2]
     #num_nodes = [1, 10]
     #degrees = [1, 2]
-    x_len = len(layers)
+    x_len = len(learning_rates)
     y_len = len(degrees)
 
     #lambdas = [1e-2, 1e-3, 1e-4, 1e-5, 1e-6]
@@ -59,12 +59,11 @@ def grid_search():
 
     for i in range(x_len):
         for j in range(y_len):
+            eta = learning_rates[i]
+            deg = degrees[j]
+            print("eta = {}, deg = {}".format(eta, deg))
 
-            #nodes = num_nodes[i]
-            #deg = degrees[j]
-            print("layers = {}, deg = {}".format(hidden_layers, deg))
-
-            outfilename = "_".join(["r2", str(hidden_layers), str(deg)]) + ".txt"
+            outfilename = "_".join(["r2", str(eta), str(deg)]) + ".txt"
 
             args = ["./main.out", str(hidden_layers), str(nodes), str(lamb), str(gamma), str(epochs), str(batch_sz), str(eta), outfilename]
             args = ["./main.out", str(hidden_layers), str(nodes), str(lamb), str(gamma), str(epochs), str(batch_sz), str(eta), outfilename, hidden_act, str(deg)]
@@ -79,30 +78,30 @@ def grid_search():
 
             os.system(" ".join(["rm", outfilename]))
 
-    outfilename_val = "regression_grid_search_layers_deg_val.txt"
+    outfilename_val = "regression_grid_search_eta_deg_leaky_relu_val.txt"
     with open(outfilename_val, "w") as outfile:
-        outfile.write("layers degree r2_val\n")
+        outfile.write("eta degree r2_val\n")
         for i in range(x_len):
             for j in range(y_len):
-                hidden_layers = layers[i]
+                eta = learning_rates[i]
                 deg = degrees[j]
 
-                args = [str(hidden_layers), str(deg), str(r2_val[i,j])]
+                args = [str(eta), str(deg), str(r2_val[i,j])]
                 line = " ".join(args)
                 outfile.write(line)
                 outfile.write("\n")
 
     os.system("mv" + " " + outfilename_val + " " + "./results/regression/")
 
-    outfilename_test = "regression_grid_search_layers_deg_test.txt"
+    outfilename_test = "regression_grid_search_eta_deg_leaky_relu_test.txt"
     with open(outfilename_test, "w") as outfile:
-        outfile.write("layers degree r2_test\n")
+        outfile.write("eta degree r2_test\n")
         for i in range(x_len):
             for j in range(y_len):
-                hidden_layers = layers[i]
+                eta = learning_rates[i]
                 deg = degrees[j]
 
-                args = [str(hidden_layers), str(deg), str(r2_test[i,j])]
+                args = [str(eta), str(deg), str(r2_test[i,j])]
                 line = " ".join(args)
                 outfile.write(line)
                 outfile.write("\n")
@@ -111,4 +110,4 @@ def grid_search():
 
 
 
-#grid_search()
+grid_search()

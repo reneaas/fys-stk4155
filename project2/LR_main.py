@@ -27,7 +27,7 @@ def train_and_test_mnist(N_train, N_test, X_train, Y_train, X_test, Y_test, clas
 
 
 #LA STÅ FUCKERS, HAR TWEAKA
-train_and_test_mnist(N_train=Ntrain, N_test=Ntest, X_train = Xtrain, Y_train = Ytrain, X_test = Xtest, Y_test = Ytest, classes = 10, eta = 10**(-3), gamma = 0.1, epochs=5, Lambda = 10**(-8), batch_size = 500, optimizer = "ADAM")
+train_and_test_mnist(N_train=Ntrain, N_test=Ntest, X_train = Xtrain, Y_train = Ytrain, X_test = Xtest, Y_test = Ytest, classes = 10, eta = 10**(-3), gamma = 0.1, epochs=10, Lambda = 10**(-8), batch_size = 100, optimizer = "ADAM")
 
 
 """
