@@ -1,6 +1,5 @@
 #include "LogReg.hpp"
 
-
 void read_mnist(mat *X_train, mat *y_train, mat *X_val, mat *y_val, mat *X_test, mat *y_test);
 
 void SGD(int classes, mat X_train, mat y_train, double eta, double Lambda, int epochs, int batch_sz, int num_train, int features, mat X_test, mat y_test, int num_test);
@@ -35,41 +34,43 @@ int main(int argc, char const *argv[]) {
     int batch_sz = 500;
     double eta = 0.1;
     int classes = 10;
-    double Lambda = 1e-8;
+    double Lambda = 1e-4;
 
 
-    //Train the model using SGD without momentum
+    //Train the model using SGD without momentum and make predictions on unseen data
+    cout << " " << endl;
     cout << "Training model using SGD:" << endl;
     SGD(classes, X_train, y_train, eta, Lambda, epochs, batch_sz, num_train, features, X_val, y_val, num_val);
 
 
-    //Train the model using SGD with momentum
+    //Train the model using SGD with momentum and make predictions on unseen data
+    cout << " " << endl;
     cout << "Training model using SGD w/momentum:" << endl;
-    double gamma = 0.5;
+    double gamma = 1e-7;
     SGD_momentum(gamma, classes, X_train, y_train, eta, Lambda, epochs, batch_sz, num_train, features, X_val, y_val, num_val);
 
-    //Train the model using Adam
+    //Train the model using Adam and make predictions on unseen data
+    cout << " " << endl;
     cout << "Training model using ADAM:" << endl;
     double beta1 = 0.99;
     double beta2 = 0.99;
     double epsilon = 1e-8;
     ADAM(beta1, beta2, epsilon, classes, X_train, y_train, eta, Lambda, epochs, batch_sz, num_train, features, X_test, y_test, num_test);
 
-
     return 0;
 }
 
 void read_mnist(mat *X_train, mat *y_train, mat *X_val, mat *y_val, mat *X_test, mat *y_test){
 
-    (*X_train).load("mnist_X_train.bin");
-    (*y_train).load("mnist_y_train.bin");
+    (*X_train).load("../datasets/mnist_X_train.bin");
+    (*y_train).load("../datasets/mnist_y_train.bin");
 
-    (*X_val).load("mnist_X_val.bin");
-    (*y_val).load("mnist_y_val.bin");
+    (*X_val).load("../datasets/mnist_X_val.bin");
+    (*y_val).load("../datasets/mnist_y_val.bin");
 
 
-    (*X_test).load("mnist_X_test.bin");
-    (*y_test).load("mnist_y_test.bin");
+    (*X_test).load("../datasets/mnist_X_test.bin");
+    (*y_test).load("../datasets/mnist_y_test.bin");
 }
 
 void SGD(int classes, mat X_train, mat y_train, double eta, double Lambda, int epochs, int batch_sz, int num_train, int features, mat X_test, mat y_test, int num_test){
@@ -87,5 +88,5 @@ void SGD_momentum(double gamma, int classes, mat X_train, mat y_train, double et
 void ADAM(double beta1, double beta2, double epsilon, int classes, mat X_train, mat y_train, double eta, double Lambda, int epochs, int batch_sz, int num_train, int features, mat X_test, mat y_test, int num_test){
     LogReg my_model_ADAM(beta1, beta2, epsilon, classes, X_train, y_train, eta, Lambda, epochs, batch_sz, num_train, features);
     my_model_ADAM.fit();
-    double accuracy_ADAM= my_model_ADAM.compute_accuracy(X_test, y_test, num_test);
+    double accuracy_ADAM = my_model_ADAM.compute_accuracy(X_test, y_test, num_test);
 }

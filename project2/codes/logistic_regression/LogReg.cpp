@@ -1,5 +1,7 @@
 #include "LogReg.hpp"
 
+
+/* Constructor that initializes the model with the SGD optimizer */
 LogReg::LogReg(int classes, mat X_train, mat y_train, double eta, double Lambda, int epochs, int batch_sz, int num_train, int features)
 {
 
@@ -28,6 +30,7 @@ LogReg::LogReg(int classes, mat X_train, mat y_train, double eta, double Lambda,
 
 }
 
+/* Constructor that initializes the model with the SGD with momentum optimizer */
 LogReg::LogReg(double gamma, int classes, mat X_train, mat y_train, double eta, double Lambda, int epochs, int batch_sz, int num_train, int features){
 
     M_ = classes;
@@ -43,7 +46,6 @@ LogReg::LogReg(double gamma, int classes, mat X_train, mat y_train, double eta, 
     eta_ = eta/batch_sz_;
     z_ = vec(M_).fill(0.);
 
-
     weights_ = randn<mat>(M_, features_)*(1./sqrt(features_));
     tmp_weights_ = mat(M_, features_).fill(0.);
     dw_ = mat(M_, features_).fill(0.);
@@ -58,6 +60,7 @@ LogReg::LogReg(double gamma, int classes, mat X_train, mat y_train, double eta, 
     optimizer_ = &LogReg::SGD_momentum;
 }
 
+/* Constructor that initializes the model with the Adam optimizer */
 LogReg::LogReg(double beta1, double beta2, double epsilon, int classes, mat X_train, mat y_train, double eta, double Lambda, int epochs, int batch_sz, int num_train, int features){
 
     M_ = classes;
@@ -94,12 +97,10 @@ LogReg::LogReg(double beta1, double beta2, double epsilon, int classes, mat X_tr
     activation_ = &LogReg::softmax;
     optimizer_ = &LogReg::ADAM;
 
-
-
 }
 
 
-
+/* Method that runs through epochs and mini-batches to train the model*/
 void LogReg::fit(){
     default_random_engine generator;
     uniform_int_distribution<int> distribution(0, num_train_-1);
@@ -130,6 +131,7 @@ void LogReg::fit(){
 
 }
 
+/* Method for SGD optimization */
 void LogReg::SGD()
 {
     dw_ *= eta_;
@@ -143,6 +145,7 @@ void LogReg::SGD()
 
 }
 
+/* Method for SGD with momentum optimization */
 void LogReg::SGD_momentum()
 {
     dw_ *= eta_;
@@ -158,6 +161,7 @@ void LogReg::SGD_momentum()
     db_.fill(0.);
 }
 
+/* Method for Adam optimization */
 void LogReg::ADAM()
 {
     dw_ *= eta_;
@@ -186,22 +190,27 @@ vec LogReg::softmax(vec a)
     return exp(a)/sum(res);
 }
 
+/* Method for computing the gradient of the cross-entropy with respect to the weights */
 mat LogReg::compute_dw(vec x, vec y)
 {
     return (output_ - y)*x.t();
 }
 
+/* Method for computing the gradient of the cross-entropy with respect to the bias */
 vec LogReg::compute_db(vec y)
 {
     return output_ - y;
 }
 
+/* Method for predicting on unseen data*/
 void LogReg::predict(vec x)
 {
     z_ = weights_*x + bias_;
     output_ = (this->*activation_)(z_);
 }
 
+
+/* Method for evaluating the score of accuracy when predicting on unseen data */
 double LogReg::compute_accuracy(mat X_test, mat y_test, int num_test){
 
     X_test_ = X_test;
