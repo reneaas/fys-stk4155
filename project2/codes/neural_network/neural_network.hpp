@@ -3,6 +3,7 @@
 
 #include "layer.hpp"
 #include <armadillo>
+#include <random>
 
 using namespace std;
 using namespace arma;

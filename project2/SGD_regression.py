@@ -78,21 +78,21 @@ class SGD_Regression():
                 col_idx += 1
         self.design_matrix = self.design_matrix[self.shuffled_idx,:] #Shuffle the design matrix
 
-    def split_data(self, fraction = 0.2):
+    def split_data(self):
         """
         Splits the data into a training set and a test set
-        Training/validate/test is by default 60/20/20 ratio.
+        Training/validate/test is by default 85.5/4.5/10 ratio.
 
-        Input parameters:
 
-        fraction_train - fraction of the dataset used for training.
         """
 
-        fraction_train = 1-fraction*2
+        fraction_train = 0.9*0.95
+        fraction_val = 0.9*0.05
+        fraction_test = 0.1
 
         #Split data into training and test set.
         self.n_train = int(fraction_train*self.n)
-        self.n_validate = int(fraction*self.n)
+        self.n_validate = int(fraction_val*self.n)
         self.n_test = self.n - self.n_train - self.n_validate
 
         self.X_train = self.design_matrix[:self.n_train,:]
