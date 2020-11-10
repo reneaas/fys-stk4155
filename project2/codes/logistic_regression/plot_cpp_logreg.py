@@ -8,8 +8,11 @@ import os
 
 
 # Results from SGD
-"""
-infile_SGD = "SGD_LogReg_final.txt"
+
+path_to_plot = "../../results/LogisticRegression/Plots/"
+path_to_files = "../../results/LogisticRegression/"
+
+infile_SGD = path_to_files +  "SGD_LogReg_final.txt"
 
 SGD_acc_val = []
 SGD_acc_test = []
@@ -42,7 +45,7 @@ SGD_best_val = np.where(SGD_acc_val == np.max(SGD_acc_val))
 SGD_acc_val_mat = np.zeros([len(SGD_epochs), len(SGD_batch)])
 SGD_acc_val_mat.flat[:] = SGD_acc_val
 
-figename_SGD = "SGD_LogReg_epochs_vs_batchsz.pdf"
+figename_SGD = path_to_plot + "SGD_LogReg_epochs_vs_batchsz.pdf"
 
 sb.set(font_scale=1.25)
 heat_map = sb.heatmap(SGD_acc_val_mat.T,annot=True, cbar=True, cbar_kws={"label": "Accuracy", "orientation" : "vertical"})
@@ -51,7 +54,6 @@ heat_map.set_ylabel("Batch Size")
 heat_map.set_xticklabels(SGD_epochs)
 heat_map.set_yticklabels(SGD_batch)
 heat_map.xaxis.tick_top()
-#print(heat_map.get_ylim())
 heat_map.set_ylim(5.0,0.0)
 heat_map.tick_params(length=0)
 plt.savefig(figename_SGD)
@@ -59,7 +61,7 @@ plt.close()
 
 
 #Results from SGD with momentum
-infile_MOM = "SGD_mom_LogReg_final.txt"
+infile_MOM = path_to_files +  "SGD_mom_LogReg_final.txt"
 
 MOM_acc_val = []
 MOM_acc_test = []
@@ -97,7 +99,7 @@ MOM_best_val = np.where(MOM_acc_val_mat[:,4:] == np.max(MOM_acc_val_mat[:,4:]))
 print(MOM_best_val)
 # Gamma = 1e-7 and Lambda = 1e-4
 
-figename_MOM = "MOM_LogReg_gamma_vs_lambda.pdf"
+figename_MOM = path_to_plot + "MOM_LogReg_gamma_vs_lambda.pdf"
 
 sb.set(font_scale=1.25)
 heat_map = sb.heatmap(MOM_acc_val_mat[:,4:].T, annot=True, cbar=True, cbar_kws={"label": "Accuracy", "orientation" : "vertical"})
@@ -106,16 +108,15 @@ heat_map.set_ylabel(r"$\lambda$")
 heat_map.set_xticklabels(MOM_gamma, rotation = 45)
 heat_map.set_yticklabels(MOM_lambda[4:])
 heat_map.xaxis.tick_top()
-#print(heat_map.get_ylim())
 heat_map.set_ylim(5.0,0.0)
 heat_map.tick_params(length=0)
 plt.savefig(figename_MOM)
 plt.show()
 plt.close()
 
-"""
+
 #Results from ADAM
-infile_ADAM = "ADAM_LogReg_final.txt"
+infile_ADAM = path_to_files +  "ADAM_LogReg_final.txt"
 
 ADAM_acc_val = []
 ADAM_acc_test = []
@@ -145,7 +146,7 @@ print(ADAM_best_val)
 ADAM_acc_val_mat = np.zeros([len(ADAM_beta1), len(ADAM_beta2)])
 ADAM_acc_val_mat.flat[:] = ADAM_acc_val
 
-figename_ADAM = "ADAM_LogReg_beta1_vs_beta2.pdf"
+figename_ADAM = path_to_plot + "ADAM_LogReg_beta1_vs_beta2.pdf"
 
 sb.set(font_scale=1.25)
 heat_map = sb.heatmap(ADAM_acc_val_mat.T, annot=True, cbar=True, cbar_kws={"label": "Accuracy", "orientation" : "vertical"})
@@ -154,7 +155,6 @@ heat_map.set_ylabel(r"$\beta_2$")
 heat_map.set_xticklabels(ADAM_beta1)
 heat_map.set_yticklabels(ADAM_beta2)
 heat_map.xaxis.tick_top()
-#print(heat_map.get_ylim())
 heat_map.set_ylim(6.0,0.0)
 heat_map.tick_params(length=0)
 plt.savefig(figename_ADAM)

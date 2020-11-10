@@ -233,9 +233,9 @@ double LogReg::compute_accuracy(mat X_test, mat y_test, int num_test){
     }
     accuracy = correct_predictions*(1./num_test_);
 
-    //cout << "Accuracy = " << accuracy << endl;
-    //cout << "correct_predictions = " << correct_predictions << endl;
-    //cout << "wrong_predictions = " << wrong_predictions << endl;
+    cout << "Accuracy = " << accuracy << endl;
+    cout << "correct_predictions = " << correct_predictions << endl;
+    cout << "wrong_predictions = " << wrong_predictions << endl;
 
     return accuracy;
 }
