@@ -1,7 +1,8 @@
 import numpy as np
 import os
 
-args = ["g++-10", "-o", "main.out", "layer.cpp", "neural_network.cpp", "regression_main.cpp", "-larmadillo", "-O3"]
+#args = ["g++-10", "-o", "main.out", "layer.cpp", "neural_network.cpp", "regression_main.cpp", "-larmadillo", "-O3"]
+args = ["g++", "-o", "main.out", "layer.cpp", "neural_network.cpp", "regression_main.cpp", "-larmadillo", "-O3", "-std=c++11"]
 command = " ".join(args)
 os.system("echo " + command)
 os.system(command) #Compile .cpp files
@@ -78,7 +79,7 @@ def grid_search():
 
             os.system(" ".join(["rm", outfilename]))
 
-    outfilename_val = "regression_grid_search_eta_deg_leaky_relu_val.txt"
+    outfilename_val = "regression_grid_search_eta_deg_relu_val.txt"
     with open(outfilename_val, "w") as outfile:
         outfile.write("eta degree r2_val\n")
         for i in range(x_len):
@@ -93,7 +94,7 @@ def grid_search():
 
     os.system("mv" + " " + outfilename_val + " " + "./results/regression/")
 
-    outfilename_test = "regression_grid_search_eta_deg_leaky_relu_test.txt"
+    outfilename_test = "regression_grid_search_eta_deg_relu_test.txt"
     with open(outfilename_test, "w") as outfile:
         outfile.write("eta degree r2_test\n")
         for i in range(x_len):

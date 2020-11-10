@@ -4,7 +4,7 @@ import numpy as np
 import os
 #plt.rc("text", usetex=True)
 
-infilename = "./results/regression/regression_grid_search_nodes_deg_val.txt"
+infilename = "./results/regression/regression_grid_search_eta_deg_relu_val.txt"
 
 
 x = []
@@ -41,18 +41,17 @@ x = x[idx]
 r2_val = r2_val[idx]
 """
 
-
-x = [int(i) for i in x]
+#x = [int(i) for i in x]
 y = [int(i) for i in y]
-
+x = x[::-1]
 
 sb.set(font_scale=1.25)
 heat_map = sb.heatmap(r2_val.T, annot=True, cbar=True, cbar_kws={"label": "$R^2$", "orientation" : "vertical"})
-heat_map.set_xlabel("hidden neurons")
+heat_map.set_xlabel(r"$\eta$")
 heat_map.set_ylabel("polynomial degree")
 heat_map.set_xticklabels(x)
 heat_map.set_yticklabels(y)
 heat_map.xaxis.tick_top()
 heat_map.tick_params(length=0)
-plt.savefig("NN_regression_heatmap_neurons_degree.pdf")
+plt.savefig("results/regression/NN_regression_heatmap_eta_degree_relu.pdf")
 plt.show()
