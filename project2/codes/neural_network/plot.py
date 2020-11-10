@@ -1,12 +1,13 @@
+#Python script to create plots. Ignore this.
+
 import matplotlib.pyplot as plt
 import seaborn as sb
 import numpy as np
 import os
-#plt.rc("text", usetex=True)
+
+
 
 infilename = "./results/classification/grid_search_lamb_gamma_leaky_relu_test.txt"
-
-
 x = []
 y = []
 r2 = []
@@ -29,12 +30,6 @@ y = np.unique(y)
 r2 = np.array(r2)
 r2_val = np.zeros([len(x), len(y)])
 r2_val.flat[:] = r2[:]
-
-
-x = x[::-1]
-#x = [int(i) for i in x]
-#y = [int(i) for i in y]
-
 
 sb.set(font_scale=1.25)
 heat_map = sb.heatmap(r2_val.T, annot=True, cbar=True, cbar_kws={"label": "Accuracy", "orientation" : "vertical"})
