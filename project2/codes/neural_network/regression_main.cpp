@@ -68,9 +68,9 @@ void read_franke(mat *X_train, mat *y_train, mat *X_val, mat *y_val, mat *X_test
     vec x = vec(n);
     vec y = vec(n);
     vec z = vec(n);
-    x.load("./data_files/frankefunction_x_20000_sigma_0.1.bin");
-    y.load("./data_files/frankefunction_y_20000_sigma_0.1.bin");
-    z.load("./data_files/frankefunction_z_20000_sigma_0.1.bin");
+    x.load("../datasets/frankefunction_x_20000_sigma_0.1.bin");
+    y.load("../datasets/frankefunction_y_20000_sigma_0.1.bin");
+    z.load("../datasets/frankefunction_z_20000_sigma_0.1.bin");
 
 
     int features = (deg+1)*(deg+2)/2;
