@@ -17,7 +17,7 @@ def single_run():
     epochs = 10
     batch_sz = 10
     eta = 0.01
-    hidden_act = "leaky_relu"
+    hidden_act = "sigmoid"
 
     outfilename = "test.txt"
     args = ["./main.out", str(hidden_layers), str(nodes), str(lamb), str(gamma), str(epochs), str(batch_sz), str(eta), outfilename, hidden_act]
