@@ -1,7 +1,5 @@
-all: compile run
+regression:
+	g++ -o main.out regression_main.cpp neural_network.cpp layer.cpp -O3 -larmadillo && ./main.out
 
-compile:
-	g++-10 -o main.out $(wildcard *.cpp) -larmadillo -O3
-
-run:
-	./main.out
+classification:
+	g++ -o main.out classification_main.cpp neural_network.cpp layer.cpp -O3 -larmadillo && ./main.out

@@ -1,81 +1,6 @@
 #include "neural_network.hpp"
 
 
-FFNN::FFNN(int hidden_layers, int features, int nodes, int num_outputs, string model_type)
-{
-    features_ = features;
-    nodes_ = nodes;
-    num_outputs_ = num_outputs;
-    hidden_layers_ = hidden_layers;
-    num_layers_ = hidden_layers_ + 1;
-
-
-    update_parameters = &FFNN::update;
-    if (model_type == "classification"){
-        top_layer_act = &FFNN::softmax; //top layer activation
-        compute_metric = &FFNN::compute_accuracy;
-    }
-
-    if (model_type == "regression"){
-        top_layer_act = &FFNN::linear;
-        compute_metric = &FFNN::compute_r2;
-    }
-
-    //assign hidden activation function
-    hidden_act = &FFNN::sigmoid;
-    hidden_act_derivative = &FFNN::sigmoid_derivative;
-
-    //Add first hidden layer
-    layers_.push_back(Layer(nodes_, features_));
-
-    //Add hidden layers
-    for (int l = 1; l < hidden_layers_; l++){
-        layers_.push_back(Layer(nodes_, nodes_));
-    }
-
-    //Add top layer
-    layers_.push_back(Layer(num_outputs_, nodes_));
-}
-
-FFNN::FFNN(int hidden_layers, int features, int nodes, int num_outputs, string model_type, double lamb)
-{
-    features_ = features;
-    nodes_ = nodes;
-    num_outputs_ = num_outputs;
-    hidden_layers_ = hidden_layers;
-    num_layers_ = hidden_layers_ + 1;
-
-
-    //Adding regularization
-    lamb_ = lamb;
-    update_parameters = &FFNN::update_l2;
-
-    if (model_type == "classification"){
-        top_layer_act = &FFNN::softmax; //top layer activation
-        compute_metric = &FFNN::compute_accuracy;
-    }
-
-    if (model_type == "regression"){
-        top_layer_act = &FFNN::linear;
-        compute_metric = &FFNN::compute_r2;
-    }
-
-    //assign hidden activation function
-    hidden_act = &FFNN::sigmoid;
-    hidden_act_derivative = &FFNN::sigmoid_derivative;
-
-    //Add first hidden layer
-    layers_.push_back(Layer(nodes_, features_));
-
-    //Add hidden layers
-    for (int l = 1; l < hidden_layers_; l++){
-        layers_.push_back(Layer(nodes_, nodes_));
-    }
-
-    //Add top layer
-    layers_.push_back(Layer(num_outputs_, nodes_));
-}
-
 FFNN::FFNN(int hidden_layers, int features, int nodes, int num_outputs, string model_type, double lamb, double gamma, string hidden_activation)
 {
     features_ = features;
@@ -116,20 +41,50 @@ FFNN::FFNN(int hidden_layers, int features, int nodes, int num_outputs, string m
     gamma_ = gamma;
     lamb_ = lamb;
 
+    if (gamma_ > 0){
+        update_parameters = &FFNN::update_l2_momentum;
 
-    update_parameters = &FFNN::update_l2_momentum;
-    string optimizer = "sgd_momentum";
+        //Add first hidden layer
+        layers_.push_back(Layer(nodes_, features_, "sgd_momentum"));
 
-    //Add first hidden layer
-    layers_.push_back(Layer(nodes_, features_, optimizer));
+        //Add hidden layers
+        for (int l = 1; l < hidden_layers_; l++){
+            layers_.push_back(Layer(nodes_, nodes_, "sgd_momentum"));
+        }
 
-    //Add hidden layers
-    for (int l = 1; l < hidden_layers_; l++){
-        layers_.push_back(Layer(nodes_, nodes_, optimizer));
+        //Add top layer
+        layers_.push_back(Layer(num_outputs_, nodes_, "sgd_momentum"));
     }
+    else if (gamma_ == 0 && lamb_ > 0){
+        update_parameters = &FFNN::update_l2;
 
-    //Add top layer
-    layers_.push_back(Layer(num_outputs_, nodes_, optimizer));
+        //Add first hidden layer
+        layers_.push_back(Layer(nodes_, features_));
+
+        //Add hidden layers
+        for (int l = 1; l < hidden_layers_; l++){
+            layers_.push_back(Layer(nodes_, nodes_));
+        }
+
+        //Add top layer
+        layers_.push_back(Layer(num_outputs_, nodes_));
+    }
+    else{
+        update_parameters = &FFNN::update;
+
+        update_parameters = &FFNN::update_l2;
+
+        //Add first hidden layer
+        layers_.push_back(Layer(nodes_, features_));
+
+        //Add hidden layers
+        for (int l = 1; l < hidden_layers_; l++){
+            layers_.push_back(Layer(nodes_, nodes_));
+        }
+
+        //Add top layer
+        layers_.push_back(Layer(num_outputs_, nodes_));
+    }
 }
 
 
@@ -143,7 +98,6 @@ void FFNN::init_data(mat X_train, mat y_train, int num_points)
 
 void FFNN::fit(int epochs, int batch_sz, double eta)
 {
-
     batch_sz_ = batch_sz;
     eta_ = eta;
     //epochs_ = epochs;
@@ -155,7 +109,7 @@ void FFNN::fit(int epochs, int batch_sz, double eta)
     x = vec(features_);
     y = vec(num_outputs_);
     for (int epoch = 0; epoch < epochs; epoch++){
-        cout << " epoch = " << epoch << " of " << epochs << "\r";
+        cout << " epoch = " << epoch+1 << " of " << epochs << endl;
 
         for (int batch = 0; batch < batches; batch++){
 
@@ -173,9 +127,11 @@ void FFNN::fit(int epochs, int batch_sz, double eta)
             (this->*update_parameters)();
         }
     }
-    cout << " " << endl;
 }
 
+/*
+Basic update rule for the gradients with no regularization or momentum. Computed on a batch.
+*/
 void FFNN::update()
 {
     double step = eta_*(1./batch_sz_);
@@ -188,6 +144,9 @@ void FFNN::update()
     }
 }
 
+/*
+Update rule for the gradients with regularization. No momentum. Computed on a batch.
+*/
 void FFNN::update_l2()
 {
     double step = eta_*(1./batch_sz_);
@@ -199,6 +158,9 @@ void FFNN::update_l2()
     }
 }
 
+/*
+Update rule for the gradients with regularization and momentum over a batch.
+*/
 void FFNN::update_l2_momentum()
 {
     double step = eta_*(1./batch_sz_);
@@ -212,6 +174,9 @@ void FFNN::update_l2_momentum()
     }
 }
 
+/*
+Feed-forward part of the backpropagation algorithm
+*/
 void FFNN::feed_forward(vec x)
 {
     //Process input activation
@@ -230,6 +195,9 @@ void FFNN::feed_forward(vec x)
     layers_[l].activation_ = (this->*top_layer_act)(layers_[l].z_);
 }
 
+/*
+Backward pass of the backpropagation algorithm
+*/
 void FFNN::backward_pass(vec x, vec y)
 {
     //Top layer error
@@ -244,7 +212,7 @@ void FFNN::backward_pass(vec x, vec y)
         add_gradients(l);
     }
 
-    //Deal with first layer
+    //Compute gradients in first layer.
     l = 0;
     layers_[l].error_ = (layers_[l+1].weights_.t() * layers_[l+1].error_) % (this->*hidden_act_derivative)(layers_[l].z_);
     layers_[l].db_ += layers_[l].error_;
@@ -252,6 +220,9 @@ void FFNN::backward_pass(vec x, vec y)
 
 }
 
+/*
+Evaluate the model on validation or test data
+*/
 double FFNN::evaluate(mat X_test, mat y_test, int num_test){
     X_test_ = X_test;
     y_test_ = y_test;
@@ -261,9 +232,10 @@ double FFNN::evaluate(mat X_test, mat y_test, int num_test){
     return metric;
 }
 
+/*
+Computes accuracy on the test set. Pointer to by compute_metric if model_type = "classification".
+*/
 double FFNN::compute_accuracy(){
-
-
     vec x = vec(features_);
     vec y = vec(num_outputs_);
 
@@ -289,15 +261,12 @@ double FFNN::compute_accuracy(){
         }
     }
     accuracy = correct_predictions*(1./num_test_);
-
-    cout << "Accuracy = " << accuracy << endl;
-    cout << "correct_predictions = " << correct_predictions << endl;
-    cout << "wrong_predictions = " << wrong_predictions << endl;
-
     return accuracy;
 }
 
-
+/*
+Computes R2 score on a test set. Pointed to by compute_metric if model_type = "regression"
+*/
 double FFNN::compute_r2()
 {
     vec x = vec(features_);
@@ -324,13 +293,14 @@ double FFNN::compute_r2()
     for (int j = 0; j < num_test_; j++){
         tmp += (y_test_(0, j)-y_mean)*(y_test_(0, j)-y_mean);
     }
-
     double r2 = 1 - error/tmp;
-    cout << "R2 = " << r2 << endl;
     return r2;
-
 }
 
+/*
+Computes mse, but is by default no used.
+Can manually be changed in the constructor.
+*/
 double FFNN::compute_mse()
 {
     vec x = vec(features_);
@@ -350,7 +320,6 @@ double FFNN::compute_mse()
         mse += diff*diff;
     }
     mse *= (1./num_test_);
-    cout << "MSE = " << mse << endl;
     return mse;
 }
 
@@ -361,7 +330,9 @@ void FFNN::add_gradients(int l)
     layers_[l].dw_ += layers_[l].error_*layers_[l-1].activation_.t(); //outer product
 }
 
-
+/*
+Hidden layer activation functions
+*/
 vec FFNN::sigmoid(vec z)
 {
     return 1./(1. + exp(-z));
@@ -398,7 +369,9 @@ vec FFNN::leaky_relu_derivative(vec z)
     return s.transform( [](double val){return 0.01*(val <= 0) + (val > 0);});
 }
 
-
+/*
+Top layer activation functions
+*/
 vec FFNN::softmax(vec a)
 {
     vec res = exp(a);

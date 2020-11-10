@@ -11,9 +11,23 @@ using namespace arma;
 
 
 /*
-The class FFNN is a feed forward neural network. There are several constructors depending on the problem type:
+
+The class FFNN is a feed forward neural network.
+Parameters passed to the constructor:
+
+int hidden_layers: Number of hidden layers in the model excluding the input layer (which is treated as an input not part of the model)
+int features: Length of the input vector x
+int nodes: number of nodes on each hidden layer
+int outputs: number of nodes in the top layer (number of outputs)
+string model_type: either "classification" or "regression" depending on the model task.
+double lamb: L2 regularization parameter.
+double gamma: SGD momentum parameter
+string hidden_activation: specifies which hidden activation function to use. Either "sigmoid", "relu" or "leaky_relu".
 
 
+
+If the model is passes model_type = "classification", it will default to a binary classifier if outputs = 1, otherwise it will
+use a softmax classifier.
 */
 
 class FFNN {
@@ -73,8 +87,6 @@ private:
 
 public:
     //Constructors
-    FFNN(int hidden_layers, int features, int nodes, int outputs, string model_type);
-    FFNN(int hidden_layers, int features, int nodes, int outputs, string model_type, double lamb);
     FFNN(int hidden_layers, int features, int nodes, int outputs, string model_type, double lamb, double gamma, string hidden_activation);
 
     //Member functions
