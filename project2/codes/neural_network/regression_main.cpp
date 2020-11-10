@@ -9,28 +9,25 @@ using namespace std;
 using namespace arma;
 
 void read_franke(mat *X_train, mat *y_train, mat *X_val, mat *y_val, mat *X_test, mat *y_test, int deg, int num_train, int num_val, int num_test);
-void test_franke(int hidden_layers, int nodes, double lamb, double gamme, int epochs, int batch_sz, double eta, string outfilename, string hidden_act, int deg);
+void test_franke(int hidden_layers, int nodes, double lamb, double gamme, int epochs, int batch_sz, double eta, string hidden_act, int deg);
 
 int main(int argc, char const *argv[]) {
 
-    int hidden_layers = atoi(argv[1]);
-    int nodes = atoi(argv[2]);
-    double lamb = atof(argv[3]);
-    double gamma = atof(argv[4]);
-    int epochs = atoi(argv[5]);
-    int batch_sz = atoi(argv[6]);
-    double eta = atof(argv[7]);
-    string outfilename = argv[8];
-    string hidden_act = argv[9];
-    int deg = atoi(argv[10]);
-
-
-    test_franke(hidden_layers, nodes, lamb, gamma, epochs, batch_sz, eta, outfilename, hidden_act, deg);
+    int hidden_layers = 1;
+    int nodes = 10;
+    double lamb = 1e-5;
+    double gamma = 0.9;
+    int epochs = 10;
+    int batch_sz = 100;
+    double eta = 0.1;
+    string hidden_act = "sigmoid";
+    int deg = 5;
+    test_franke(hidden_layers, nodes, lamb, gamma, epochs, batch_sz, eta, hidden_act, deg);
 
     return 0;
 }
 
-void test_franke(int hidden_layers, int nodes, double lamb, double gamma, int epochs, int batch_sz, double eta, string outfilename, string hidden_act, int deg){
+void test_franke(int hidden_layers, int nodes, double lamb, double gamma, int epochs, int batch_sz, double eta, string hidden_act, int deg){
     mat X_train, y_train;
     mat X_val, y_val;
     mat X_test, y_test;
@@ -46,20 +43,14 @@ void test_franke(int hidden_layers, int nodes, double lamb, double gamma, int ep
     string model_type = "regression";
     int num_outputs = 1;
 
-
-    //FFNN my_network(hidden_layers, features, nodes, num_outputs, model_type);
     FFNN my_network(hidden_layers, features, nodes, num_outputs, model_type, lamb, gamma, hidden_act);
-
     my_network.init_data(X_train, y_train, num_train);
-
     my_network.fit(epochs, batch_sz, eta);
     double r2_val = my_network.evaluate(X_val, y_val, num_val);
     double r2_test = my_network.evaluate(X_test, y_test, num_test);
 
-    ofstream ofile;
-    ofile.open(outfilename);
-    ofile << r2_val << " " << r2_test << endl;
-    ofile.close();
+    cout << "validation R2 = " << r2_val << endl;
+    cout << "test R2 = " << r2_test << endl;
 }
 
 void read_franke(mat *X_train, mat *y_train, mat *X_val, mat *y_val, mat *X_test, mat *y_test, int deg, int num_train, int num_val, int num_test)
