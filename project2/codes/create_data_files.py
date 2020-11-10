@@ -122,11 +122,24 @@ with open(outfilename_test_Y, "w") as outfile:
         outfile.write(str(Y_test.flat[i]))
         outfile.write("\n")
 
-os.system("g++ -o create_datasets.out create_datasets.cpp -larmadillo")
-os.system("./create_datasets.out")
+os.system("g++ -o ./misc_code/create_datasets.out ./misc_code/create_datasets.cpp -larmadillo")
+os.system("./misc_code/create_datasets.out")
 
-path = ""
-os.system("mv")
+path = "datasets"
+if not os.path.exists(path):
+    os.makedirs(path)
+
+
+names = ["frankefunction", "dataset", "N", str(N), "sigma", str(sigma)]
+outfilename = "_".join(names) + ".txt"
+
+os.system("mv" + " " + outfilename + " " + path)
+
+
+
+
+
+
 os.system("rm *.txt")
 
-os.system("mv *.bin ../data_files")
+os.system("mv *.bin datasets")
