@@ -125,6 +125,8 @@ with open(outfilename_test_Y, "w") as outfile:
 os.system("g++ -o create_datasets.out create_datasets.cpp -larmadillo")
 os.system("./create_datasets.out")
 
+path = ""
+os.system("mv")
 os.system("rm *.txt")
 
 os.system("mv *.bin ../data_files")

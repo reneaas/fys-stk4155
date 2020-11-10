@@ -86,7 +86,12 @@ FFNN::FFNN(int hidden_layers, int features, int nodes, int num_outputs, string m
 
     //Set top layer activation function and which metric to use.
     if (model_type == "classification"){
-        top_layer_act = &FFNN::softmax; //top layer activation
+        if (num_outputs == 1){
+            top_layer_act = &FFNN::binary_classifier;
+        }
+        else{
+            top_layer_act = &FFNN::softmax; //top layer activation
+        }
         compute_metric = &FFNN::compute_accuracy;
     }
     else if (model_type == "regression"){
@@ -403,4 +408,10 @@ vec FFNN::softmax(vec a)
 vec FFNN::linear(vec z)
 {
     return z;
+}
+
+vec FFNN::binary_classifier(vec z)
+{
+    vec s = 1./(1.+exp(z));
+    return s.transform( [](double val){return (val > 0.5);});
 }
