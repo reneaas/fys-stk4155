@@ -1,8 +1,8 @@
 import numpy as np
 import os
 
-#args = ["g++-10", "-o", "main.out", "layer.cpp", "neural_network.cpp", "regression_main.cpp", "-larmadillo", "-O3"]
-args = ["g++", "-o", "main.out", "layer.cpp", "neural_network.cpp", "regression_main.cpp", "-larmadillo", "-O3", "-std=c++11"]
+
+args = ["g++-10", "-o", "main.out", "layer.cpp", "neural_network.cpp", "regression_main.cpp", "-larmadillo", "-O3"]
 command = " ".join(args)
 os.system("echo " + command)
 os.system(command) #Compile .cpp files
@@ -26,7 +26,7 @@ def single_run():
     os.system("cat test.txt")
     os.system("rm test.txt")
 
-#single_run()
+single_run()
 
 
 def grid_search():
@@ -111,4 +111,4 @@ def grid_search():
 
 
 
-grid_search()
+#grid_search()
