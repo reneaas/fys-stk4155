@@ -2,13 +2,6 @@
 
 void read_mnist(mat *X_train, mat *y_train, mat *X_val, mat *y_val, mat *X_test, mat *y_test);
 
-void SGD(int classes, mat X_train, mat y_train, double eta, double Lambda, int epochs, int batch_sz, int num_train, int features, mat X_test, mat y_test, int num_test);
-
-void SGD_momentum(double gamma, int classes, mat X_train, mat y_train, double eta, double Lambda, int epochs, int batch_sz, int num_train, int features, mat X_test, mat y_test, int num_test);
-
-void ADAM(double beta1, double beta2, double epsilon, int classes, mat X_train, mat y_train, double eta, double Lambda, int epochs, int batch_sz, int num_train, int features, mat X_test, mat y_test, int num_test);
-
-
 int main(int argc, char const *argv[]) {
 
     int features = 28*28;
@@ -39,23 +32,38 @@ int main(int argc, char const *argv[]) {
 
     //Train the model using SGD without momentum and make predictions on unseen data
     cout << " " << endl;
-    cout << "Training model using SGD:" << endl;
-    SGD(classes, X_train, y_train, eta, Lambda, epochs, batch_sz, num_train, features, X_val, y_val, num_val);
+    cout << "Training model using SGD..." << endl;
+
+    LogReg my_model_SGD(classes, X_train, y_train, eta, Lambda, epochs, batch_sz, num_train, features);
+    my_model_SGD.fit();
+    cout << "Testing model..." << endl;
+    double accuracy_SGD = my_model_SGD.compute_accuracy(X_test, y_test, num_test);
+
 
 
     //Train the model using SGD with momentum and make predictions on unseen data
     cout << " " << endl;
-    cout << "Training model using SGD w/momentum:" << endl;
+    cout << "Training model using SGD w/momentum..." << endl;
     double gamma = 1e-7;
-    SGD_momentum(gamma, classes, X_train, y_train, eta, Lambda, epochs, batch_sz, num_train, features, X_val, y_val, num_val);
+
+    LogReg my_model_SGD_momentum(gamma, classes, X_train, y_train, eta, Lambda, epochs, batch_sz, num_train, features);
+    my_model_SGD_momentum.fit();
+    cout << "Testing model..." << endl;
+    double accuracy_SGD_momentum = my_model_SGD_momentum.compute_accuracy(X_test, y_test, num_test);
+
+
 
     //Train the model using Adam and make predictions on unseen data
     cout << " " << endl;
-    cout << "Training model using ADAM:" << endl;
+    cout << "Training model using ADAM..." << endl;
     double beta1 = 0.99;
     double beta2 = 0.99;
     double epsilon = 1e-8;
-    ADAM(beta1, beta2, epsilon, classes, X_train, y_train, eta, Lambda, epochs, batch_sz, num_train, features, X_test, y_test, num_test);
+
+    LogReg my_model_ADAM(beta1, beta2, epsilon, classes, X_train, y_train, eta, Lambda, epochs, batch_sz, num_train, features);
+    my_model_ADAM.fit();
+    cout << "Testing model..." << endl;
+    double accuracy_ADAM = my_model_ADAM.compute_accuracy(X_test, y_test, num_test);
 
     return 0;
 }
@@ -71,22 +79,4 @@ void read_mnist(mat *X_train, mat *y_train, mat *X_val, mat *y_val, mat *X_test,
 
     (*X_test).load("../datasets/mnist_X_test.bin");
     (*y_test).load("../datasets/mnist_y_test.bin");
-}
-
-void SGD(int classes, mat X_train, mat y_train, double eta, double Lambda, int epochs, int batch_sz, int num_train, int features, mat X_test, mat y_test, int num_test){
-    LogReg my_model_SGD(classes, X_train, y_train, eta, Lambda, epochs, batch_sz, num_train, features);
-    my_model_SGD.fit();
-    double accuracy_SGD = my_model_SGD.compute_accuracy(X_test, y_test, num_test);
-}
-
-void SGD_momentum(double gamma, int classes, mat X_train, mat y_train, double eta, double Lambda, int epochs, int batch_sz, int num_train, int features, mat X_test, mat y_test, int num_test){
-    LogReg my_model_SGD_momentum(gamma, classes, X_train, y_train, eta, Lambda, epochs, batch_sz, num_train, features);
-    my_model_SGD_momentum.fit();
-    double accuracy_SGD_momentum = my_model_SGD_momentum.compute_accuracy(X_test, y_test, num_test);
-}
-
-void ADAM(double beta1, double beta2, double epsilon, int classes, mat X_train, mat y_train, double eta, double Lambda, int epochs, int batch_sz, int num_train, int features, mat X_test, mat y_test, int num_test){
-    LogReg my_model_ADAM(beta1, beta2, epsilon, classes, X_train, y_train, eta, Lambda, epochs, batch_sz, num_train, features);
-    my_model_ADAM.fit();
-    double accuracy_ADAM = my_model_ADAM.compute_accuracy(X_test, y_test, num_test);
 }

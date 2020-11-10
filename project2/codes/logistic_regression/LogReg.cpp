@@ -110,7 +110,6 @@ void LogReg::fit(){
     x = vec(features_);
     y = vec(M_);
     for (int epoch = 0; epoch < epochs_; epoch++){
-        cout << "epoch = " << epoch << " of " << epochs_ << endl;
         for (batch_ = 0; batch_ < batches; batch_++){
             for (int b = 0; b < batch_sz_; b++){
                 idx = distribution(generator);
