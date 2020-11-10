@@ -7,6 +7,14 @@
 using namespace std;
 using namespace arma;
 
+
+
+/*
+The class FFNN is a feed forward neural network. There are several constructors depending on the problem type:
+
+
+*/
+
 class FFNN {
 private:
     friend class Layer;

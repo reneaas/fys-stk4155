@@ -74,13 +74,13 @@ void test_mnist(int hidden_layers, int nodes, double lamb, double gamma, int epo
 
 void read_mnist(mat *X_train, mat *y_train, mat *X_val, mat *y_val, mat *X_test, mat *y_test){
 
-    (*X_train).load("./data_files/mnist_X_train.bin");
-    (*y_train).load("./data_files/mnist_y_train.bin");
+    (*X_train).load("../datasets/mnist_X_train.bin");
+    (*y_train).load("../datasets/mnist_y_train.bin");
 
-    (*X_val).load("./data_files/mnist_X_val.bin");
-    (*y_val).load("./data_files/mnist_y_val.bin");
+    (*X_val).load("../datasets/mnist_X_val.bin");
+    (*y_val).load("../datasets/mnist_y_val.bin");
 
 
-    (*X_test).load("./data_files/mnist_X_test.bin");
-    (*y_test).load("./data_files/mnist_y_test.bin");
+    (*X_test).load("../datasets/mnist_X_test.bin");
+    (*y_test).load("../datasets/mnist_y_test.bin");
 }
