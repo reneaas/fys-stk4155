@@ -30,7 +30,6 @@ r2 = np.array(r2)
 r2_val = np.zeros([len(x), len(y)])
 r2_val.flat[:] = r2[:]
 
-"""
 
 idx = np.where(x <= 7)
 x = x[idx]

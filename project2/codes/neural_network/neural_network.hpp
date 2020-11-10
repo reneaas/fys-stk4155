@@ -49,6 +49,7 @@ private:
     //Top layer activation functions
     vec softmax(vec a);
     vec linear(vec z);
+    vec binary_classifier(vec z);
 
     //Various metrics
     double compute_accuracy();
