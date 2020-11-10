@@ -53,7 +53,7 @@ def grid_search():
     epochs = 100
     batch_sz = 100
     eta = 0.1
-    hidden_act = "relu"
+    hidden_act = "sigmoid"
     deg = 5
 
 
