@@ -1,8 +1,6 @@
 from SGD_regression import SGD_Regression
-import os
 
-# Generate data with n = 20000 and sigma = 0.1 for Frankes function
-os.system("python3 generate_data.py 20000 0.1")
+
 
 filename = "datasets/frankefunction_dataset_N_20000_sigma_0.1.txt"
 
