@@ -87,12 +87,16 @@ private:
 
 public:
     //Constructors
+    FFNN(int features, int outputs, string model_type, double lamb, double gamma, string hidden_activation);
     FFNN(int hidden_layers, int features, int nodes, int outputs, string model_type, double lamb, double gamma, string hidden_activation);
 
     //Member functions
+    void add_layer(int rows, int cols); //Adds a layer to the model.
     void init_data(mat X_train, mat y_train, int num_points); //Initializes training data.
     void fit(int epochs, int batch_sz, double eta); //Fits the model
     double evaluate(mat X_test, mat y_test, int num_test); //Evaluates the model according to the appropriate performance metric.
+
+
 };
 
 #endif

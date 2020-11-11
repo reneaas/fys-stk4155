@@ -43,16 +43,40 @@ void test_franke(int hidden_layers, int nodes, double lamb, double gamma, int ep
     string model_type = "regression";
     int num_outputs = 1;
 
-    FFNN my_network(hidden_layers, features, nodes, num_outputs, model_type, lamb, gamma, hidden_act);
-    my_network.init_data(X_train, y_train, num_train);
-    my_network.fit(epochs, batch_sz, eta);
-    double r2_val = my_network.evaluate(X_val, y_val, num_val);
-    double r2_test = my_network.evaluate(X_test, y_test, num_test);
+    //Here we show how to use the neural net with several hidden layers with a variable number of nodes in the hidden layers.
+    FFNN my_network(features, num_outputs, model_type, lamb, gamma, hidden_act);
+    my_network.add_layer(nodes, features); //Add the first hidden layer connected to the input x.
+    my_network.add_layer(2*nodes, nodes); //Add a hidden layer
+    my_network.add_layer(5*nodes, 2*nodes); //Add another hidden layer
+    my_network.add_layer(10*nodes, 5*nodes); //Add yet another hidden layer.
+    my_network.add_layer(num_outputs, 10*nodes); //add top layer that produces the final prediction
+    my_network.init_data(X_train, y_train, num_train); //Feed the training data to the model
+    my_network.fit(epochs, batch_sz, eta); //Fit the model to the training data.
+    double r2_val = my_network.evaluate(X_val, y_val, num_val); //Evaluate the model on the validation set
+    double r2_test = my_network.evaluate(X_test, y_test, num_test); //Evaluate the model on the test set.
 
     cout << "validation R2 = " << r2_val << endl;
     cout << "test R2 = " << r2_test << endl;
+
+
+    //Here we show a different version where every hidden layer has the same number of hidden neurons.
+    //It calls a different constructor that sets up the model for us with no fuzz.
+    FFNN my_network2(hidden_layers, features, nodes, num_outputs, model_type, lamb, gamma, hidden_act); //Create the neural net with all its layers.
+    my_network2.init_data(X_train, y_train, num_train); //Feed the training data to the model
+    my_network2.fit(epochs, batch_sz, eta); //Fit the model to the training data.
+    r2_val = my_network2.evaluate(X_val, y_val, num_val); //Evalute the model on the validation set
+    r2_test = my_network2.evaluate(X_test, y_test, num_test); //Evalute the model on the test set.
+
+    cout << "validation R2 = " << r2_val << endl;
+    cout << "test R2 = " << r2_test << endl;
+
+
 }
 
+
+/*
+Reads and creates data matrices of Franke's function for the training-, validation- and test set.
+*/
 void read_franke(mat *X_train, mat *y_train, mat *X_val, mat *y_val, mat *X_test, mat *y_test, int deg, int num_train, int num_val, int num_test)
 {
     int n = 20000;
