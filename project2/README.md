@@ -20,4 +20,4 @@ The datasets used in this project, respectively data for Franke's function and t
 python3 create_data_files.py
 ```
 
-from the codes directory. The python script can be found [here](https://github.com/reneaas/fys-stk4155/blob/master/project2/codes/create_data_files.py). All of the necessary parameters are pre-defined, but can easily be changed inside the script.
+from the *codes* directory. The python script can be found [here](https://github.com/reneaas/fys-stk4155/blob/master/project2/codes/create_data_files.py). All of the necessary parameters are pre-defined, but can easily be changed inside the script.
