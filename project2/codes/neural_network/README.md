@@ -20,3 +20,7 @@ make classification
 
 ## Usage of the neural network class
 For regression tasks, the code *regression_main.cpp* illustrates its usage applied to data generated from Franke's function. For classification tasks, the code *classification_main.cpp* illustrates its use applied to the MNIST dataset.
+
+
+## Required libraries
+The C++ codes are created using the linear algebra and scientific computing library [Armadillo](http://arma.sourceforge.net/). Usage of these codes thus requires installation of this software which can be downloaded for free from http://arma.sourceforge.net/.

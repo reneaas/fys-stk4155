@@ -54,11 +54,11 @@ void test_mnist(int hidden_layers, int nodes, double lamb, double gamma, int epo
     my_network.add_layer(num_outputs, 3*nodes); //add top layer that produces the final prediction
     my_network.init_data(X_train, y_train, num_train); //Feed the training data to the model
     my_network.fit(epochs, batch_sz, eta); //Fit the model to the training data.
-    double r2_val = my_network.evaluate(X_val, y_val, num_val); //Evaluate the model on the validation set
-    double r2_test = my_network.evaluate(X_test, y_test, num_test); //Evaluate the model on the test set.
+    double accuracy_val = my_network.evaluate(X_val, y_val, num_val); //Evaluate the model on the validation set
+    double accuracy_test = my_network.evaluate(X_test, y_test, num_test); //Evaluate the model on the test set.
 
-    cout << "validation R2 = " << r2_val << endl;
-    cout << "test R2 = " << r2_test << endl;
+    cout << "validation accuracy = " << accuracy_val << endl;
+    cout << "test accuracy = " << accuracy_test << endl;
 
 
     //Here we show a different version where every hidden layer has the same number of hidden neurons.
@@ -66,11 +66,11 @@ void test_mnist(int hidden_layers, int nodes, double lamb, double gamma, int epo
     FFNN my_network2(hidden_layers, features, nodes, num_outputs, model_type, lamb, gamma, hidden_act); //Create the neural net with all its layers.
     my_network2.init_data(X_train, y_train, num_train); //Feed the training data to the model
     my_network2.fit(epochs, batch_sz, eta); //Fit the model to the training data.
-    r2_val = my_network2.evaluate(X_val, y_val, num_val); //Evalute the model on the validation set
-    r2_test = my_network2.evaluate(X_test, y_test, num_test); //Evalute the model on the test set.
+    accuracy_val = my_network2.evaluate(X_val, y_val, num_val); //Evalute the model on the validation set
+    accuracy_test = my_network2.evaluate(X_test, y_test, num_test); //Evalute the model on the test set.
 
-    cout << "validation R2 = " << r2_val << endl;
-    cout << "test R2 = " << r2_test << endl;
+    cout << "validation accuracy = " << accuracy_val << endl;
+    cout << "test accuracy = " << accuracy_test << endl;
 
 }
 
