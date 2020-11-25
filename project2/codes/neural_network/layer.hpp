@@ -15,6 +15,7 @@ public:
 
     int rows_, cols_; //Number of rows and columns in the weights_ matrix.
 
+    //Properties a layer in the neural net.
     vec bias_;
     vec error_;
     vec activation_;
@@ -30,7 +31,7 @@ public:
     vec b_mom_;
 
 
-    //Constructions
+    //Constructors
     Layer(int rows, int cols);
     Layer(int rows, int cols, string optimizer);
 };

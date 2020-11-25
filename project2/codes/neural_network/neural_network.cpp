@@ -1,6 +1,59 @@
 #include "neural_network.hpp"
 
+/*
+Constructor that sets up a basic model with no layers. Meant be used with the member function add_layer(int rows, int cols).
+*/
+FFNN::FFNN(int features, int num_outputs, string model_type, double lamb, double gamma, string hidden_activation)
+{
+    features_ = features;
+    num_outputs_ = num_outputs;
 
+    //Set top layer activation function and which metric to use.
+    if (model_type == "classification"){
+        if (num_outputs == 1){
+            top_layer_act = &FFNN::binary_classifier;
+        }
+        else{
+            top_layer_act = &FFNN::softmax; //top layer activation
+        }
+        compute_metric = &FFNN::compute_accuracy;
+    }
+    else if (model_type == "regression"){
+        top_layer_act = &FFNN::linear;
+        compute_metric = &FFNN::compute_r2;
+    }
+
+    //Set hidden activation function
+    if (hidden_activation == "sigmoid"){
+        hidden_act = &FFNN::sigmoid;
+        hidden_act_derivative = &FFNN::sigmoid_derivative;
+    }
+    else if (hidden_activation == "relu"){
+        hidden_act = &FFNN::relu;
+        hidden_act_derivative = &FFNN::relu_derivative;
+    }
+    else if (hidden_activation == "leaky_relu"){
+        hidden_act = &FFNN::leaky_relu;
+        hidden_act_derivative = &FFNN::leaky_relu_derivative;
+    }
+
+    gamma_ = gamma;
+    lamb_ = lamb;
+
+    if (gamma_ > 0){
+        update_parameters = &FFNN::update_l2_momentum;
+    }
+    else if (gamma_ == 0 && lamb_ > 0){
+        update_parameters = &FFNN::update_l2;
+    }
+    else{
+        update_parameters = &FFNN::update;
+    }
+}
+
+/*
+Constructor that sets up a neural net with equally many hidden neurons in each hidden layer.
+*/
 FFNN::FFNN(int hidden_layers, int features, int nodes, int num_outputs, string model_type, double lamb, double gamma, string hidden_activation)
 {
     features_ = features;
@@ -85,6 +138,25 @@ FFNN::FFNN(int hidden_layers, int features, int nodes, int num_outputs, string m
         //Add top layer
         layers_.push_back(Layer(num_outputs_, nodes_));
     }
+}
+
+
+/*
+Adds a layer to the neural net.
+Parameters:
+int rows: number of neurons in the layer
+int rows: number of neurons in the previous layer.
+*/
+void FFNN::add_layer(int rows, int cols)
+{
+    if (gamma_ > 0){
+        layers_.push_back(Layer(rows, cols, "sgd_momentum"));
+    }
+    else{
+        layers_.push_back(Layer(rows, cols));
+    }
+    num_layers_ = layers_.size();
+    hidden_layers_ = num_layers_ - 1;
 }
 
 
