@@ -39,7 +39,20 @@ def create_DNN(layers, input_size):
 def trial_function(t, x0, model, training):
     return tf.exp(-t)*x0 + (1-tf.exp(-t))*model(t, training=training)
 
+@tf.function
+def f(A, x):
+    shape = A.get_shape().as_list()
+    I = tf.eye(shape[0])
 
+    term1 = tf.linalg.matmul(tf.transpose(x), x)*A
+
+    Ax = tf.linalg.matmul(A, x)
+
+    term2 = (1-tf.matmul(tf.transpose(x), Ax))*I
+    new_mat = term1+term2
+
+    func_val = tf.linalg.matmul(new_mat, x)
+    return func_val
 
 @tf.function
 def loss(t, x0, A, y, trial_function):
@@ -53,17 +66,7 @@ def loss(t, x0, A, y, trial_function):
 
     del tape
 
-    shape = A.get_shape().as_list()
-    I = tf.eye(shape[0])
-
-    term1 = tf.transpose(x_trial)*x_trial*A
-    print("TERM1 = ", term1.get_shape())
-    term2 = (1 - tf.transpose(x_trial)*tf.linalg.matmul(A,x_trial) )*I
-    print("TERM2 = ", term2.get_shape())
-    f = tf.linalg.matmul((term1 + term2),x_trial)
-    print("F = ", f.get_shape())
-
-    y_pred = dx_dt + x_trial - f
+    y_pred = dx_dt + x_trial - f(A, x_trial)
     loss_value = loss_fn(y, y_pred)
 
     return loss_value
@@ -79,11 +82,11 @@ def grad(t, x0, A, y, trial_function):
 @tf.function
 def predict(t, x0):
     N = model(t, training=False)
-    g_trial = tf.exp(-t)*x0 + (1-tf.exp(-t))*model(t, training=False)
+    g_trial = tf.exp(-t)*x0 + (1-tf.exp(-t))*N
     return g_trial
 
 
-layers = [10, 100, 200, 1000, 250, 20, 10, 1]
+layers = [10, 1000, 1000, 500, 1]
 model = create_DNN(layers, input_size=1)
 
 optimizer = tf.keras.optimizers.Adam()
@@ -93,32 +96,38 @@ loss_fn = tf.keras.losses.MeanSquaredError()
 n = 3
 
 t = np.linspace(0, 1, n)
-x0 = np.array([1.1,0.1,0.1])
+x0 = np.random.uniform(0, 5, n)
 
 x0 = tf.convert_to_tensor(x0.reshape(-1,1), dtype=tf.float32)
 t = tf.convert_to_tensor(t.reshape(-1,1), dtype=tf.float32)
 
-
-#Anp = np.array([[2, 4, 4], [4, 8, 8], [4, 8, 8]])
-Anp = np.array([[3, 0, 4], [0, 2, 0], [4, 0, 3]])
-A = tf.convert_to_tensor(Anp.reshape(3,3), dtype=tf.float32)
+A = np.array([[3, 0, 4], [0, 2, 0], [4, 0, 3]]).reshape(3,3)
+A_ = tf.convert_to_tensor(-A, dtype=tf.float32)
 
 zeros = np.zeros_like(t)
 ground_truth = tf.convert_to_tensor(zeros, dtype=tf.float32)
 
+#trial = trial_function(t, x0, model, True)
+#loss_val = loss(t, x0, A, ground_truth, trial_function)
+
+
 epochs = 500
 for i in range(epochs):
-    loss_value, gradients = grad(t, x0, A, ground_truth, trial_function)
+    loss_value, gradients = grad(t, x0, A_, ground_truth, trial_function)
     optimizer.apply_gradients(zip(gradients, model.trainable_variables))
-    print("loss: ", loss_value.numpy())
-
-
-eigen_vec_predict = predict(x0, t)
-eig_vec = eigen_vec_predict.numpy()
+    #print("loss: ", loss_value.numpy())
 
 true_val = np.linalg.eig(Anp)
 print("TRUE = ", true_val)
 
 eig_val = (eig_vec.T@Anp@eig_vec)/eig_vec.T@eig_vec
 
-print(eig_val)
+x_predict = predict(t, x0)
+x = x_predict.numpy()
+
+
+lamda = (x.T@A@x)/(x.T@x)
+print(lamda)
+print("-----")
+
+print(np.linalg.eig(A)[0])
