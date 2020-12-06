@@ -36,14 +36,13 @@ plt.xticks(fontsize=fontsize)
 plt.yticks(fontsize=fontsize)
 plt.xlabel("epochs", size=fontsize)
 plt.ylabel("eigenvalue estimate", size=fontsize)
-plt.legend(fontsize=fontsize)
 plt.show()
 
 #Plot eigenvector estimate as function of epochs
 for j in range(mat_sz):
     plt.plot(epoch_arr, eigvecs[:,j], label=f"$x_{j}$")
 plt.xlabel("epochs", size=fontsize)
-plt.ylabel(r"$x_i(t)$", size=fontsize)
+plt.ylabel(r"$x_i$", size=fontsize)
 plt.xticks(fontsize=fontsize)
 plt.yticks(fontsize=fontsize)
 plt.legend(fontsize=fontsize)
@@ -69,9 +68,11 @@ print("Estimated eigenvalue = ", eigvals[-1]) #Largest value for t.
 
 #Plot "eigenvalue prediction" as function of t for final model. Converges to true as t --> inf
 plt.plot(T, eigvals)
+plt.ylabel("eigenvalue estimate", size=fontsize)
+plt.xlabel(r"$t$", size=fontsize)
 plt.xticks(fontsize=fontsize)
 plt.yticks(fontsize=fontsize)
-plt.legend(fontsize=fontsize)
+# plt.legend(fontsize=fontsize)
 plt.show()
 
 

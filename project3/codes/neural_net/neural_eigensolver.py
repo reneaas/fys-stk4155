@@ -17,27 +17,28 @@ class NeuralEigenSolver(NeuralBase):
 
     def fit(self, x, t, epochs):
         #Set up meshgrid
+        x0 = x #start vector
         x = tf.convert_to_tensor(x, dtype=tf.float32)
-        x0 = x
         t = tf.convert_to_tensor(t, dtype=tf.float32)
         x, t = tf.meshgrid(x, t)
         x, t = tf.reshape(x, [-1, 1]), tf.reshape(t, [-1, 1])
         self.x, self.t = x, t
 
+        #Arrays to store predictions as function of epochs
         epoch_arr = np.linspace(1, epochs, epochs)
         eigvals = np.zeros(epochs)
         eigvecs = np.zeros([epochs, self.mat_sz])
-        #fit the model
+        t_max = tf.reshape(self.t[-1], [-1,1])
+
+        #Fit the model
         bar = Bar("Epochs", max = epochs)
         for epoch in range(epochs):
             bar.next()
             loss, gradients = self.compute_gradients()
             self.optimizer.apply_gradients(zip(gradients, self.trainable_variables))
-            t_max = tf.reshape(self.t[-1], [-1,1])
             eigval, eigvec = self.eig(x0, t_max)
             eigvals[epoch] = eigval.numpy()
             eigvecs[epoch,:] = eigvec.numpy().T[:]
-
         bar.finish()
         return epoch_arr, eigvals, eigvecs
 
@@ -79,6 +80,7 @@ class NeuralEigenSolver(NeuralBase):
         Av = tf.matmul(self.A, v)
         vAv = tf.reduce_sum(tf.multiply(v, Av))
         vv = tf.reduce_sum(tf.multiply(v,v))
-        eigenvalue = vAv/vv
+        eigval = vAv/vv
         v_norm = tf.sqrt(vv)
-        return eigenvalue, v/v_norm
+        eigvec = v/v_norm
+        return eigval, eigvec
