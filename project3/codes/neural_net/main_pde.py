@@ -17,7 +17,7 @@ t = np.random.uniform(0, 1, n)
 epochs = 1000
 
 my_model = PDE_NN(layers, input_sz)
-my_model.train(x=x, t=t, epochs=epochs)
+my_model.fit(x=x, t=t, epochs=epochs)
 
 
 # Define grid
