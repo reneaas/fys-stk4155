@@ -1,15 +1,15 @@
 import tensorflow as tf
 import numpy as np
-from neural_net import NeuralNet
+from neural_base import NeuralBase
 from progress.bar import Bar
 
 seed = 10
 tf.random.set_seed(seed)
 np.random.seed(seed)
 
-class PDE_NN(NeuralNet):
+class NeuralDiffusionSolver(NeuralBase):
     def __init__(self, layers, input_sz):
-        super(PDE_NN, self).__init__(layers, input_sz)
+        super(NeuralDiffusionSolver, self).__init__(layers, input_sz)
 
     def fit(self, x, t, epochs):
         x = x.reshape(-1,1)

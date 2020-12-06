@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-from neural_net import NeuralNet
+from neural_base import NeuralBase
 from progress.bar import Bar
 
 seed = 10
@@ -8,9 +8,9 @@ tf.random.set_seed(seed)
 np.random.seed(seed)
 
 
-class EigenSolver_NN(NeuralNet):
+class NeuralEigenSolver(NeuralBase):
     def __init__(self, layers, input_sz, matrix):
-        super(EigenSolver_NN, self).__init__(layers, input_sz)
+        super(NeuralEigenSolver, self).__init__(layers, input_sz)
         self.A = tf.convert_to_tensor(matrix, dtype=tf.float32)
         self.mat_sz = layers[-1]
         self.I = tf.eye(num_rows=self.mat_sz, dtype=tf.float32)

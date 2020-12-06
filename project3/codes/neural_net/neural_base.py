@@ -1,9 +1,9 @@
 import tensorflow as tf
 import numpy as np
 
-class NeuralNet(tf.keras.Sequential):
+class NeuralBase(tf.keras.Sequential):
     def __init__(self, layers, input_sz):
-        super(NeuralNet, self).__init__()
+        super(NeuralBase, self).__init__()
         # Set up model
         # First hidden layer connected to the input
         self.add(tf.keras.layers.Dense(layers[0], input_shape=(input_sz,), activation=None))

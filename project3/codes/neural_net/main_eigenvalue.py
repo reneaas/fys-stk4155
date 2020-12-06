@@ -1,4 +1,4 @@
-from eigensolver_nn import EigenSolver_NN
+from neural_eigensolver import NeuralEigenSolver
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
@@ -16,7 +16,7 @@ A = np.array([[3, 0, 4], [0, 2, 0], [4, 0, 3]])
 #Initialize the model
 input_sz = 1
 layers = [1, 100, 100, 3]
-my_solver = EigenSolver_NN(layers = layers, input_sz = input_sz, matrix = A)
+my_solver = NeuralEigenSolver(layers = layers, input_sz = input_sz, matrix = A)
 
 
 #Fit the model

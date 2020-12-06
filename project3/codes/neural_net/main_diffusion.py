@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
-from pde_nn import PDE_NN
+from neural_diffusion_solver import NeuralDiffusionSolver
 
 seed = 10
 tf.random.set_seed(seed)
@@ -16,7 +16,7 @@ t = np.random.uniform(0, 1, n)
 
 epochs = 1000
 
-my_model = PDE_NN(layers, input_sz)
+my_model = NeuralDiffusionSolver(layers, input_sz)
 my_model.fit(x=x, t=t, epochs=epochs)
 
 
