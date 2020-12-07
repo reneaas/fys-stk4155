@@ -60,7 +60,6 @@ def loss(t, x0, A, y, trial_function):
         tape.watch(t)
 
         x_trial = trial_function(t, x0, model, True)
-        print("XTRIAL = ", x_trial.get_shape())
 
     dx_dt = tape.gradient(x_trial, t)
 
@@ -117,10 +116,6 @@ for i in range(epochs):
     optimizer.apply_gradients(zip(gradients, model.trainable_variables))
     #print("loss: ", loss_value.numpy())
 
-true_val = np.linalg.eig(Anp)
-print("TRUE = ", true_val)
-
-eig_val = (eig_vec.T@Anp@eig_vec)/eig_vec.T@eig_vec
 
 x_predict = predict(t, x0)
 x = x_predict.numpy()
