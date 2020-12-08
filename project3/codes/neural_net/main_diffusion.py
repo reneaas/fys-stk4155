@@ -7,17 +7,27 @@ seed = 10
 tf.random.set_seed(seed)
 np.random.seed(seed)
 
-layers = [1, 1000, 100] + [1]
+exact = lambda x, t: np.sin(x*np.pi)*np.exp(-np.pi**2 * t)
+
+layers = [1000, 500, 1000, 1]
 input_sz = 2
 n = 100
 
 x = np.random.uniform(0, 1, n)
 t = np.random.uniform(0, 1, n)
 
-epochs = 1000
+epochs = 500
 
 my_model = NeuralDiffusionSolver(layers, input_sz)
-my_model.fit(x=x, t=t, epochs=epochs)
+epoch_arr, loss = my_model.fit(x=x, t=t, epochs=epochs)
+
+fontsize = 12
+plt.plot(epoch_arr, loss)
+plt.xlabel("epochs", size=fontsize)
+plt.ylabel("loss", size=fontsize)
+plt.xticks(fontsize=fontsize)
+plt.yticks(fontsize=fontsize)
+plt.show()
 
 
 # Define grid
@@ -30,7 +40,6 @@ X, T = tf.meshgrid(tf.linspace(start_t, stop_t, num_points), tf.linspace(start_t
 x, t = tf.reshape(X, [-1, 1]), tf.reshape(T, [-1, 1])
 
 
-exact = lambda x, t: np.sin(x*np.pi)*np.exp(-np.pi**2 * t)
 f_predict = my_model.predict(x, t)
 g = tf.reshape(exact(x, t), (num_points, num_points))
 g_nn = tf.reshape(f_predict, (num_points, num_points))
@@ -44,10 +53,10 @@ print("R2 = ", R2)
 
 
 
-plt.contourf(X,T, g, levels=41)
+plt.contourf(X, T, g, levels=41, cmap="inferno")
 plt.colorbar()
 
 fig = plt.figure()
-plt.contourf(X,T, g_nn, levels=41)
+plt.contourf(X, T, g_nn, levels=41, cmap="inferno")
 plt.colorbar()
 plt.show()

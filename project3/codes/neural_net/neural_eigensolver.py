@@ -4,8 +4,8 @@ from neural_base import NeuralBase
 from progress.bar import Bar
 
 seed = 10
-tf.random.set_seed(seed)
-np.random.seed(seed)
+# tf.random.set_seed(seed)
+# np.random.seed(seed)
 
 
 class NeuralEigenSolver(NeuralBase):
