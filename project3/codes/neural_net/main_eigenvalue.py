@@ -4,10 +4,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 seed = 10
-tf.random.set_seed(seed)
-np.random.seed(seed)
+# tf.random.set_seed(seed)
+# np.random.seed(seed)
 
-#Set up solver
+#Create symmetric matrix
 mat_sz = 3
 A = np.array([[3, 0, 4], [0, 2, 0], [4, 0, 3]])
 # mat_sz = 6
@@ -17,14 +17,16 @@ A = np.array([[3, 0, 4], [0, 2, 0], [4, 0, 3]])
 
 #Initialize the model
 input_sz = 1
-layers = [1, 100, 100, mat_sz]
+layers = [100, 400, 100, mat_sz]
 my_solver = NeuralEigenSolver(layers = layers, input_sz = input_sz, matrix = A)
 
 
 #Fit the model
 Nt = 100
-t_max = 1000
+t_max = 1e3
 x = np.random.normal(0, 1, size=mat_sz)
+# x = np.array([-1, 0, 1])
+# x = x/np.linalg.norm(x)
 t = np.linspace(0, t_max, Nt)
 epochs = 100
 epoch_arr, eigvals, eigvecs = my_solver.fit(x = x, t = t, epochs = epochs)
@@ -33,7 +35,7 @@ true_eigvals, true_eigvecs = np.linalg.eig(A)
 #Plot eigenvalue estimate as function of epochs
 fontsize = 12
 plt.plot(epoch_arr, eigvals, label="estimate", color="r")
-plt.hlines(y = true_eigvals[:], xmin = 1, xmax = epochs, linestyles="dashed")
+plt.hlines(y = true_eigvals, xmin = 1, xmax = epochs, linestyles="dashed")
 plt.xticks(fontsize=fontsize)
 plt.yticks(fontsize=fontsize)
 plt.xlabel("epochs", size=fontsize)

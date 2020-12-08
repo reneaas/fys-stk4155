@@ -19,13 +19,20 @@ class NeuralDiffusionSolver(NeuralBase):
         self.x = x
         self.t = t
 
+        epoch_arr = np.zeros(epochs)
+        losses = np.zeros(epochs)
+
         bar = Bar("Epochs", max = epochs)
         for epoch in range(epochs):
             bar.next()
             loss, gradients = self.compute_gradients()
             self.optimizer.apply_gradients(zip(gradients, self.trainable_variables))
+
+            epoch_arr[epoch] = epoch
+            losses[epoch] = loss
         bar.finish()
-        return None
+        return epoch_arr, losses
+
 
     @tf.function
     def predict(self, x, t):
