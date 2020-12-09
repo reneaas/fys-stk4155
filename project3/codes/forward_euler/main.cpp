@@ -9,10 +9,10 @@ using namespace std;
 
 int main(int nargs, char* argv[]){
     //Declaration of variables.
-    double *v_new, *v_old, *x;
+    double *v, *x, *t;
     int gridpoints;
-    double r, t, dt, dx, total_time;
-    double start_x, end_x;
+    double r, dt, dx, total_time;
+    double start_x, end_x, timesteps;
     string outfilename;
 
     outfilename = argv[1];
@@ -25,19 +25,20 @@ int main(int nargs, char* argv[]){
 
     r = 0.5;
     dt = r*dx*dx;
-    t = 0;
+    timesteps = total_time/dt;
 
     gridpoints = (int) (end_x - start_x)/dx + 1;
 
-    initialize(&v_new, &v_old, &x, gridpoints, dx);
 
-    explicit_scheme(v_new, v_old, r, gridpoints, dt, total_time, &t);
+    initialize(&v, &x, &t, gridpoints, timesteps, dx, dt);
 
-    write_to_file(outfilename, t, gridpoints, v_new, x);
+    explicit_scheme(v, r, gridpoints, timesteps);
 
-    delete[] v_old;
-    delete[] v_new;
+    write_to_file(outfilename, v, x, t, gridpoints, timesteps);
+
+    delete[] v;
     delete[] x;
+    delete[] t;
 
 
     return 0;

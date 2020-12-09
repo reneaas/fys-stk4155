@@ -11,11 +11,11 @@ using namespace std;
 
 
 
-void initialize(double **v_new, double **v_old, double **x, int gridpoints, double dx);
+void initialize(double **v, double **x, double **t, int gridpoints, int timesteps, double dx, double dt);
 
-void explicit_scheme(double *v_new, double *v_old , double r, int gridpoints, double dt, double total_time, double *t);
+void explicit_scheme(double *v , double r, int gridpoints, int timesteps);
 
-void write_to_file(string outfilename, double t, int gridpoints, double *v_new, double *x);
+void write_to_file(string outfilename, double *v, double *x, double *t, int gridpoints, int timesteps);
 
 
 #endif

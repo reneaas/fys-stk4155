@@ -92,7 +92,7 @@ optimizer = tf.keras.optimizers.Adam()
 loss_fn = tf.keras.losses.MeanSquaredError()
 
 
-n = 3
+n = 6
 
 t = np.linspace(0, 1, n)
 x0 = np.random.uniform(0, 5, n)
@@ -100,8 +100,15 @@ x0 = np.random.uniform(0, 5, n)
 x0 = tf.convert_to_tensor(x0.reshape(-1,1), dtype=tf.float32)
 t = tf.convert_to_tensor(t.reshape(-1,1), dtype=tf.float32)
 
-A = np.array([[3, 0, 4], [0, 2, 0], [4, 0, 3]]).reshape(3,3)
-A_ = tf.convert_to_tensor(-A, dtype=tf.float32)
+
+#A = np.array([[10001, 3, 5, 7, 9, 11], [1, 10003, 5, 7, 9, 11], \
+#               [1, 3, 10005, 7, 9, 11], [1, 3, 5, 10007, 9, 11], \
+#               [1, 3, 5, 7, 10009, 11], [1, 3, 5, 7, 9, 10011]])
+
+A = np.random.uniform(-10,10, size=(6,6))
+A_sym = (A.T + A)/2
+
+A_ = tf.convert_to_tensor(A_sym, dtype=tf.float32)
 
 zeros = np.zeros_like(t)
 ground_truth = tf.convert_to_tensor(zeros, dtype=tf.float32)
