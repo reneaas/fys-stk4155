@@ -10,7 +10,7 @@ def exact_1D(x, t):
     """
     return np.sin(np.pi*x)*np.exp(-np.pi**2 * t)
 
-path = "results/euler/"
+path = "../results/euler/"
 
 dx = [0.1, 0.01]
 
@@ -43,6 +43,6 @@ for i in dx:
         plt.yticks(size=ticksize)
         plt.xlabel("x", size=fontsize)
         plt.ylabel("u(x,%.2f)" % T, size=fontsize)
-        plt.legend()
+        plt.legend(fontsize=fontsize)
         plt.savefig(path + figurename)
         plt.close()
