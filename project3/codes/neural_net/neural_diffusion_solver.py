@@ -38,12 +38,12 @@ class NeuralDiffusionSolver(NeuralBase):
     def predict(self, x, t):
         self.x = x
         self.t = t
-        f_trial = self.trial_function(training=False)
+        f_trial = self.trial_fn(training=False)
         return f_trial
 
 
     @tf.function
-    def trial_function(self,training):
+    def trial_fn(self,training):
         x, t = self.x, self.t
         X = tf.concat([x,t], 1)
         N = self(X, training=training)
@@ -58,7 +58,7 @@ class NeuralDiffusionSolver(NeuralBase):
             gg.watch(x)
             with tf.GradientTape(persistent=True) as g:
                 g.watch([x,t])
-                f_trial = self.trial_function(training=True)
+                f_trial = self.trial_fn(training=True)
 
             df_dt = g.gradient(f_trial, t)
             df_dx = g.gradient(f_trial, x)

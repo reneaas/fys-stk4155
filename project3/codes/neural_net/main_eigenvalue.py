@@ -3,16 +3,23 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 
+
+# tf.config.threading.set_inter_op_parallelism_threads(num_threads=1)
+
 seed = 10
 # tf.random.set_seed(seed)
 # np.random.seed(seed)
 
 #Create symmetric matrix
-# mat_sz = 3
-# A = np.array([[3, 0, 4], [0, 2, 0], [4, 0, 3]])
-mat_sz = 6
-Q = np.random.normal(0, 1, size=(mat_sz, mat_sz))
-A = 0.5*(Q.T + Q)
+mat_sz = 3
+A = np.array([[3, 0, 4], [0, 2, 0], [4, 0, 3]])
+# mat_sz = 6
+# Q = np.random.normal(0, 1, size=(mat_sz, mat_sz))
+# A = 0.5*(Q.T + Q)
+
+true_eigvals, true_eigvecs = np.linalg.eig(A)
+x = true_eigvecs.T[1]
+print(x)
 
 
 #Initialize the model
@@ -25,12 +32,10 @@ my_solver = NeuralEigenSolver(layers = layers, input_sz = input_sz, matrix = A, 
 #Fit the model
 Nt = 100
 t_max = 1e3
-x = np.random.normal(0, 1, size=mat_sz)
-# x = np.array([0, 1, 0])
-# x = x/np.linalg.norm(x)
-t = np.linspace(0, t_max, Nt)
-epochs = 500
+# x = np.random.normal(0, 1, size=mat_sz)
 
+t = np.linspace(0, t_max, Nt)
+epochs = 100
 epoch_arr, eigvals, eigvecs = my_solver.fit(x = x, t = t, epochs = epochs)
 
 true_eigvals, true_eigvecs = np.linalg.eig(A)
