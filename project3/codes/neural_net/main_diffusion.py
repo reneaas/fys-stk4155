@@ -18,7 +18,7 @@ t = np.random.uniform(0, 1, n)
 
 epochs = 500
 
-my_model = NeuralDiffusionSolver(layers, input_sz)
+my_model = NeuralDiffusionSolver(layers=layers, input_sz=input_sz)
 epoch_arr, loss = my_model.fit(x=x, t=t, epochs=epochs)
 
 my_model.save('my_pde_model')
