@@ -19,24 +19,31 @@ class NeuralDiffusionSolver(NeuralBase):
         self.x = x
         self.t = t
 
+        epoch_arr = np.zeros(epochs)
+        losses = np.zeros(epochs)
+
         bar = Bar("Epochs", max = epochs)
         for epoch in range(epochs):
             bar.next()
             loss, gradients = self.compute_gradients()
             self.optimizer.apply_gradients(zip(gradients, self.trainable_variables))
+
+            epoch_arr[epoch] = epoch
+            losses[epoch] = loss
         bar.finish()
-        return None
+        return epoch_arr, losses
+
 
     @tf.function
     def predict(self, x, t):
         self.x = x
         self.t = t
-        f_trial = self.trial_function(training=False)
+        f_trial = self.trial_fn(training=False)
         return f_trial
 
 
     @tf.function
-    def trial_function(self,training):
+    def trial_fn(self,training):
         x, t = self.x, self.t
         X = tf.concat([x,t], 1)
         N = self(X, training=training)
@@ -51,7 +58,7 @@ class NeuralDiffusionSolver(NeuralBase):
             gg.watch(x)
             with tf.GradientTape(persistent=True) as g:
                 g.watch([x,t])
-                f_trial = self.trial_function(training=True)
+                f_trial = self.trial_fn(training=True)
 
             df_dt = g.gradient(f_trial, t)
             df_dx = g.gradient(f_trial, x)
