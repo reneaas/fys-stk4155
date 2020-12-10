@@ -24,6 +24,7 @@ for i in dx:
 
 filename1 = path + "u_dx_0.1.txt"
 filename2 = path + "u_dx_0.01.txt"
+filename3 = path + "u_dx_0.01_t_1.2.txt"
 
 def exact_1D(x, t):
     """
@@ -32,10 +33,11 @@ def exact_1D(x, t):
     return np.sin(np.pi*x)*np.exp(-np.pi**2 * t)
 
 
+
 t = []
 x = []
 
-with open(filename1, "r") as infile:
+with open(filename3, "r") as infile:
     first_line = infile.readline()
     points = first_line.split()
     timepoints = int(points[0])
@@ -57,18 +59,29 @@ x = np.array(x)
 
 X, T = np.meshgrid(x, t)
 
-fontsize = 12
-ticksize = 12
+fontsize = 16
+ticksize = 16
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
 
-plt.contourf(X, T, np.abs(u - exact_1D(X,T))/exact_1D(X,T), cmap="inferno", levels=41)
+exact = exact_1D(X,T)
+
+
+rel_err = np.abs(u - exact)/exact
+
+
+plt.contourf(X, T, rel_err, cmap="inferno", levels=201)
+
+
+#plt.contourf(X, T, rel_err, cmap="inferno", levels=41)
 cbar = plt.colorbar()
-cbar.set_label(r"$\epsilon_{rel}$", size=fontsize)
+cbar.set_label("Relative Error", size=fontsize)
 cbar.ax.tick_params(labelsize=ticksize)
+cbar.formatter.set_powerlimits((0,0))
+cbar.update_ticks()
 plt.xticks(size=ticksize)
 plt.yticks(size=ticksize)
-ax.set_xlabel("x", size=fontsize)
-ax.set_ylabel("t", size=fontsize)
+ax.set_xlabel(r"$x$", size=fontsize)
+ax.set_ylabel(r"$t$", size=fontsize)
 plt.show()
