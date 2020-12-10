@@ -7,7 +7,7 @@ seed = 10
 tf.random.set_seed(seed)
 np.random.seed(seed)
 
-layers = [1, 1000, 100] + [1]
+layers = [1000, 1000, 1000, 1000] + [1]
 input_sz = 2
 n = 100
 
@@ -22,11 +22,11 @@ my_model.fit(x=x, t=t, epochs=epochs)
 
 # Define grid
 num_points = 41
-start = tf.constant(0, dtype=tf.float32)
+start = tf.constant(0.001, dtype=tf.float32)
 stop = tf.constant(1, dtype=tf.float32)
 start_t = tf.constant(0, dtype=tf.float32)
-stop_t = tf.constant(1, dtype=tf.float32)
-X, T = tf.meshgrid(tf.linspace(start_t, stop_t, num_points), tf.linspace(start_t, stop_t, num_points))
+stop_t = tf.constant(0.8, dtype=tf.float32)
+X, T = tf.meshgrid(tf.linspace(start, stop, num_points), tf.linspace(start_t, stop_t, num_points))
 x, t = tf.reshape(X, [-1, 1]), tf.reshape(T, [-1, 1])
 
 
@@ -44,7 +44,7 @@ print("R2 = ", R2)
 
 
 
-plt.contourf(X,T, g, levels=41)
+plt.contourf(X,T, np.abs(g-g_nn)/g, levels=41)
 plt.colorbar()
 
 fig = plt.figure()
