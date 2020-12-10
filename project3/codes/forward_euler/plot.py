@@ -16,8 +16,8 @@ dx = [0.1, 0.01]
 
 t = [0.02, 1.]
 
-fontsize = 14
-ticksize = 14
+fontsize = 16
+ticksize = 16
 for i in dx:
     for j in t:
         x = []

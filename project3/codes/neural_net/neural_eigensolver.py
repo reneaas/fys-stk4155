@@ -52,7 +52,7 @@ class NeuralEigenSolver(NeuralBase):
 
 
     @tf.function
-    def trial_function(self, x, t, training):
+    def trial_fn(self, x, t, training):
         N = self(t, training=training)
         return tf.exp(-t)*x + (1-tf.exp(-t))*N
 
@@ -61,7 +61,7 @@ class NeuralEigenSolver(NeuralBase):
     def compute_loss(self):
         with tf.GradientTape() as tape:
             tape.watch(self.t)
-            self.x_trial = self.trial_function(self.x, self.t, training=True)
+            self.x_trial = self.trial_fn(self.x, self.t, training=True)
         dx_dt = tape.batch_jacobian(self.x_trial, self.t)
         del tape
 
@@ -83,7 +83,7 @@ class NeuralEigenSolver(NeuralBase):
         returns eigenvalue and corresponding normalized eigenvector
         """
         x = tf.convert_to_tensor(x, dtype=tf.float32)
-        v = self.trial_function(x, t, training=False)
+        v = self.trial_fn(x, t, training=False)
         v = tf.transpose(v) #Must be transposed to get the correct mathematical shape
         Av = tf.matmul(self.A_test, v)
         vAv = tf.reduce_sum(tf.multiply(v, Av))
