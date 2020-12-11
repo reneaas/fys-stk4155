@@ -15,29 +15,34 @@ seed = 150
 mat_sz = 6
 A = np.load("matrix.npy")
 mat_sz = np.shape(A)[0]
-np.save("matrix.npy", A)
+# np.save("matrix.npy", A)
+true_eigvals, true_eigvecs = np.linalg.eig(A)
+
 
 
 #Initialize the model
 input_sz = 1
-layers = [10000, mat_sz]
+layers = [5000, mat_sz]
 eig_type = "max"
 my_solver = NeuralEigenSolver(layers = layers, input_sz = input_sz, matrix = A, eig_type = eig_type)
 
 
 #Fit the model
-Nt = 10
+Nt = 50
 t_max = 1e3
 x = np.random.normal(0, 1, size=mat_sz)
+idx = np.where(true_eigvals == np.max(true_eigvals))
+max_eigvec = true_eigvecs.T[idx]
+x = np.copy(max_eigvec)
 
 t = np.linspace(0, t_max, Nt)
 epochs = 2500
 epoch_arr, eigvals, eigvecs = my_solver.fit(x = x, t = t, epochs = epochs)
 
-true_eigvals, true_eigvecs = np.linalg.eig(A)
 
-idx = np.where(true_eigvals == np.max(true_eigvals))
-max_eigvec = true_eigvecs.T[idx]
+
+
+
 #Plot eigenvalue estimate as function of epochs
 fontsize = 16
 plt.plot(epoch_arr, eigvals, label= "eigenvalue estimate", color="r")
@@ -52,15 +57,15 @@ plt.show()
 #Plot eigenvector estimate as function of epochs
 
 
-for j in range(mat_sz):
-    plt.plot(epoch_arr, eigvecs[:,j], label=f"$x_{j}$")
-plt.hlines(y = max_eigvec, xmin=0, xmax=epochs, linestyles="dashed")
-plt.xlabel("epochs", size=fontsize)
-plt.ylabel(r"$x_i$", size=fontsize)
-plt.xticks(fontsize=fontsize)
-plt.yticks(fontsize=fontsize)
-plt.legend(fontsize=fontsize, loc=4)
-plt.show()
+# for j in range(mat_sz):
+#     plt.plot(epoch_arr, eigvecs[:,j], label=f"$x_{j}$")
+# plt.hlines(y = x, xmin=0, xmax=epochs, linestyles="dashed")
+# plt.xlabel("epochs", size=fontsize)
+# plt.ylabel(r"$x_i$", size=fontsize)
+# plt.xticks(fontsize=fontsize)
+# plt.yticks(fontsize=fontsize)
+# plt.legend(fontsize=fontsize, loc=4)
+# plt.show()
 
 
 
