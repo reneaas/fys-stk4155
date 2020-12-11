@@ -33,16 +33,18 @@ for i in dx:
                 u.append(float(vals[-1]))
 
         figurename = "euler_dx_" + str(i) + "_time_" + str(j) + ".pdf"
+        fig, ax = plt.subplots()
 
         x = np.array(x)
         u = np.array(u)
         u_analytical = exact_1D(x, T)
         plt.plot(x, u, label="approximation")
         plt.plot(x, u_analytical, label="analytical")
-        plt.xticks(size=ticksize)
+        plt.xticks()
         plt.yticks(size=ticksize)
         plt.xlabel("x", size=fontsize)
         plt.ylabel("u(x,%.2f)" % T, size=fontsize)
+        plt.rc(['font'], size=14)
         plt.legend(fontsize=fontsize)
         plt.savefig(path + figurename)
         plt.close()
