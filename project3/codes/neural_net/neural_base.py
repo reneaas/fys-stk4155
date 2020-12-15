@@ -6,7 +6,7 @@ class NeuralBase(tf.keras.Sequential):
         super(NeuralBase, self).__init__()
         # Set up model
         # First hidden layer connected to the input
-        self.add(tf.keras.layers.Dense(layers[0], input_shape=(input_sz,), activation=None))
+        self.add(tf.keras.layers.Dense(layers[0], input_shape=(input_sz,), activation="linear"))
 
         # Hidden layers
         for layer in layers[1:-1]:
@@ -16,6 +16,7 @@ class NeuralBase(tf.keras.Sequential):
         # Output layer
         self.add(tf.keras.layers.Dense(layers[-1], activation="linear"))
 
+        # self.optimizer = tf.keras.optimizers.SGD(learning_rate=0.001, momentum=0.7)
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
         self.loss_fn = tf.keras.losses.MeanSquaredError()
 

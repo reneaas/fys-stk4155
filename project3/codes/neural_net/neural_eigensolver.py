@@ -43,7 +43,7 @@ class NeuralEigenSolver(NeuralBase):
             bar.next()
             loss, gradients = self.compute_gradients()
             self.optimizer.apply_gradients(zip(gradients, self.trainable_variables))
-            eigval, eigvec = self.eig(x0, t_max, self.A_test)
+            eigval, eigvec = self.eig(x0, t_max)
             eigvals[epoch] = eigval.numpy()
             eigvecs[epoch,:] = eigvec.numpy().T[:]
             epoch_arr[epoch] = epoch
@@ -78,7 +78,7 @@ class NeuralEigenSolver(NeuralBase):
         return loss
 
 
-    def eig(self, x, t, A):
+    def eig(self, x, t):
         """
         returns eigenvalue and corresponding normalized eigenvector
         """
