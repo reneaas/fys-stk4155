@@ -21,6 +21,7 @@ epochs = 500
 my_model = NeuralDiffusionSolver(layers=layers, input_sz=input_sz)
 epoch_arr, loss = my_model.fit(x=x, t=t, epochs=epochs)
 
+"""
 fontsize = 16
 
 
@@ -84,7 +85,7 @@ cb.set_label(label=r"$u(x,t)$", size=fontsize)
 cb.ax.tick_params(labelsize = fontsize)
 plt.savefig("../results/neural_net/pde/pde_network_on_training_domain.pdf")
 plt.show()
-
+"""
 
 # Define grid
 num_points = 401
@@ -127,4 +128,5 @@ plt.xticks(size=ticksize)
 plt.yticks(size=ticksize)
 ax.set_xlabel(r"$x$", size=fontsize)
 ax.set_ylabel(r"$t$", size=fontsize)
+plt.savefig("test1.pdf", dpi=1000)
 plt.show()

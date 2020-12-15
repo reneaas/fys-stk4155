@@ -24,7 +24,7 @@ for i in dx:
 
 filename1 = path + "u_dx_0.1.txt"
 filename2 = path + "u_dx_0.01.txt"
-filename3 = path + "u_dx_0.01_t_1.2.txt"
+filename3 = path + "u_dx_0.01_t_1.txt"
 
 def exact_1D(x, t):
     """
@@ -57,6 +57,7 @@ with open(filename3, "r") as infile:
 t = np.array(t[::gridpoints])
 x = np.array(x)
 
+
 X, T = np.meshgrid(x, t)
 
 fontsize = 16
@@ -68,13 +69,13 @@ ax = fig.add_subplot(111)
 exact = exact_1D(X,T)
 
 
+
+
+
 rel_err = np.abs(u - exact)/exact
 
 
-plt.contourf(X, T, rel_err, cmap="inferno", levels=201)
-
-
-#plt.contourf(X, T, rel_err, cmap="inferno", levels=41)
+plt.contourf(X, T, rel_err, cmap="inferno", levels=41)
 cbar = plt.colorbar()
 cbar.set_label("relative error", size=fontsize)
 cbar.ax.tick_params(labelsize=ticksize)
