@@ -1,7 +1,7 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import os
-
+import sys
+import matplotlib.pyplot as plt
 
 
 def exact_1D(x, t):
@@ -10,41 +10,54 @@ def exact_1D(x, t):
     """
     return np.sin(np.pi*x)*np.exp(-np.pi**2 * t)
 
-path = "../results/euler/"
 
-dx = [0.1, 0.01]
+t = []
+x = []
 
-t = [0.02, 1,2]
+filename = "u_dx_0.01_t_1.2.txt"
+with open(filename, "r") as infile:
+    first_line = infile.readline()
+    points = first_line.split()
+    timepoints = int(points[0])
+    gridpoints = int(points[1])
+
+    u = np.zeros([timepoints, gridpoints])
+    for i in range(timepoints):
+        for j in range(gridpoints):
+            line = infile.readline()
+            values = line.split()
+            u[i,j] = float(values[-1])
+            if i == 0:
+                x.append(float(values[1]))
+            t.append(float(values[0]))
+
+
+t = np.array(t[::gridpoints])
+x = np.array(x)
+
+
+X, T = np.meshgrid(x, t)
 
 fontsize = 16
 ticksize = 16
-for i in dx:
-    for j in t:
-        x = []
-        u = []
-        infilename = path + "euler_dx_" + str(i) + "_time_" + str(j) + ".txt"
-        with open(infilename, "r") as infile:
-            T = float(infile.readline().split()[0])
-            print(T)
-            lines = infile.readlines()
-            for line in lines:
-                vals = line.split()
-                x.append(float(vals[0]))
-                u.append(float(vals[-1]))
 
-        figurename = "euler_dx_" + str(i) + "_time_" + str(j) + ".pdf"
-        fig, ax = plt.subplots()
+fig = plt.figure()
+ax = fig.add_subplot(111)
 
-        x = np.array(x)
-        u = np.array(u)
-        u_analytical = exact_1D(x, T)
-        plt.plot(x, u, label="approximation")
-        plt.plot(x, u_analytical, label="analytical")
-        plt.xticks()
-        plt.yticks(size=ticksize)
-        plt.xlabel("x", size=fontsize)
-        plt.ylabel("u(x,%.2f)" % T, size=fontsize)
-        plt.rc(['font'], size=14)
-        plt.legend(fontsize=fontsize)
-        plt.savefig(path + figurename)
-        plt.close()
+exact = exact_1D(X,T)
+
+rel_err = np.abs(exact-u)/exact
+
+
+plt.contourf(X, T, rel_err, cmap="inferno", levels=201)
+cbar = plt.colorbar()
+cbar.set_label("relative error", size=fontsize)
+cbar.ax.tick_params(labelsize=ticksize)
+cbar.formatter.set_powerlimits((0,0))
+cbar.ax.yaxis.get_offset_text().set_fontsize(14)
+cbar.update_ticks()
+plt.xticks(size=ticksize)
+plt.yticks(size=ticksize)
+ax.set_xlabel(r"$x$", size=fontsize)
+ax.set_ylabel(r"$t$", size=fontsize)
+plt.show()

@@ -7,4 +7,4 @@ run:
 	./main.exe u_dx_0.01_t_1.2.txt 1.2 0.01
 
 plot:
-	python3 main.py
+	python3 plot.py
