@@ -24,7 +24,6 @@ To simply run the forward Euler scheme, and produce new results, the following c
 ```terminal
 >> g++-10 -o main.exe $(wildcard *.cpp) -O3
 >> ./main.exe outfilename total_time dx
-
 ```
 
 The python file [plot.py](https://github.com/reneaas/fys-stk4155/blob/master/project3/codes/forward_euler/plot.py) plots the relative error between the numerical and analytical solution. It requires a .txt file with results to exists, i. e. it does not produce results on its own.
