@@ -3,6 +3,9 @@
 
 
 
+/*
+Allocates memory and initializes values of the arrays
+*/
 void initialize(double **v, double **x, double **t, int gridpoints, int timesteps, double dx, double dt){
     // Position array
     *x = new double[gridpoints]();
@@ -20,7 +23,6 @@ void initialize(double **v, double **x, double **t, int gridpoints, int timestep
 
     //Initial condition
     for (int i = 0; i < gridpoints; i++) (*v)[i] = sin(M_PI * (*x)[i]);
-
 }
 
 
@@ -34,7 +36,7 @@ void explicit_scheme(double *v, double r, int gridpoints, int timesteps){
     }
 }
 
-
+//Writes the computes solution to file.
 void write_to_file(string outfilename, double *v, double *x, double *t, int gridpoints, int timesteps){
     ofstream ofile;
     ofile.open(outfilename);

@@ -31,9 +31,7 @@ int main(int nargs, char* argv[]){
 
 
     initialize(&v, &x, &t, gridpoints, timesteps, dx, dt);
-
     explicit_scheme(v, r, gridpoints, timesteps);
-
     write_to_file(outfilename, v, x, t, gridpoints, timesteps);
 
     delete[] v;

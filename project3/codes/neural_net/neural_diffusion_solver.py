@@ -8,8 +8,9 @@ tf.random.set_seed(seed)
 np.random.seed(seed)
 
 class NeuralDiffusionSolver(NeuralBase):
-    def __init__(self, layers, input_sz):
-        super(NeuralDiffusionSolver, self).__init__(layers, input_sz)
+    def __init__(self, layers, input_sz, learning_rate):
+        super(NeuralDiffusionSolver, self).__init__(layers, input_sz, learning_rate)
+
 
     def fit(self, x, t, epochs):
         x = x.reshape(-1,1)
@@ -19,17 +20,19 @@ class NeuralDiffusionSolver(NeuralBase):
         self.x = x
         self.t = t
 
+
         epoch_arr = np.zeros(epochs)
         losses = np.zeros(epochs)
 
         bar = Bar("Epochs", max = epochs)
         for epoch in range(epochs):
             bar.next()
+
             loss, gradients = self.compute_gradients()
             self.optimizer.apply_gradients(zip(gradients, self.trainable_variables))
-
             epoch_arr[epoch] = epoch
             losses[epoch] = loss
+
         bar.finish()
         return epoch_arr, losses
 

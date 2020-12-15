@@ -14,7 +14,7 @@ path = "../results/euler/"
 
 dx = [0.1, 0.01]
 
-t = [0.02, 1.]
+t = [0.02, 1,2]
 
 fontsize = 16
 ticksize = 16
