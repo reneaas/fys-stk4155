@@ -47,7 +47,7 @@ Once the model is fitted, we can evaluate the function at any time 0 <= x <= 1 a
 prediction = my_solver.predict(x, t)
 ```
 
-where x and t are tensors dtype=tf.float32.
+x and t should be tensors of dtype=tf.float32
 
 #### test program
 In *test_diffusion.py*, an end-to-end example is provided where the model of the neural diffusion solver is fitted and tested. Simply run
