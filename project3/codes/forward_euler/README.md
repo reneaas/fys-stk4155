@@ -20,10 +20,9 @@ The forward Euler algorithm is found in [functions.cpp](https://github.com/renea
 
 
 
-To simply run the forward Euler scheme, and produce new results, the following calls can be made
+To simply run the forward Euler scheme, and produce new results, the following comand can be run in a Linux terminal
 ```terminal
->> g++-10 -o main.exe $(wildcard *.cpp) -O3
->> ./main.exe outfilename total_time dx
+make
 ```
 
 The python file [plot.py](https://github.com/reneaas/fys-stk4155/blob/master/project3/codes/forward_euler/plot.py) plots the relative error between the numerical and analytical solution. It requires a .txt file with results to exists, i. e. it does not produce results on its own.

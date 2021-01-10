@@ -14,13 +14,13 @@ void test_franke(int hidden_layers, int nodes, double lamb, double gamme, int ep
 int main(int argc, char const *argv[]) {
 
     int hidden_layers = 1;
-    int nodes = 10;
+    int nodes = 50;
     double lamb = 1e-5;
     double gamma = 0.9;
-    int epochs = 10;
-    int batch_sz = 100;
-    double eta = 0.1;
-    string hidden_act = "sigmoid";
+    int epochs = 100;
+    int batch_sz = 10;
+    double eta = 0.01;
+    string hidden_act = "relu";
     int deg = 5;
     test_franke(hidden_layers, nodes, lamb, gamma, epochs, batch_sz, eta, hidden_act, deg);
 
@@ -39,7 +39,7 @@ void test_franke(int hidden_layers, int nodes, double lamb, double gamma, int ep
 
     read_franke(&X_train, &y_train, &X_val, &y_val, &X_test, &y_test, deg, num_train, num_val, num_test);
 
-    int features = (int) (deg+1)*(deg+2)/2;
+    int features = 2;
     string model_type = "regression";
     int num_outputs = 1;
 
@@ -48,12 +48,12 @@ void test_franke(int hidden_layers, int nodes, double lamb, double gamma, int ep
     my_network.add_layer(nodes, features); //Add the first hidden layer connected to the input x.
     my_network.add_layer(2*nodes, nodes); //Add a hidden layer
     my_network.add_layer(5*nodes, 2*nodes); //Add another hidden layer
-    my_network.add_layer(10*nodes, 5*nodes); //Add yet another hidden layer.
-    my_network.add_layer(num_outputs, 10*nodes); //add top layer that produces the final prediction
-    my_network.init_data(X_train, y_train, num_train); //Feed the training data to the model
+    my_network.add_layer(3*nodes, 5*nodes); //Add yet another hidden layer.
+    my_network.add_layer(num_outputs, 3*nodes); //add top layer that produces the final prediction
+    my_network.init_data(X_train, y_train); //Feed the training data to the model
     my_network.fit(epochs, batch_sz, eta); //Fit the model to the training data.
-    double r2_val = my_network.evaluate(X_val, y_val, num_val); //Evaluate the model on the validation set
-    double r2_test = my_network.evaluate(X_test, y_test, num_test); //Evaluate the model on the test set.
+    double r2_val = my_network.evaluate(X_val, y_val); //Evaluate the model on the validation set
+    double r2_test = my_network.evaluate(X_test, y_test); //Evaluate the model on the test set.
 
     cout << "validation R2 = " << r2_val << endl;
     cout << "test R2 = " << r2_test << endl;
@@ -62,10 +62,10 @@ void test_franke(int hidden_layers, int nodes, double lamb, double gamma, int ep
     //Here we show a different version where every hidden layer has the same number of hidden neurons.
     //It calls a different constructor that sets up the model for us with no fuzz.
     FFNN my_network2(hidden_layers, features, nodes, num_outputs, model_type, lamb, gamma, hidden_act); //Create the neural net with all its layers.
-    my_network2.init_data(X_train, y_train, num_train); //Feed the training data to the model
+    my_network2.init_data(X_train, y_train); //Feed the training data to the model
     my_network2.fit(epochs, batch_sz, eta); //Fit the model to the training data.
-    r2_val = my_network2.evaluate(X_val, y_val, num_val); //Evalute the model on the validation set
-    r2_test = my_network2.evaluate(X_test, y_test, num_test); //Evalute the model on the test set.
+    r2_val = my_network2.evaluate(X_val, y_val); //Evalute the model on the validation set
+    r2_test = my_network2.evaluate(X_test, y_test); //Evalute the model on the test set.
 
     cout << "validation R2 = " << r2_val << endl;
     cout << "test R2 = " << r2_test << endl;
@@ -88,7 +88,7 @@ void read_franke(mat *X_train, mat *y_train, mat *X_val, mat *y_val, mat *X_test
     z.load("../datasets/frankefunction_z_20000_sigma_0.1.bin");
 
 
-    int features = (deg+1)*(deg+2)/2;
+    int features = 2;
 
     (*X_train) = mat(features, num_train);
     (*y_train) = mat(1, num_train);
@@ -99,37 +99,21 @@ void read_franke(mat *X_train, mat *y_train, mat *X_val, mat *y_val, mat *X_test
     (*X_test) = mat(features, num_test);
     (*y_test) = mat(1, num_test);
 
-    int q;
     for (int i = 0; i < num_train; i++){
         (*y_train)(0, i) = z(i);
-        (*X_train)(0, i) = 1.;
-        for (int j = 1; j < deg+1; j++){
-            q = (int) (j*(j+1)/2);
-            for (int k = 0; k < j+1; k++){
-                (*X_train)(q+k, i) = pow(x(i), j-k)*pow(y(i), k);
-            }
-        }
+        (*X_train)(0, i) = x(i);
+        (*X_train)(1,i) = y(i);
     }
 
     for (int i = 0; i < num_val; i++){
         (*y_val)(0, i) = z(num_train + i);
-        (*X_val)(0, i) = 1.;
-        for (int j = 1; j < deg+1; j++){
-            q = (int) (j*(j+1)/2);
-            for (int k = 0; k < j+1; k++){
-                (*X_val)(q+k, i) = pow(x(num_train + i), j-k)*pow(y(num_train + i), k);
-            }
-        }
+        (*X_val)(0, i) = x(num_train + i);
+        (*X_val)(1, i) = y(num_train + i);
     }
 
     for (int i = 0; i < num_test; i++){
         (*y_test)(0, i) = z(num_train + num_val + i);
-        (*X_test)(0, i) = 1.;
-        for (int j = 1; j < deg+1; j++){
-            q = (int) (j*(j+1)/2);
-            for (int k = 0; k < j+1; k++){
-                (*X_test)(q+k, i) = pow(x(num_train + num_val +i), j-k)*pow(y(num_train  + num_val + i), k);
-            }
-        }
+        (*X_test)(0, i) = x(num_train + num_val + i);
+        (*X_test)(1, i) = y(num_train + num_val + i);
     }
 }

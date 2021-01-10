@@ -3,9 +3,6 @@
 
 #include <armadillo>
 
-using namespace std;
-using namespace arma;
-
 
 /*
  The Layer class is used by the FFNN class to store properties of each layer.
@@ -16,24 +13,24 @@ public:
     int rows_, cols_; //Number of rows and columns in the weights_ matrix.
 
     //Properties a layer in the neural net.
-    vec bias_;
-    vec error_;
-    vec activation_;
-    mat weights_;
-    vec z_;
+    arma::vec bias_;
+    arma::vec error_;
+    arma::vec activation_;
+    arma::mat weights_;
+    arma::vec z_;
 
     //Store gradients
-    mat dw_;
-    vec db_;
+    arma::mat dw_;
+    arma::vec db_;
 
     //Used with sgd_momentum
-    mat w_mom_;
-    vec b_mom_;
+    arma::mat w_mom_;
+    arma::vec b_mom_;
 
 
     //Constructors
     Layer(int rows, int cols);
-    Layer(int rows, int cols, string optimizer);
+    Layer(int rows, int cols, std::string optimizer);
 };
 
 #endif

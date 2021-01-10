@@ -5,11 +5,6 @@
 #include <armadillo>
 #include <random>
 
-using namespace std;
-using namespace arma;
-
-
-
 /*
 
 The class FFNN is a feed forward neural network.
@@ -34,44 +29,44 @@ class FFNN {
 private:
     friend class Layer;
 
-    vector<Layer> layers_;
+    std::vector<Layer> layers_;
 
     int hidden_layers_, features_, nodes_, num_outputs_, num_points_, num_layers_;
     int epochs_, batch_sz_;
     double eta_;
-    mat X_train_, y_train_;
-    mat X_test_, y_test_;
+    arma::mat X_train_, y_train_;
+    arma::mat X_test_, y_test_;
     int num_test_;
     double lamb_, gamma_;
 
 
     //These methods make up the backpropagation algorithm
-    void feed_forward(vec x);
-    void backward_pass(vec x, vec y);
+    void feed_forward(arma::vec x);
+    void backward_pass(arma::vec x, arma::vec y);
     void add_gradients(int l);
 
     //Pointers to member functions
-    vec (FFNN::*hidden_act)(vec z);
-    vec (FFNN::*top_layer_act)(vec a);
-    vec (FFNN::*hidden_act_derivative)(vec z);
+    arma::vec (FFNN::*hidden_act)(arma::vec z);
+    arma::vec (FFNN::*top_layer_act)(arma::vec a);
+    arma::vec (FFNN::*hidden_act_derivative)(arma::vec z);
     double (FFNN::*compute_metric)();
     void (FFNN::*update_parameters)();
 
 
     //Various hidden layer activation functions
-    vec sigmoid(vec z);
-    vec sigmoid_derivative(vec z);
+    arma::vec sigmoid(arma::vec z);
+    arma::vec sigmoid_derivative(arma::vec z);
 
-    vec relu(vec z);
-    vec relu_derivative(vec z);
+    arma::vec relu(arma::vec z);
+    arma::vec relu_derivative(arma::vec z);
 
-    vec leaky_relu(vec z);
-    vec leaky_relu_derivative(vec z);
+    arma::vec leaky_relu(arma::vec z);
+    arma::vec leaky_relu_derivative(arma::vec z);
 
     //Top layer activation functions
-    vec softmax(vec a);
-    vec linear(vec z);
-    vec binary_classifier(vec z);
+    arma::vec softmax(arma::vec a);
+    arma::vec linear(arma::vec z);
+    arma::vec binary_classifier(arma::vec z);
 
     //Various metrics
     double compute_accuracy();
@@ -87,14 +82,14 @@ private:
 
 public:
     //Constructors
-    FFNN(int features, int outputs, string model_type, double lamb, double gamma, string hidden_activation);
-    FFNN(int hidden_layers, int features, int nodes, int outputs, string model_type, double lamb, double gamma, string hidden_activation);
+    FFNN(int features, int outputs, std::string model_type, double lamb, double gamma, std::string hidden_activation);
+    FFNN(int hidden_layers, int features, int nodes, int outputs, std::string model_type, double lamb, double gamma, std::string hidden_activation);
 
     //Member functions
     void add_layer(int rows, int cols); //Adds a layer to the model.
-    void init_data(mat X_train, mat y_train, int num_points); //Initializes training data.
+    void init_data(arma::mat X_train, arma::mat y_train); //Initializes training data.
     void fit(int epochs, int batch_sz, double eta); //Fits the model
-    double evaluate(mat X_test, mat y_test, int num_test); //Evaluates the model according to the appropriate performance metric.
+    double evaluate(arma::mat X_test, arma::mat y_test); //Evaluates the model according to the appropriate performance metric.
 
 
 };

@@ -1,9 +1,9 @@
 #include "neural_network.hpp"
 
 /*
-Constructor that sets up a basic model with no layers. Meant be used with the member function add_layer(int rows, int cols).
+Constructor that sets up a basic model with no layers. Meant to be used with the member function add_layer(int rows, int cols).
 */
-FFNN::FFNN(int features, int num_outputs, string model_type, double lamb, double gamma, string hidden_activation)
+FFNN::FFNN(int features, int num_outputs, std::string model_type, double lamb, double gamma, std::string hidden_activation)
 {
     features_ = features;
     num_outputs_ = num_outputs;
@@ -54,7 +54,7 @@ FFNN::FFNN(int features, int num_outputs, string model_type, double lamb, double
 /*
 Constructor that sets up a neural net with equally many hidden neurons in each hidden layer.
 */
-FFNN::FFNN(int hidden_layers, int features, int nodes, int num_outputs, string model_type, double lamb, double gamma, string hidden_activation)
+FFNN::FFNN(int hidden_layers, int features, int nodes, int num_outputs, std::string model_type, double lamb, double gamma, std::string hidden_activation)
 {
     features_ = features;
     nodes_ = nodes;
@@ -145,7 +145,7 @@ FFNN::FFNN(int hidden_layers, int features, int nodes, int num_outputs, string m
 Adds a layer to the neural net.
 Parameters:
 int rows: number of neurons in the layer
-int rows: number of neurons in the previous layer.
+int cols: number of neurons in the previous layer.
 */
 void FFNN::add_layer(int rows, int cols)
 {
@@ -161,9 +161,9 @@ void FFNN::add_layer(int rows, int cols)
 
 
 
-void FFNN::init_data(mat X_train, mat y_train, int num_points)
+void FFNN::init_data(arma::mat X_train, arma::mat y_train)
 {
-    num_points_ = num_points;
+    num_points_ = X_train.n_cols;
     X_train_ = X_train;
     y_train_ = y_train;
 }
@@ -173,26 +173,22 @@ void FFNN::fit(int epochs, int batch_sz, double eta)
     batch_sz_ = batch_sz;
     eta_ = eta;
     //epochs_ = epochs;
-    default_random_engine generator;
-    uniform_int_distribution<int> distribution(0, num_points_-1);
+    std::default_random_engine generator;
+    std::uniform_int_distribution<int> distribution(0, num_points_-1);
     int idx;
     int batches = num_points_/batch_sz_;
-    vec x, y;
-    x = vec(features_);
-    y = vec(num_outputs_);
+    arma::vec x, y;
+    x = arma::vec(features_);
+    y = arma::vec(num_outputs_);
     for (int epoch = 0; epoch < epochs; epoch++){
-        cout << " epoch = " << epoch+1 << " of " << epochs << endl;
+        std::cout << " epoch = " << epoch+1 << " of " << epochs << std::endl;
 
         for (int batch = 0; batch < batches; batch++){
 
             for (int b = 0; b < batch_sz_; b++){
                 idx = distribution(generator);
-                for (int j = 0; j < features_; j++){
-                    x(j) = X_train_(j, idx);
-                }
-                for (int j = 0; j < num_outputs_; j++){
-                    y(j) = y_train_(j, idx);
-                }
+                x = X_train_.col(idx);
+                y = y_train_.col(idx);
                 feed_forward(x);
                 backward_pass(x, y);
             }
@@ -249,7 +245,7 @@ void FFNN::update_l2_momentum()
 /*
 Feed-forward part of the backpropagation algorithm
 */
-void FFNN::feed_forward(vec x)
+void FFNN::feed_forward(arma::vec x)
 {
     //Process input activation
     layers_[0].z_ = layers_[0].weights_*x + layers_[0].bias_;
@@ -270,7 +266,7 @@ void FFNN::feed_forward(vec x)
 /*
 Backward pass of the backpropagation algorithm
 */
-void FFNN::backward_pass(vec x, vec y)
+void FFNN::backward_pass(arma::vec x, arma::vec y)
 {
     //Top layer error
     int l = num_layers_-1;
@@ -295,10 +291,10 @@ void FFNN::backward_pass(vec x, vec y)
 /*
 Evaluate the model on validation or test data
 */
-double FFNN::evaluate(mat X_test, mat y_test, int num_test){
+double FFNN::evaluate(arma::mat X_test, arma::mat y_test){
     X_test_ = X_test;
     y_test_ = y_test;
-    num_test_ = num_test;
+    num_test_ = X_test_.n_cols;
 
     double metric = (this->*compute_metric)();
     return metric;
@@ -308,8 +304,8 @@ double FFNN::evaluate(mat X_test, mat y_test, int num_test){
 Computes accuracy on the test set. Pointer to by compute_metric if model_type = "classification".
 */
 double FFNN::compute_accuracy(){
-    vec x = vec(features_);
-    vec y = vec(num_outputs_);
+    arma::vec x = arma::vec(features_);
+    arma::vec y = arma::vec(num_outputs_);
 
     int idx;
     double accuracy = 0;
@@ -317,19 +313,12 @@ double FFNN::compute_accuracy(){
     double wrong_predictions = 0;
     int l = num_layers_-1;
     for (int i = 0; i < num_test_; i++){
-        for (int j = 0; j < features_; j++){
-            x(j) = X_test_(j, i);
-        }
-        for (int j = 0; j < num_outputs_; j++){
-            y(j) = y_test_(j, i);
-        }
+        x = X_test_.col(i);
+        y = y_test_.col(i);
         feed_forward(x);
         idx = index_max(layers_[l].activation_);
         if (y(idx) == 1){
             correct_predictions++;
-        }
-        else{
-            wrong_predictions++;
         }
     }
     accuracy = correct_predictions*(1./num_test_);
@@ -341,20 +330,17 @@ Computes R2 score on a test set. Pointed to by compute_metric if model_type = "r
 */
 double FFNN::compute_r2()
 {
-    vec x = vec(features_);
-    vec y = vec(num_outputs_);
+    arma::vec x = arma::vec(features_);
+    arma::vec y = arma::vec(num_outputs_);
     double diff;
 
     double error = 0.;
     double y_mean = 0.;
     int l = num_layers_-1;
     for (int i = 0; i < num_test_; i++){
-        for (int j = 0; j < features_; j++){
-            x(j) = X_test_(j, i);
-        }
-        y(0) = y_test_(0, i);
+        x = X_test_.col(i);
+        y = y_test_.col(i);
         feed_forward(x);
-
         diff = y(0) - layers_[l].activation_(0);
         error += diff*diff;
         y_mean += y(0);
@@ -375,17 +361,15 @@ Can manually be changed in the constructor.
 */
 double FFNN::compute_mse()
 {
-    vec x = vec(features_);
-    vec y = vec(num_outputs_);
+    arma::vec x = arma::vec(features_);
+    arma::vec y = arma::vec(num_outputs_);
 
     double mse = 0.;
     double diff;
     int l = num_layers_-1;
     for (int i = 0; i < num_test_; i++){
-        for (int j = 0; j < features_; j++){
-            x(j) = X_test_(j, i);
-        }
-        y(0) = y_test_(0, i);
+        x = X_test_.col(i);
+        y = y_test_.col(i);
         feed_forward(x);
 
         diff = y(0) - layers_[l].activation_(0);
@@ -405,58 +389,58 @@ void FFNN::add_gradients(int l)
 /*
 Hidden layer activation functions
 */
-vec FFNN::sigmoid(vec z)
+arma::vec FFNN::sigmoid(arma::vec z)
 {
     return 1./(1. + exp(-z));
 }
 
-vec FFNN::sigmoid_derivative(vec z)
+arma::vec FFNN::sigmoid_derivative(arma::vec z)
 {
-    vec res = 1./(1. + exp(-z));
+    arma::vec res = 1./(1. + exp(-z));
     return res % (1-res);
 }
 
 
-vec FFNN::relu(vec z)
+arma::vec FFNN::relu(arma::vec z)
 {
-    vec s = z;
+    arma::vec s = z;
     return s.transform( [](double val){return val*(val > 0);});
 }
 
-vec FFNN::relu_derivative(vec z)
+arma::vec FFNN::relu_derivative(arma::vec z)
 {
-    vec s = z;
+    arma::vec s = z;
     return s.transform( [](double val){return (val > 0);});
 }
 
-vec FFNN::leaky_relu(vec z)
+arma::vec FFNN::leaky_relu(arma::vec z)
 {
-    vec s = z;
+    arma::vec s = z;
     return s.transform( [](double val){return 0.01*val*(val <= 0) + val*(val > 0);});
 }
 
-vec FFNN::leaky_relu_derivative(vec z)
+arma::vec FFNN::leaky_relu_derivative(arma::vec z)
 {
-    vec s = z;
+    arma::vec s = z;
     return s.transform( [](double val){return 0.01*(val <= 0) + (val > 0);});
 }
 
 /*
 Top layer activation functions
 */
-vec FFNN::softmax(vec a)
+arma::vec FFNN::softmax(arma::vec a)
 {
-    vec res = exp(a);
+    arma::vec res = exp(a);
     return exp(a)/sum(res);
 }
 
-vec FFNN::linear(vec z)
+arma::vec FFNN::linear(arma::vec z)
 {
     return z;
 }
 
-vec FFNN::binary_classifier(vec z)
+arma::vec FFNN::binary_classifier(arma::vec z)
 {
-    vec s = 1./(1.+exp(z));
+    arma::vec s = 1./(1.+exp(z));
     return s.transform( [](double val){return (val > 0.5);});
 }
