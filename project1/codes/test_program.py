@@ -10,6 +10,7 @@ if not os.path.exists(filename):
     os.system("python3 generate_data.py 1000 0.1")
 
 deg = 7 # Highest polynomial degree, gives 15 features in the model.
+
 """
 # Show-case usage of OLS class:
 my_solver = OLS()                    # Initiates the solver.
@@ -36,7 +37,6 @@ cost_func = my_solver.SDG(epochs=epochs,batch_size=5,eta=0.0001, gamma=0.2)
 R2, MSE = my_solver.predict_test()     # Computes R2-score and MSE on the test data.
 print("Ridge; R2 score = ", R2)
 print("Ridge; MSE = ", MSE)
-
 
 """
 # Show-case usage of Lasso class:
